@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!--
+        Added the entity TrainingSession.
+    -->
+    <changeSet id="20260304100007-1" author="clubmanagement">
+        <createTable tableName="training_session">
+            <column name="id" type="${uuidType}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="date" type="${dateType}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="start_time" type="${timeType}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="end_time" type="${timeType}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="recurrence_group_id" type="${uuidType}">
+                <constraints nullable="true"/>
+            </column>
+            <column name="status" type="varchar(20)" defaultValue="SCHEDULED">
+                <constraints nullable="false"/>
+            </column>
+            <column name="notes" type="varchar(1000)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="team_id" type="${uuidType}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="field_id" type="${uuidType}">
+                <constraints nullable="true"/>
+            </column>
+            <column name="created_by" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="${datetimeType}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_by" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_date" type="${datetimeType}">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createIndex indexName="idx_training_session_date" tableName="training_session">
+            <column name="date"/>
+        </createIndex>
+        <createIndex indexName="idx_training_session_recurrence_group_id" tableName="training_session">
+            <column name="recurrence_group_id"/>
+        </createIndex>
+        <dropDefaultValue tableName="training_session" columnName="created_date" columnDataType="${datetimeType}"/>
+        <dropDefaultValue tableName="training_session" columnName="last_modified_date" columnDataType="${datetimeType}"/>
+    </changeSet>
+
+</databaseChangeLog>

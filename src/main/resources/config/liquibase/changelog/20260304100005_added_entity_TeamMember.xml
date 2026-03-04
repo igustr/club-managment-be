@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!--
+        Added the entity TeamMember.
+    -->
+    <changeSet id="20260304100005-1" author="clubmanagement">
+        <createTable tableName="team_member">
+            <column name="id" type="${uuidType}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="joined_date" type="${dateType}">
+                <constraints nullable="true"/>
+            </column>
+            <column name="team_id" type="${uuidType}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="member_id" type="${uuidType}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="${datetimeType}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_by" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_date" type="${datetimeType}">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addUniqueConstraint tableName="team_member" columnNames="team_id, member_id" constraintName="uc_team_member_team_id_member_id"/>
+        <dropDefaultValue tableName="team_member" columnName="created_date" columnDataType="${datetimeType}"/>
+        <dropDefaultValue tableName="team_member" columnName="last_modified_date" columnDataType="${datetimeType}"/>
+    </changeSet>
+
+</databaseChangeLog>

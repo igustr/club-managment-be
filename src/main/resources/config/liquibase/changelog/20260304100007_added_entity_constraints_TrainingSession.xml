@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!--
+        Added the constraints for entity TrainingSession.
+    -->
+    <changeSet id="20260304100007-2" author="clubmanagement">
+
+        <addForeignKeyConstraint baseColumnNames="team_id"
+                                 baseTableName="training_session"
+                                 constraintName="fk_training_session__team_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="team"/>
+
+        <addForeignKeyConstraint baseColumnNames="field_id"
+                                 baseTableName="training_session"
+                                 constraintName="fk_training_session__field_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="field"/>
+    </changeSet>
+
+</databaseChangeLog>
