@@ -51,15 +51,25 @@ See `.claude/development-plan.md` for the full phased development plan, database
 
 ## Architecture
 
-Enforced layered architecture:
+Enforced layered architecture (follows emde-2-be patterns):
 
 ```
-api/controller  →  service  →  repository  →  domain
-     ↓               ↓
-  service/dto    service/mapper
+config              → Spring configuration classes
+security            → Authentication, authorization, JWT, RBAC
+api/controller      → REST controllers (thin, delegates to services)
+service             → Business logic, @Transactional boundaries
+service/dto         → Data Transfer Objects
+service/mapper      → MapStruct mappers (Entity ↔ DTO)
+repository          → Spring Data JPA repositories
+domain              → JPA entities, base classes
+domain/enumeration  → Enum types
+domain/converter    → JPA AttributeConverters for enums
+common/exception    → Custom exceptions, ExceptionTranslator
+common/validation   → Custom business validators
+common/util         → Shared utilities
 ```
 
-Base package: `ee.taltech.clubmanagement`
+Base package: `ee.finalthesis.clubmanagement`
 
 ## Key Conventions
 

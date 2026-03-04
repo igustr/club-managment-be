@@ -1,0 +1,21 @@
+logging:
+  level:
+    ROOT: INFO
+    org.hibernate.SQL: DEBUG
+    ee.finalthesis.clubmanagement: DEBUG
+    org.springframework.security: INFO
+
+spring:
+  docker:
+    compose:
+      enabled: false
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:postgresql://localhost:5433/clubmanagement?TimeZone=Europe/Tallinn
+    username: clubmanagement
+    password: clubmanagement
+    hikari:
+      poolName: Hikari
+      auto-commit: false
+  liquibase:
+    contexts: dev

@@ -31,21 +31,25 @@
 ### Layered Architecture (enforced by ArchUnit)
 
 ```
-config          → Spring configuration classes
-security        → Authentication, authorization, JWT, RBAC
-api/controller  → REST controllers (thin, delegates to services)
-service         → Business logic, @Transactional boundaries
-service/dto     → Data Transfer Objects
-service/mapper  → MapStruct mappers (Entity ↔ DTO)
-repository      → Spring Data JPA repositories
-domain          → JPA entities, enums, base classes
-common          → Shared utilities, exceptions, constants
+config              → Spring configuration classes
+security            → Authentication, authorization, JWT, RBAC
+api/controller      → REST controllers (thin, delegates to services)
+service             → Business logic, @Transactional boundaries
+service/dto         → Data Transfer Objects
+service/mapper      → MapStruct mappers (Entity ↔ DTO)
+repository          → Spring Data JPA repositories
+domain              → JPA entities, base classes
+domain/enumeration  → Enum types (AppRole, MemberStatus, etc.)
+domain/converter    → JPA AttributeConverters for enums
+common/exception    → Custom exceptions, ExceptionTranslator
+common/validation   → Custom business validators
+common/util         → Shared utilities
 ```
 
 ### Package Structure
 
 ```
-ee.taltech.clubmanagement
+ee.finalthesis.clubmanagement
 ├── ClubManagementApplication.java
 ├── api/
 │   └── controller/
@@ -67,7 +71,6 @@ ee.taltech.clubmanagement
 │   ├── JwtTokenProvider.java
 │   ├── JwtAuthenticationFilter.java
 │   ├── SecurityUtils.java
-│   ├── AppRole.java (enum)
 │   └── UserDetailsServiceImpl.java
 ├── service/
 │   ├── AuthService.java
@@ -116,18 +119,21 @@ ee.taltech.clubmanagement
 │   ├── Attendance.java
 │   ├── Notification.java
 │   ├── NotificationRecipient.java
-│   └── enumeration/
-│       ├── AppRole.java
-│       ├── AttendanceStatus.java
-│       ├── NotificationType.java
-│       ├── RecipientGroup.java
-│       └── DayOfWeek.java
+│   ├── enumeration/
+│   │   ├── AppRole.java
+│   │   ├── AttendanceStatus.java
+│   │   ├── MemberStatus.java
+│   │   ├── TrainingSessionStatus.java
+│   │   ├── NotificationType.java
+│   │   └── RecipientGroup.java
+│   └── converter/          (JPA AttributeConverters for enums)
 └── common/
     ├── exception/
     │   ├── BadRequestException.java
     │   ├── ResourceNotFoundException.java
     │   ├── ConflictException.java
     │   └── ExceptionTranslator.java (ControllerAdvice)
+    ├── validation/          (custom business validators, e.g. field booking conflicts)
     └── util/
         └── SecurityUtils.java
 ```
@@ -136,92 +142,101 @@ ee.taltech.clubmanagement
 
 ## Database Model (Entities & Relationships)
 
+### Design Rationale
+
+The schema separates **authentication** (User) from **club profiles** (Member) to avoid data
+duplication and to support young players who have club profiles but no login accounts.
+Recurrence is modeled via a shared `recurrence_group_id` rather than per-row metadata,
+enabling clean batch operations on recurring training series. Enums replace booleans
+where extensibility matters (training status, member status). Database-level unique
+constraints enforce data integrity that application code alone cannot guarantee.
+
 ### Core Entities
 
 ```
-User (auth)
+User (auth-only entity — login credentials and role)
 ├── id: UUID (PK)
-├── email: String (unique)
+├── email: String (UNIQUE, used for login)
 ├── password_hash: String
-├── first_name, last_name: String
-├── phone: String
 ├── role: AppRole (ADMIN, COACH, PLAYER, PARENT)
 ├── club_id: FK → Club
-├── active: boolean
-└── audit fields (created_at, updated_at)
+├── active: boolean (default true)
+└── audit fields (created_at, updated_at, created_by, last_modified_by)
 
 Club
 ├── id: UUID (PK)
 ├── name: String
-├── registration_code: String
-├── address: String
-├── contact_email, contact_phone: String
+├── registration_code: String (nullable)
+├── address: String (nullable)
+├── contact_email: String
+├── contact_phone: String (nullable)
 └── audit fields
 
 Team
 ├── id: UUID (PK)
-├── name: String (e.g., "U-12", "U-15", "Esindus")
+├── name: String (e.g. "U-12", "U-15", "Esindus")
 ├── club_id: FK → Club
 ├── coach_id: FK → User (role=COACH)
-├── age_group: String
-├── season: String
+├── age_group: String (nullable)
+├── season: String (nullable)
 └── audit fields
 
-Member (player or person in a team context)
+Member (club player profile — personal data lives here, not on User)
 ├── id: UUID (PK)
-├── user_id: FK → User (nullable, may not have login)
+├── user_id: FK → User (nullable — young players may not have login)
 ├── club_id: FK → Club
-├── first_name, last_name: String
-├── date_of_birth: LocalDate
-├── email: String
-├── phone: String
-├── parent_id: FK → User (role=PARENT, for minors)
+├── first_name: String
+├── last_name: String
+├── date_of_birth: LocalDate (nullable)
+├── email: String (nullable — contact email, may be parent's for minors)
+├── phone: String (nullable)
+├── parent_id: FK → User (nullable, role=PARENT, for minors)
+├── status: MemberStatus (ACTIVE, INACTIVE)
 └── audit fields
 
-TeamMember (join table)
+TeamMember (join table — row exists = member is in team, delete row = removed)
 ├── id: UUID (PK)
 ├── team_id: FK → Team
 ├── member_id: FK → Member
 ├── joined_date: LocalDate
-├── active: boolean
+├── UNIQUE(team_id, member_id)
 └── audit fields
 
 Field (training ground / pitch)
 ├── id: UUID (PK)
 ├── name: String
-├── address: String
+├── address: String (nullable)
 ├── club_id: FK → Club
-├── surface_type: String (grass, artificial, indoor)
-├── capacity: Integer
+├── surface_type: String (nullable — grass, artificial, indoor)
+├── capacity: Integer (nullable)
 └── audit fields
 
 TrainingSession
 ├── id: UUID (PK)
 ├── team_id: FK → Team
-├── field_id: FK → Field
+├── field_id: FK → Field (nullable — field may be TBD when scheduling)
 ├── date: LocalDate
 ├── start_time: LocalTime
 ├── end_time: LocalTime
-├── recurring: boolean
-├── recurrence_day: DayOfWeek (if recurring)
-├── recurrence_end_date: LocalDate (if recurring)
-├── notes: String
-├── cancelled: boolean
+├── recurrence_group_id: UUID (nullable — shared ID linking all sessions in a recurring series)
+├── status: TrainingSessionStatus (SCHEDULED, CANCELLED)
+├── notes: String (nullable)
 └── audit fields
 
 Attendance
 ├── id: UUID (PK)
 ├── training_session_id: FK → TrainingSession
 ├── member_id: FK → Member
-├── status: AttendanceStatus (CONFIRMED, DECLINED, PENDING)
-├── confirmed_by_user_id: FK → User (parent or self)
-├── confirmed_at: Instant
+├── status: AttendanceStatus (PENDING, CONFIRMED, DECLINED)
+├── confirmed_by_user_id: FK → User (nullable — parent or player themselves)
+├── confirmed_at: Instant (nullable)
+├── UNIQUE(training_session_id, member_id)
 └── audit fields
 
 Notification
 ├── id: UUID (PK)
 ├── club_id: FK → Club
-├── team_id: FK → Team (nullable, club-wide if null)
+├── team_id: FK → Team (nullable — null = club-wide notification)
 ├── sender_id: FK → User
 ├── title: String
 ├── content: String
@@ -234,9 +249,20 @@ NotificationRecipient
 ├── id: UUID (PK)
 ├── notification_id: FK → Notification
 ├── user_id: FK → User
-├── read: boolean
-├── read_at: Instant
+├── read: boolean (default false)
+├── read_at: Instant (nullable)
 └── audit fields
+```
+
+### Enumerations
+
+```
+AppRole:              ADMIN, COACH, PLAYER, PARENT
+MemberStatus:         ACTIVE, INACTIVE
+TrainingSessionStatus: SCHEDULED, CANCELLED
+AttendanceStatus:     PENDING, CONFIRMED, DECLINED
+NotificationType:     GENERAL, TRAINING_CHANGE, ATTENDANCE_REQUEST
+RecipientGroup:       ALL, PLAYERS_ONLY, PARENTS_ONLY
 ```
 
 ### Key Relationships
@@ -246,16 +272,36 @@ NotificationRecipient
 - Club 1:N Users
 - Team N:1 Club
 - Team N:1 User (coach)
-- Team N:M Members (via TeamMember)
+- Team N:M Members (via TeamMember join table, UNIQUE constraint)
 - TrainingSession N:1 Team
-- TrainingSession N:1 Field
-- Attendance N:1 TrainingSession
+- TrainingSession N:1 Field (nullable)
+- Attendance N:1 TrainingSession (UNIQUE with member_id)
 - Attendance N:1 Member
-- Notification N:1 Team
+- Notification N:1 Club
+- Notification N:1 Team (nullable for club-wide)
 - Notification N:1 User (sender)
 - NotificationRecipient N:1 Notification
 - NotificationRecipient N:1 User
-- Member N:1 User (parent, for minors)
+- Member N:1 User (own account, nullable)
+- Member N:1 User (parent, nullable)
+
+### Key Indexes (for Liquibase migrations)
+- `users.email` — UNIQUE
+- `users.club_id` — FK index
+- `teams.club_id` — FK index
+- `teams.coach_id` — FK index
+- `members.club_id` — FK index
+- `members.user_id` — FK index
+- `members.parent_id` — FK index
+- `team_members(team_id, member_id)` — UNIQUE composite
+- `training_sessions.team_id` — FK index
+- `training_sessions.field_id` — FK index
+- `training_sessions.date` — for schedule queries
+- `training_sessions.recurrence_group_id` — for batch operations on series
+- `attendance(training_session_id, member_id)` — UNIQUE composite
+- `notifications.team_id` — FK index
+- `notification_recipients.notification_id` — FK index
+- `notification_recipients.user_id` — FK index
 
 ---
 
@@ -374,7 +420,7 @@ PUT    /api/clubs/{clubId}/notifications/{notificationId}/read # Mark as read
 - [ ] Create Spring Boot main application class
 - [ ] Set up `application.yaml` (base), `application-dev.yml`, `application-prod.yml`
 - [ ] Set up `docker-compose.yaml` with PostgreSQL 17
-- [ ] Create base package structure (`ee.taltech.clubmanagement.*`)
+- [ ] Create base package structure (`ee.finalthesis.clubmanagement.*`)
 - [ ] Configure Spotless (Google Java Format)
 - [ ] Create `AbstractAuditingEntity` base class with audit fields
 - [ ] Set up Liquibase master changelog
@@ -383,8 +429,8 @@ PUT    /api/clubs/{clubId}/notifications/{notificationId}/read # Mark as read
 ### Phase 1: Authentication & User Management
 **Goal:** JWT-based auth with RBAC, user CRUD
 
-- [ ] Create `User` entity with role enum (ADMIN, COACH, PLAYER, PARENT)
-- [ ] Liquibase migration for `users` table
+- [ ] Create `User` entity (auth-only: email, password_hash, role, club_id, active)
+- [ ] Liquibase migration for `users` table (with UNIQUE on email, index on club_id)
 - [ ] Configure Spring Security (SecurityConfiguration)
 - [ ] Implement JWT token provider (generate, validate, parse)
 - [ ] Implement JWT authentication filter
@@ -403,9 +449,9 @@ PUT    /api/clubs/{clubId}/notifications/{notificationId}/read # Mark as read
 
 - [ ] Create `Club` entity
 - [ ] Create `Team` entity with coach relationship
-- [ ] Create `Member` entity with parent relationship
-- [ ] Create `TeamMember` join entity
-- [ ] Liquibase migrations for clubs, teams, members, team_members
+- [ ] Create `Member` entity with parent relationship and MemberStatus enum
+- [ ] Create `TeamMember` join entity (with UNIQUE(team_id, member_id))
+- [ ] Liquibase migrations for clubs, teams, members, team_members (with indexes and constraints)
 - [ ] Create DTOs (ClubDTO, TeamDTO, MemberDTO, TeamMemberDTO)
 - [ ] Create MapStruct mappers
 - [ ] Create repositories
@@ -418,8 +464,8 @@ PUT    /api/clubs/{clubId}/notifications/{notificationId}/read # Mark as read
 **Goal:** Field CRUD, training scheduling with recurrence and conflict detection
 
 - [ ] Create `Field` entity
-- [ ] Create `TrainingSession` entity with recurrence support
-- [ ] Liquibase migrations for fields, training_sessions
+- [ ] Create `TrainingSession` entity with recurrence_group_id and TrainingSessionStatus enum
+- [ ] Liquibase migrations for fields, training_sessions (with indexes on date, recurrence_group_id)
 - [ ] Create DTOs
 - [ ] Create MapStruct mappers
 - [ ] Create repositories with custom queries (field availability, schedule overlap)
@@ -436,8 +482,8 @@ PUT    /api/clubs/{clubId}/notifications/{notificationId}/read # Mark as read
 ### Phase 4: Attendance Management
 **Goal:** Training attendance confirmation by players and parents
 
-- [ ] Create `Attendance` entity
-- [ ] Liquibase migration for attendance table
+- [ ] Create `Attendance` entity (with UNIQUE(training_session_id, member_id))
+- [ ] Liquibase migration for attendance table (with unique composite constraint)
 - [ ] Create DTOs (AttendanceDTO, AttendanceSummaryDTO)
 - [ ] Create `AttendanceService` with:
   - Auto-create PENDING attendance records when training is created
