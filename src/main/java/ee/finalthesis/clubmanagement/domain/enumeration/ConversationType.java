@@ -1,8 +1,6 @@
 package ee.finalthesis.clubmanagement.domain.enumeration;
 
-public enum AppRole {
-  ADMIN,
-  COACH,
-  PLAYER,
-  PARENT,
+public enum ConversationType {
+  DIRECT,
+  TEAM,
 }

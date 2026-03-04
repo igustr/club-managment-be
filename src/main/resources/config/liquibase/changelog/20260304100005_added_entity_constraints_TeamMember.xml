@@ -15,11 +15,11 @@
                                  referencedColumnNames="id"
                                  referencedTableName="team"/>
 
-        <addForeignKeyConstraint baseColumnNames="member_id"
+        <addForeignKeyConstraint baseColumnNames="user_id"
                                  baseTableName="team_member"
-                                 constraintName="fk_team_member__member_id"
+                                 constraintName="fk_team_member__user_id"
                                  referencedColumnNames="id"
-                                 referencedTableName="member"/>
+                                 referencedTableName="users"/>
     </changeSet>
 
 </databaseChangeLog>

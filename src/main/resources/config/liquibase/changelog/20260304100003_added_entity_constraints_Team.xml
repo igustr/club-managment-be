@@ -14,12 +14,6 @@
                                  constraintName="fk_team__club_id"
                                  referencedColumnNames="id"
                                  referencedTableName="club"/>
-
-        <addForeignKeyConstraint baseColumnNames="coach_id"
-                                 baseTableName="team"
-                                 constraintName="fk_team__coach_id"
-                                 referencedColumnNames="id"
-                                 referencedTableName="users"/>
     </changeSet>
 
 </databaseChangeLog>

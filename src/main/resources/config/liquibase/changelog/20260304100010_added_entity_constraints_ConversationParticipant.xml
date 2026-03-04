@@ -5,19 +5,19 @@
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
     <!--
-        Added the constraints for entity Attendance.
+        Added the constraints for entity ConversationParticipant.
     -->
-    <changeSet id="20260304100008-2" author="clubmanagement">
+    <changeSet id="20260304100010-2" author="clubmanagement">
 
-        <addForeignKeyConstraint baseColumnNames="training_session_id"
-                                 baseTableName="attendance"
-                                 constraintName="fk_attendance__training_session_id"
+        <addForeignKeyConstraint baseColumnNames="conversation_id"
+                                 baseTableName="conversation_participant"
+                                 constraintName="fk_conversation_participant__conversation_id"
                                  referencedColumnNames="id"
-                                 referencedTableName="training_session"/>
+                                 referencedTableName="conversation"/>
 
         <addForeignKeyConstraint baseColumnNames="user_id"
-                                 baseTableName="attendance"
-                                 constraintName="fk_attendance__user_id"
+                                 baseTableName="conversation_participant"
+                                 constraintName="fk_conversation_participant__user_id"
                                  referencedColumnNames="id"
                                  referencedTableName="users"/>
     </changeSet>

@@ -51,16 +51,16 @@ public class TrainingSession extends AbstractAuditingEntity<UUID> implements Ser
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "team_id", nullable = false)
   @JsonIgnoreProperties(
-      value = {"teamMembers", "trainingSessions", "club", "coach"},
+      value = {"teamMembers", "trainingSessions", "club"},
       allowSetters = true)
   private Team team;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "field_id")
+  @JoinColumn(name = "pitch_id")
   @JsonIgnoreProperties(
       value = {"club"},
       allowSetters = true)
-  private Field field;
+  private Pitch pitch;
 
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "trainingSession")
   @JsonIgnoreProperties(

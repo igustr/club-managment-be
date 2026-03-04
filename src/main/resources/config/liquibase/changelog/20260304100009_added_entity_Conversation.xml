@@ -5,23 +5,26 @@
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
     <!--
-        Added the entity Field.
+        Added the entity Conversation.
     -->
-    <changeSet id="20260304100006-1" author="clubmanagement">
-        <createTable tableName="field">
+    <changeSet id="20260304100009-1" author="clubmanagement">
+        <createTable tableName="conversation">
             <column name="id" type="${uuidType}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="name" type="varchar(255)">
+            <column name="type" type="varchar(20)">
                 <constraints nullable="false"/>
             </column>
-            <column name="address" type="varchar(500)">
+            <column name="last_message_text" type="varchar(1000)">
                 <constraints nullable="true"/>
             </column>
-            <column name="surface_type" type="varchar(100)">
+            <column name="last_message_time" type="${datetimeType}">
                 <constraints nullable="true"/>
             </column>
-            <column name="capacity" type="integer">
+            <column name="last_message_sender_id" type="${uuidType}">
+                <constraints nullable="true"/>
+            </column>
+            <column name="team_id" type="${uuidType}">
                 <constraints nullable="true"/>
             </column>
             <column name="club_id" type="${uuidType}">
@@ -40,8 +43,9 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
-        <dropDefaultValue tableName="field" columnName="created_date" columnDataType="${datetimeType}"/>
-        <dropDefaultValue tableName="field" columnName="last_modified_date" columnDataType="${datetimeType}"/>
+        <dropDefaultValue tableName="conversation" columnName="last_message_time" columnDataType="${datetimeType}"/>
+        <dropDefaultValue tableName="conversation" columnName="created_date" columnDataType="${datetimeType}"/>
+        <dropDefaultValue tableName="conversation" columnName="last_modified_date" columnDataType="${datetimeType}"/>
     </changeSet>
 
 </databaseChangeLog>

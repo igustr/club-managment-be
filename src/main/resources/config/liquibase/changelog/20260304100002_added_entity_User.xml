@@ -18,8 +18,23 @@
             <column name="password_hash" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="role" type="varchar(20)">
+            <column name="first_name" type="varchar(100)">
                 <constraints nullable="false"/>
+            </column>
+            <column name="last_name" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_of_birth" type="${dateType}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="phone" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="photo_url" type="varchar(500)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="role" type="varchar(20)">
+                <constraints nullable="true"/>
             </column>
             <column name="active" type="boolean" defaultValueBoolean="true">
                 <constraints nullable="false"/>
@@ -42,6 +57,21 @@
         </createTable>
         <dropDefaultValue tableName="users" columnName="created_date" columnDataType="${datetimeType}"/>
         <dropDefaultValue tableName="users" columnName="last_modified_date" columnDataType="${datetimeType}"/>
+    </changeSet>
+
+    <!--
+        Added the user_parent join table for multi-parent support.
+    -->
+    <changeSet id="20260304100002-1a" author="clubmanagement">
+        <createTable tableName="user_parent">
+            <column name="child_id" type="${uuidType}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="parent_id" type="${uuidType}">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey tableName="user_parent" columnNames="child_id, parent_id"/>
     </changeSet>
 
 </databaseChangeLog>

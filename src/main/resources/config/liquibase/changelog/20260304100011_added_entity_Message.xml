@@ -5,33 +5,21 @@
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
     <!--
-        Added the entity Notification.
+        Added the entity Message.
     -->
-    <changeSet id="20260304100009-1" author="clubmanagement">
-        <createTable tableName="notification">
+    <changeSet id="20260304100011-1" author="clubmanagement">
+        <createTable tableName="message">
             <column name="id" type="${uuidType}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="title" type="varchar(255)">
+            <column name="text" type="TEXT">
                 <constraints nullable="false"/>
             </column>
-            <column name="content" type="TEXT">
+            <column name="created_at" type="${datetimeType}">
                 <constraints nullable="false"/>
             </column>
-            <column name="notification_type" type="varchar(30)">
+            <column name="conversation_id" type="${uuidType}">
                 <constraints nullable="false"/>
-            </column>
-            <column name="recipient_group" type="varchar(20)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="sent_at" type="${datetimeType}">
-                <constraints nullable="true"/>
-            </column>
-            <column name="club_id" type="${uuidType}">
-                <constraints nullable="false"/>
-            </column>
-            <column name="team_id" type="${uuidType}">
-                <constraints nullable="true"/>
             </column>
             <column name="sender_id" type="${uuidType}">
                 <constraints nullable="false"/>
@@ -49,9 +37,15 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
-        <dropDefaultValue tableName="notification" columnName="sent_at" columnDataType="${datetimeType}"/>
-        <dropDefaultValue tableName="notification" columnName="created_date" columnDataType="${datetimeType}"/>
-        <dropDefaultValue tableName="notification" columnName="last_modified_date" columnDataType="${datetimeType}"/>
+        <createIndex indexName="idx_message_conversation_id" tableName="message">
+            <column name="conversation_id"/>
+        </createIndex>
+        <createIndex indexName="idx_message_created_at" tableName="message">
+            <column name="created_at"/>
+        </createIndex>
+        <dropDefaultValue tableName="message" columnName="created_at" columnDataType="${datetimeType}"/>
+        <dropDefaultValue tableName="message" columnName="created_date" columnDataType="${datetimeType}"/>
+        <dropDefaultValue tableName="message" columnName="last_modified_date" columnDataType="${datetimeType}"/>
     </changeSet>
 
 </databaseChangeLog>

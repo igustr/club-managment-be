@@ -5,7 +5,6 @@ import ee.finalthesis.clubmanagement.domain.enumeration.AttendanceStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.time.Instant;
 import java.util.UUID;
 import lombok.*;
 
@@ -14,8 +13,8 @@ import lombok.*;
     name = "attendance",
     uniqueConstraints =
         @UniqueConstraint(
-            name = "uc_attendance_training_session_id_member_id",
-            columnNames = {"training_session_id", "member_id"}))
+            name = "uc_attendance_training_session_id_user_id",
+            columnNames = {"training_session_id", "user_id"}))
 @Getter
 @Setter
 @NoArgsConstructor
@@ -34,29 +33,19 @@ public class Attendance extends AbstractAuditingEntity<UUID> implements Serializ
   @Builder.Default
   private AttendanceStatus status = AttendanceStatus.PENDING;
 
-  @Column(name = "confirmed_at")
-  private Instant confirmedAt;
-
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "training_session_id", nullable = false)
   @JsonIgnoreProperties(
-      value = {"attendances", "team", "field"},
+      value = {"attendances", "team", "pitch"},
       allowSetters = true)
   private TrainingSession trainingSession;
 
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
-  @JoinColumn(name = "member_id", nullable = false)
+  @JoinColumn(name = "user_id", nullable = false)
   @JsonIgnoreProperties(
-      value = {"teamMembers", "club", "user", "parent"},
+      value = {"club", "parents", "children"},
       allowSetters = true)
-  private Member member;
-
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "confirmed_by_user_id")
-  @JsonIgnoreProperties(
-      value = {"club"},
-      allowSetters = true)
-  private User confirmedByUser;
+  private User user;
 
   @Override
   public boolean equals(Object o) {

@@ -5,19 +5,19 @@
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
     <!--
-        Added the constraints for entity NotificationRecipient.
+        Added the constraints for entity ConversationReadStatus.
     -->
-    <changeSet id="20260304100010-2" author="clubmanagement">
+    <changeSet id="20260304100012-2" author="clubmanagement">
 
-        <addForeignKeyConstraint baseColumnNames="notification_id"
-                                 baseTableName="notification_recipient"
-                                 constraintName="fk_notification_recipient__notification_id"
+        <addForeignKeyConstraint baseColumnNames="conversation_id"
+                                 baseTableName="conversation_read_status"
+                                 constraintName="fk_conversation_read_status__conversation_id"
                                  referencedColumnNames="id"
-                                 referencedTableName="notification"/>
+                                 referencedTableName="conversation"/>
 
         <addForeignKeyConstraint baseColumnNames="user_id"
-                                 baseTableName="notification_recipient"
-                                 constraintName="fk_notification_recipient__user_id"
+                                 baseTableName="conversation_read_status"
+                                 constraintName="fk_conversation_read_status__user_id"
                                  referencedColumnNames="id"
                                  referencedTableName="users"/>
     </changeSet>

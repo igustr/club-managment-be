@@ -15,17 +15,11 @@
             <column name="status" type="varchar(20)" defaultValue="PENDING">
                 <constraints nullable="false"/>
             </column>
-            <column name="confirmed_at" type="${datetimeType}">
-                <constraints nullable="true"/>
-            </column>
             <column name="training_session_id" type="${uuidType}">
                 <constraints nullable="false"/>
             </column>
-            <column name="member_id" type="${uuidType}">
+            <column name="user_id" type="${uuidType}">
                 <constraints nullable="false"/>
-            </column>
-            <column name="confirmed_by_user_id" type="${uuidType}">
-                <constraints nullable="true"/>
             </column>
             <column name="created_by" type="varchar(50)">
                 <constraints nullable="false"/>
@@ -40,8 +34,7 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
-        <addUniqueConstraint tableName="attendance" columnNames="training_session_id, member_id" constraintName="uc_attendance_training_session_id_member_id"/>
-        <dropDefaultValue tableName="attendance" columnName="confirmed_at" columnDataType="${datetimeType}"/>
+        <addUniqueConstraint tableName="attendance" columnNames="training_session_id, user_id" constraintName="uc_attendance_training_session_id_user_id"/>
         <dropDefaultValue tableName="attendance" columnName="created_date" columnDataType="${datetimeType}"/>
         <dropDefaultValue tableName="attendance" columnName="last_modified_date" columnDataType="${datetimeType}"/>
     </changeSet>

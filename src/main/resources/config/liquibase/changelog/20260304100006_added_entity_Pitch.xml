@@ -5,23 +5,26 @@
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
     <!--
-        Added the entity NotificationRecipient.
+        Added the entity Pitch.
     -->
-    <changeSet id="20260304100010-1" author="clubmanagement">
-        <createTable tableName="notification_recipient">
+    <changeSet id="20260304100006-1" author="clubmanagement">
+        <createTable tableName="pitch">
             <column name="id" type="${uuidType}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="is_read" type="boolean" defaultValueBoolean="false">
+            <column name="name" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="read_at" type="${datetimeType}">
+            <column name="address" type="varchar(500)">
                 <constraints nullable="true"/>
             </column>
-            <column name="notification_id" type="${uuidType}">
-                <constraints nullable="false"/>
+            <column name="surface_type" type="varchar(100)">
+                <constraints nullable="true"/>
             </column>
-            <column name="user_id" type="${uuidType}">
+            <column name="capacity" type="integer">
+                <constraints nullable="true"/>
+            </column>
+            <column name="club_id" type="${uuidType}">
                 <constraints nullable="false"/>
             </column>
             <column name="created_by" type="varchar(50)">
@@ -37,9 +40,8 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
-        <dropDefaultValue tableName="notification_recipient" columnName="read_at" columnDataType="${datetimeType}"/>
-        <dropDefaultValue tableName="notification_recipient" columnName="created_date" columnDataType="${datetimeType}"/>
-        <dropDefaultValue tableName="notification_recipient" columnName="last_modified_date" columnDataType="${datetimeType}"/>
+        <dropDefaultValue tableName="pitch" columnName="created_date" columnDataType="${datetimeType}"/>
+        <dropDefaultValue tableName="pitch" columnName="last_modified_date" columnDataType="${datetimeType}"/>
     </changeSet>
 
 </databaseChangeLog>

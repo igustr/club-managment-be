@@ -5,13 +5,13 @@
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
     <!--
-        Added the constraints for entity Field.
+        Added the constraints for entity Pitch.
     -->
     <changeSet id="20260304100006-2" author="clubmanagement">
 
         <addForeignKeyConstraint baseColumnNames="club_id"
-                                 baseTableName="field"
-                                 constraintName="fk_field__club_id"
+                                 baseTableName="pitch"
+                                 constraintName="fk_pitch__club_id"
                                  referencedColumnNames="id"
                                  referencedTableName="club"/>
     </changeSet>

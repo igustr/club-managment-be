@@ -2,25 +2,21 @@ package ee.finalthesis.clubmanagement.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.time.LocalDate;
+import java.time.Instant;
 import java.util.UUID;
 import lombok.*;
 
 @Entity
-@Table(
-    name = "team_member",
-    uniqueConstraints =
-        @UniqueConstraint(
-            name = "uc_team_member_team_id_user_id",
-            columnNames = {"team_id", "user_id"}))
+@Table(name = "message")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TeamMember extends AbstractAuditingEntity<UUID> implements Serializable {
+public class Message extends AbstractAuditingEntity<UUID> implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
@@ -28,28 +24,32 @@ public class TeamMember extends AbstractAuditingEntity<UUID> implements Serializ
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
 
-  @Column(name = "joined_date")
-  private LocalDate joinedDate;
+  @NotBlank
+  @Column(name = "text", columnDefinition = "TEXT", nullable = false)
+  private String text;
+
+  @NotNull @Column(name = "created_at", nullable = false)
+  private Instant createdAt;
 
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
-  @JoinColumn(name = "team_id", nullable = false)
+  @JoinColumn(name = "conversation_id", nullable = false)
   @JsonIgnoreProperties(
-      value = {"teamMembers", "trainingSessions", "club"},
+      value = {"participants", "messages"},
       allowSetters = true)
-  private Team team;
+  private Conversation conversation;
 
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
-  @JoinColumn(name = "user_id", nullable = false)
+  @JoinColumn(name = "sender_id", nullable = false)
   @JsonIgnoreProperties(
       value = {"club", "parents", "children"},
       allowSetters = true)
-  private User user;
+  private User sender;
 
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof TeamMember)) return false;
-    return getId() != null && getId().equals(((TeamMember) o).getId());
+    if (!(o instanceof Message)) return false;
+    return getId() != null && getId().equals(((Message) o).getId());
   }
 
   @Override

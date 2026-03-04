@@ -15,11 +15,11 @@
                                  referencedColumnNames="id"
                                  referencedTableName="team"/>
 
-        <addForeignKeyConstraint baseColumnNames="field_id"
+        <addForeignKeyConstraint baseColumnNames="pitch_id"
                                  baseTableName="training_session"
-                                 constraintName="fk_training_session__field_id"
+                                 constraintName="fk_training_session__pitch_id"
                                  referencedColumnNames="id"
-                                 referencedTableName="field"/>
+                                 referencedTableName="pitch"/>
     </changeSet>
 
 </databaseChangeLog>

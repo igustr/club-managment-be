@@ -14,23 +14,25 @@
     <include file="config/liquibase/changelog/20260304100001_added_entity_Club.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20260304100002_added_entity_User.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20260304100003_added_entity_Team.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20260304100004_added_entity_Member.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20260304100005_added_entity_TeamMember.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20260304100006_added_entity_Field.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260304100006_added_entity_Pitch.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20260304100007_added_entity_TrainingSession.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20260304100008_added_entity_Attendance.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20260304100009_added_entity_Notification.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20260304100010_added_entity_NotificationRecipient.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260304100009_added_entity_Conversation.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260304100010_added_entity_ConversationParticipant.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260304100011_added_entity_Message.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260304100012_added_entity_ConversationReadStatus.xml" relativeToChangelogFile="false"/>
 
     <!-- Entity constraint changelogs (foreign keys) -->
     <include file="config/liquibase/changelog/20260304100002_added_entity_constraints_User.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20260304100003_added_entity_constraints_Team.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20260304100004_added_entity_constraints_Member.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20260304100005_added_entity_constraints_TeamMember.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20260304100006_added_entity_constraints_Field.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260304100006_added_entity_constraints_Pitch.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20260304100007_added_entity_constraints_TrainingSession.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20260304100008_added_entity_constraints_Attendance.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20260304100009_added_entity_constraints_Notification.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20260304100010_added_entity_constraints_NotificationRecipient.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260304100009_added_entity_constraints_Conversation.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260304100010_added_entity_constraints_ConversationParticipant.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260304100011_added_entity_constraints_Message.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260304100012_added_entity_constraints_ConversationReadStatus.xml" relativeToChangelogFile="false"/>
 
 </databaseChangeLog>

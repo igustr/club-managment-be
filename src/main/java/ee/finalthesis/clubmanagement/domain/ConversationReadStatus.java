@@ -9,13 +9,18 @@ import java.util.UUID;
 import lombok.*;
 
 @Entity
-@Table(name = "notification_recipient")
+@Table(
+    name = "conversation_read_status",
+    uniqueConstraints =
+        @UniqueConstraint(
+            name = "uc_conversation_read_status_conv_id_user_id",
+            columnNames = {"conversation_id", "user_id"}))
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class NotificationRecipient extends AbstractAuditingEntity<UUID> implements Serializable {
+public class ConversationReadStatus extends AbstractAuditingEntity<UUID> implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
@@ -23,32 +28,32 @@ public class NotificationRecipient extends AbstractAuditingEntity<UUID> implemen
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
 
-  @NotNull @Column(name = "is_read", nullable = false)
+  @NotNull @Column(name = "unread_count", nullable = false)
   @Builder.Default
-  private Boolean isRead = false;
+  private Integer unreadCount = 0;
 
-  @Column(name = "read_at")
-  private Instant readAt;
+  @Column(name = "last_read_at")
+  private Instant lastReadAt;
 
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
-  @JoinColumn(name = "notification_id", nullable = false)
+  @JoinColumn(name = "conversation_id", nullable = false)
   @JsonIgnoreProperties(
-      value = {"recipients", "club", "team", "sender"},
+      value = {"participants", "messages"},
       allowSetters = true)
-  private Notification notification;
+  private Conversation conversation;
 
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "user_id", nullable = false)
   @JsonIgnoreProperties(
-      value = {"club"},
+      value = {"club", "parents", "children"},
       allowSetters = true)
   private User user;
 
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof NotificationRecipient)) return false;
-    return getId() != null && getId().equals(((NotificationRecipient) o).getId());
+    if (!(o instanceof ConversationReadStatus)) return false;
+    return getId() != null && getId().equals(((ConversationReadStatus) o).getId());
   }
 
   @Override

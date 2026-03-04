@@ -9,13 +9,13 @@ import java.util.UUID;
 import lombok.*;
 
 @Entity
-@Table(name = "field")
+@Table(name = "pitch")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Field extends AbstractAuditingEntity<UUID> implements Serializable {
+public class Pitch extends AbstractAuditingEntity<UUID> implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
@@ -38,15 +38,15 @@ public class Field extends AbstractAuditingEntity<UUID> implements Serializable 
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "club_id", nullable = false)
   @JsonIgnoreProperties(
-      value = {"users", "teams", "members", "fields"},
+      value = {"users", "teams", "pitches"},
       allowSetters = true)
   private Club club;
 
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof Field)) return false;
-    return getId() != null && getId().equals(((Field) o).getId());
+    if (!(o instanceof Pitch)) return false;
+    return getId() != null && getId().equals(((Pitch) o).getId());
   }
 
   @Override

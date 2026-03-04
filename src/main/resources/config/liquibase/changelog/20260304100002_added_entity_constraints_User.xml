@@ -14,6 +14,18 @@
                                  constraintName="fk_users__club_id"
                                  referencedColumnNames="id"
                                  referencedTableName="club"/>
+
+        <addForeignKeyConstraint baseColumnNames="child_id"
+                                 baseTableName="user_parent"
+                                 constraintName="fk_user_parent__child_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="users"/>
+
+        <addForeignKeyConstraint baseColumnNames="parent_id"
+                                 baseTableName="user_parent"
+                                 constraintName="fk_user_parent__parent_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="users"/>
     </changeSet>
 
 </databaseChangeLog>

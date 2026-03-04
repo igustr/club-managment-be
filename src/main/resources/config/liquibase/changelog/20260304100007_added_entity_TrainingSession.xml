@@ -33,7 +33,7 @@
             <column name="team_id" type="${uuidType}">
                 <constraints nullable="false"/>
             </column>
-            <column name="field_id" type="${uuidType}">
+            <column name="pitch_id" type="${uuidType}">
                 <constraints nullable="true"/>
             </column>
             <column name="created_by" type="varchar(50)">

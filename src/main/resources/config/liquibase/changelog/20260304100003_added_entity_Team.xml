@@ -24,9 +24,6 @@
             <column name="club_id" type="${uuidType}">
                 <constraints nullable="false"/>
             </column>
-            <column name="coach_id" type="${uuidType}">
-                <constraints nullable="true"/>
-            </column>
             <column name="created_by" type="varchar(50)">
                 <constraints nullable="false"/>
             </column>

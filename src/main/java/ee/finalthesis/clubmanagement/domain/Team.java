@@ -37,16 +37,9 @@ public class Team extends AbstractAuditingEntity<UUID> implements Serializable {
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "club_id", nullable = false)
   @JsonIgnoreProperties(
-      value = {"users", "teams", "members", "fields"},
+      value = {"users", "teams", "pitches"},
       allowSetters = true)
   private Club club;
-
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "coach_id")
-  @JsonIgnoreProperties(
-      value = {"club"},
-      allowSetters = true)
-  private User coach;
 
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "team")
   @JsonIgnoreProperties(

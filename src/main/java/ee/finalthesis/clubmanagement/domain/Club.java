@@ -59,14 +59,7 @@ public class Club extends AbstractAuditingEntity<UUID> implements Serializable {
       value = {"club"},
       allowSetters = true)
   @Builder.Default
-  private Set<Member> members = new HashSet<>();
-
-  @OneToMany(fetch = FetchType.LAZY, mappedBy = "club")
-  @JsonIgnoreProperties(
-      value = {"club"},
-      allowSetters = true)
-  @Builder.Default
-  private Set<Field> fields = new HashSet<>();
+  private Set<Pitch> pitches = new HashSet<>();
 
   @Override
   public boolean equals(Object o) {
