@@ -35,4 +35,7 @@
     <include file="config/liquibase/changelog/20260304100011_added_entity_constraints_Message.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20260304100012_added_entity_constraints_ConversationReadStatus.xml" relativeToChangelogFile="false"/>
 
+    <!-- Seed data -->
+    <include file="config/liquibase/changelog/20260307100001_seed_admin_user.xml" relativeToChangelogFile="false"/>
+
 </databaseChangeLog>

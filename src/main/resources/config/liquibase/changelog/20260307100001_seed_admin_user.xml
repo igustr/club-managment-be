@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!--
+        Seed default admin user for development.
+        Email: admin@club.ee / Password: admin123
+    -->
+    <changeSet id="20260307100001-1" author="clubmanagement" context="dev">
+        <insert tableName="users">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="email" value="admin@club.ee"/>
+            <column name="password_hash" value="$2b$12$0ykkTu783lOC.Ed5B3StAObE/RAXr.GhWeLLylf77K/5jDgBJ.KXW"/>
+            <column name="first_name" value="Admin"/>
+            <column name="last_name" value="User"/>
+            <column name="date_of_birth" value="1990-01-01"/>
+            <column name="phone" value="+372 5551234"/>
+            <column name="role" value="ADMIN"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>
