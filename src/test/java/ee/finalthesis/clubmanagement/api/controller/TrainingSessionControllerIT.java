@@ -18,6 +18,7 @@ import ee.finalthesis.clubmanagement.domain.TrainingSession;
 import ee.finalthesis.clubmanagement.domain.User;
 import ee.finalthesis.clubmanagement.domain.enumeration.ClubRole;
 import ee.finalthesis.clubmanagement.domain.enumeration.TrainingSessionStatus;
+import ee.finalthesis.clubmanagement.repository.AttendanceRepository;
 import ee.finalthesis.clubmanagement.repository.ClubRepository;
 import ee.finalthesis.clubmanagement.repository.PitchRepository;
 import ee.finalthesis.clubmanagement.repository.TeamMemberRepository;
@@ -53,6 +54,7 @@ class TrainingSessionControllerIT {
   @Autowired private TeamMemberRepository teamMemberRepository;
   @Autowired private PitchRepository pitchRepository;
   @Autowired private TrainingSessionRepository trainingSessionRepository;
+  @Autowired private AttendanceRepository attendanceRepository;
   @Autowired private PasswordEncoder passwordEncoder;
   @Autowired private JwtTokenProvider jwtTokenProvider;
 
@@ -69,6 +71,7 @@ class TrainingSessionControllerIT {
 
   @BeforeEach
   void setUp() {
+    attendanceRepository.deleteAll();
     trainingSessionRepository.deleteAll();
     teamMemberRepository.deleteAll();
     teamRepository.deleteAll();
@@ -115,6 +118,7 @@ class TrainingSessionControllerIT {
 
   @AfterEach
   void tearDown() {
+    attendanceRepository.deleteAll();
     trainingSessionRepository.deleteAll();
     teamMemberRepository.deleteAll();
     teamRepository.deleteAll();

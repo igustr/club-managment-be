@@ -15,9 +15,11 @@ import ee.finalthesis.clubmanagement.domain.Team;
 import ee.finalthesis.clubmanagement.domain.TeamMember;
 import ee.finalthesis.clubmanagement.domain.User;
 import ee.finalthesis.clubmanagement.domain.enumeration.ClubRole;
+import ee.finalthesis.clubmanagement.repository.AttendanceRepository;
 import ee.finalthesis.clubmanagement.repository.ClubRepository;
 import ee.finalthesis.clubmanagement.repository.TeamMemberRepository;
 import ee.finalthesis.clubmanagement.repository.TeamRepository;
+import ee.finalthesis.clubmanagement.repository.TrainingSessionRepository;
 import ee.finalthesis.clubmanagement.repository.UserRepository;
 import ee.finalthesis.clubmanagement.security.JwtTokenProvider;
 import ee.finalthesis.clubmanagement.security.UserPrincipal;
@@ -44,6 +46,8 @@ class TeamControllerIT {
   @Autowired private UserRepository userRepository;
   @Autowired private TeamRepository teamRepository;
   @Autowired private TeamMemberRepository teamMemberRepository;
+  @Autowired private AttendanceRepository attendanceRepository;
+  @Autowired private TrainingSessionRepository trainingSessionRepository;
   @Autowired private PasswordEncoder passwordEncoder;
   @Autowired private JwtTokenProvider jwtTokenProvider;
 
@@ -58,6 +62,8 @@ class TeamControllerIT {
 
   @BeforeEach
   void setUp() {
+    attendanceRepository.deleteAll();
+    trainingSessionRepository.deleteAll();
     teamMemberRepository.deleteAll();
     teamRepository.deleteAll();
     userRepository.deleteAll();
@@ -88,6 +94,8 @@ class TeamControllerIT {
 
   @AfterEach
   void tearDown() {
+    attendanceRepository.deleteAll();
+    trainingSessionRepository.deleteAll();
     teamMemberRepository.deleteAll();
     teamRepository.deleteAll();
     userRepository.deleteAll();

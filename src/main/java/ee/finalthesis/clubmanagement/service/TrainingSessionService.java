@@ -40,6 +40,7 @@ public class TrainingSessionService {
   private final PitchRepository pitchRepository;
   private final TeamMemberRepository teamMemberRepository;
   private final TrainingSessionMapper trainingSessionMapper;
+  private final AttendanceService attendanceService;
   private final MessageSource messageSource;
 
   @Transactional(readOnly = true)
@@ -105,6 +106,7 @@ public class TrainingSessionService {
             .build();
 
     training = trainingSessionRepository.save(training);
+    attendanceService.createAttendanceForTraining(training);
     return trainingSessionMapper.toDto(training);
   }
 
@@ -154,7 +156,9 @@ public class TrainingSessionService {
               .recurrenceGroupId(recurrenceGroupId)
               .build();
 
-      sessions.add(trainingSessionRepository.save(training));
+      training = trainingSessionRepository.save(training);
+      attendanceService.createAttendanceForTraining(training);
+      sessions.add(training);
       current = current.plusWeeks(1);
     }
 

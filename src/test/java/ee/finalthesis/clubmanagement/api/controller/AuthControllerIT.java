@@ -9,6 +9,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ee.finalthesis.clubmanagement.IntegrationTest;
 import ee.finalthesis.clubmanagement.domain.User;
+import ee.finalthesis.clubmanagement.repository.AttendanceRepository;
+import ee.finalthesis.clubmanagement.repository.TeamMemberRepository;
+import ee.finalthesis.clubmanagement.repository.TrainingSessionRepository;
 import ee.finalthesis.clubmanagement.repository.UserRepository;
 import ee.finalthesis.clubmanagement.service.dto.auth.AuthResponseDTO;
 import ee.finalthesis.clubmanagement.service.dto.auth.LoginRequestDTO;
@@ -38,6 +41,9 @@ class AuthControllerIT {
 
   @Autowired private MockMvc mockMvc;
   @Autowired private ObjectMapper om;
+  @Autowired private AttendanceRepository attendanceRepository;
+  @Autowired private TrainingSessionRepository trainingSessionRepository;
+  @Autowired private TeamMemberRepository teamMemberRepository;
   @Autowired private UserRepository userRepository;
   @Autowired private PasswordEncoder passwordEncoder;
 
@@ -45,11 +51,17 @@ class AuthControllerIT {
 
   @BeforeEach
   void setUp() {
+    attendanceRepository.deleteAll();
+    trainingSessionRepository.deleteAll();
+    teamMemberRepository.deleteAll();
     userRepository.deleteAll();
   }
 
   @AfterEach
   void tearDown() {
+    attendanceRepository.deleteAll();
+    trainingSessionRepository.deleteAll();
+    teamMemberRepository.deleteAll();
     userRepository.deleteAll();
   }
 
