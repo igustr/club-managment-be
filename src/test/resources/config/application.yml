@@ -1,0 +1,50 @@
+logging:
+  level:
+    ROOT: WARN
+    ee.finalthesis.clubmanagement: INFO
+    org.springframework.security: WARN
+
+spring:
+  application:
+    name: club-management
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      auto-commit: false
+      poolName: Hikari
+      maximum-pool-size: 5
+  docker:
+    compose:
+      enabled: false
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+        implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
+    properties:
+      hibernate.jdbc.time_zone: Europe/Tallinn
+      hibernate.timezone.default_storage: NORMALIZE
+      hibernate.connection.provider_disables_autocommit: true
+      hibernate.cache.use_second_level_cache: false
+      hibernate.cache.use_query_cache: false
+      hibernate.generate_statistics: false
+      hibernate.type.preferred_instant_jdbc_type: TIMESTAMP
+  liquibase:
+    change-log: classpath:config/liquibase/master.xml
+    contexts: test
+  main:
+    allow-bean-definition-overriding: true
+
+server:
+  port: 0
+
+application:
+  security:
+    jwt:
+      secret: dGVzdC1qd3Qtc2VjcmV0LWtleS10aGF0LWlzLWxvbmctZW5vdWdoLWZvci1obWFjLXNoYTUxMi10ZXN0aW5n
+      token-validity-in-seconds: 86400
+      refresh-token-validity-in-seconds: 2592000
+  cors:
+    allowed-origins: http://localhost:3000

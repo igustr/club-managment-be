@@ -1,0 +1,2 @@
+org.springframework.test.context.ContextCustomizerFactory=\
+  ee.finalthesis.clubmanagement.config.SqlTestContainersSpringContextCustomizerFactory

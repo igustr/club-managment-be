@@ -446,18 +446,34 @@ GET    /api/clubs/{clubId}/conversations/unread-count               # Total unre
 ### Phase 1: Authentication & User Management
 **Goal:** JWT-based auth with RBAC, user CRUD
 
-- [ ] Configure Spring Security (SecurityConfiguration)
-- [ ] Implement JWT token provider (generate, validate, parse)
-- [ ] Implement JWT authentication filter
-- [ ] Create `UserDetailsServiceImpl`
-- [ ] Create auth DTOs (LoginRequest, RegisterRequest, AuthResponse, UserDTO)
-- [ ] Create `AuthController` (register, login, me, refresh)
-- [ ] Create `AuthService` (self-registration creates user with no club/role)
-- [ ] Create `UserMapper` (MapStruct)
-- [ ] Seed default admin user via Liquibase
-- [ ] Configure CORS
-- [ ] Create `ExceptionTranslator` (@ControllerAdvice, RFC 7807)
-- [ ] Write integration tests for auth endpoints
+- [x] Add jjwt dependencies to `build.gradle.kts`
+- [x] Add JWT config properties to `application.yml` (secret, token validity 24h, refresh 30d)
+- [x] Create `SecurityProperties` (@ConfigurationProperties for JWT config)
+- [x] Create `CorsProperties` (@ConfigurationProperties for CORS)
+- [x] Create `UserRepository` (findByEmail, existsByEmail)
+- [x] Create `TeamMemberRepository` (existsByTeamIdAndUserId)
+- [x] Create `UserPrincipal` (custom UserDetails with id, email, role, clubId)
+- [x] Create `JwtTokenProvider` (generate access/refresh tokens, validate, parse)
+- [x] Create `JwtAuthenticationFilter` (OncePerRequestFilter with HandlerExceptionResolver — wallet pattern)
+- [x] Create `UserDetailsServiceImpl` (load by email, check active status)
+- [x] Create `SecurityUtils` (getCurrentUserId, getCurrentUserEmail, getCurrentUserRole, getCurrentUserClubId)
+- [x] Create `SpringSecurityAuditorAware` (feeds createdBy/lastModifiedBy audit fields)
+- [x] Create `SecurityConfiguration` (stateless JWT, CORS, public/auth endpoints, @EnableMethodSecurity)
+- [x] Create `ClubMembershipChecker` (@clubSecurity — isMemberOfClub)
+- [x] Create `TeamAccessChecker` (@teamSecurity — canAccessTeam, canManageTeam)
+- [x] Create custom exceptions: `BadRequestException`, `ResourceNotFoundException`, `ConflictException`
+- [x] Create `ExceptionTranslator` (@ControllerAdvice, RFC 7807, i18n via MessageSource)
+- [x] Create i18n: `messages.properties`, `messages_et.properties`, `messages_en.properties`
+- [x] Create `LocaleConfiguration` (AcceptHeaderLocaleResolver, default Estonian)
+- [x] Create auth DTOs: LoginRequestDTO, RegisterRequestDTO, RefreshTokenRequestDTO, AuthResponseDTO, UserDTO
+- [x] Create `UserMapper` (MapStruct)
+- [x] Create `AuthService` (register, login, refreshToken, getCurrentUser — all i18n-aware)
+- [x] Create `AuthController` (POST register/login/refresh, GET me)
+- [x] Seed default admin user via Liquibase (admin@club.ee / admin123, dev context only)
+- [x] Write integration tests for auth endpoints (18 tests: register, login, refresh, me + error cases)
+- [x] Set up TestContainers infrastructure (@IntegrationTest, @EmbeddedSQL, PostgreSqlTestContainer)
+- [x] Create ArchUnit architecture test (enforces layered architecture)
+- [x] Fix SecurityConfiguration: add AuthenticationEntryPoint for proper 401 responses
 
 ### Phase 2: Club & Team Management
 **Goal:** Club structure, team CRUD, team roster management
@@ -571,7 +587,15 @@ GET    /api/clubs/{clubId}/conversations/unread-count               # Total unre
 - bcrypt password hashing
 - CORS configured for frontend origin
 - Input validation on DTOs (@Valid, @NotBlank, @Size, etc.)
-- All endpoints require authentication except `/api/auth/register` and `/api/auth/login`
+- All endpoints require authentication except `/api/auth/register`, `/api/auth/login`, `/api/auth/refresh`
+- RBAC via `@PreAuthorize` with `@clubSecurity.isMemberOfClub()` and `@teamSecurity.canAccessTeam()`
+
+### Internationalization (i18n)
+- Properties-based: `src/main/resources/i18n/messages[_locale].properties`
+- Supported locales: Estonian (et, default), English (en)
+- Locale resolved from `Accept-Language` header via `AcceptHeaderLocaleResolver`
+- All error messages in ExceptionTranslator and services use `MessageSource`
+- Message keys follow dot-notation: `error.auth.emailExists`, `title.badRequest`
 
 ### Testing
 - Integration tests: `*IT.java` with `@SpringBootTest` + TestContainers
@@ -583,5 +607,5 @@ GET    /api/clubs/{clubId}/conversations/unread-count               # Total unre
 
 ## Current Status
 
-**Phase:** 0 (Project Bootstrap) — COMPLETED
-**Next action:** Phase 1 — Authentication & User Management
+**Phase:** 1 (Authentication & User Management) — COMPLETE
+**Next action:** Phase 2 — Club & Team Management

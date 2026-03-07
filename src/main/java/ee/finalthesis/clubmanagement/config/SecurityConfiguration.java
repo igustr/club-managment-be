@@ -1,6 +1,7 @@
 package ee.finalthesis.clubmanagement.config;
 
 import ee.finalthesis.clubmanagement.security.JwtAuthenticationFilter;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +38,11 @@ public class SecurityConfiguration {
         .cors(Customizer.withDefaults())
         .sessionManagement(
             session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .exceptionHandling(
+            exceptions ->
+                exceptions.authenticationEntryPoint(
+                    (request, response, authException) ->
+                        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized")))
         .authorizeHttpRequests(
             auth ->
                 auth.requestMatchers(
