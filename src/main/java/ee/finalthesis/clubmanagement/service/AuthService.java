@@ -14,8 +14,11 @@ import ee.finalthesis.clubmanagement.service.dto.auth.LoginRequestDTO;
 import ee.finalthesis.clubmanagement.service.dto.auth.RegisterRequestDTO;
 import ee.finalthesis.clubmanagement.service.dto.auth.UserDTO;
 import ee.finalthesis.clubmanagement.service.mapper.UserMapper;
+import java.util.Locale;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -33,11 +36,12 @@ public class AuthService {
   private final JwtTokenProvider jwtTokenProvider;
   private final SecurityProperties securityProperties;
   private final UserMapper userMapper;
+  private final MessageSource messageSource;
 
   @Transactional
   public UserDTO register(RegisterRequestDTO request) {
     if (userRepository.existsByEmail(request.getEmail())) {
-      throw new ConflictException("Email is already registered", "user", "emailExists");
+      throw new ConflictException(msg("error.auth.emailExists"), "user", "emailExists");
     }
 
     User user =
@@ -76,7 +80,8 @@ public class AuthService {
   public AuthResponseDTO refreshToken(String refreshToken) {
     if (!jwtTokenProvider.validateToken(refreshToken)
         || !jwtTokenProvider.isRefreshToken(refreshToken)) {
-      throw new BadRequestException("Invalid refresh token", "auth", "invalidRefreshToken");
+      throw new BadRequestException(
+          msg("error.auth.invalidRefreshToken"), "auth", "invalidRefreshToken");
     }
 
     UUID userId = jwtTokenProvider.getUserIdFromToken(refreshToken);
@@ -86,7 +91,8 @@ public class AuthService {
             .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
 
     if (!user.getActive()) {
-      throw new BadRequestException("User account is deactivated", "auth", "accountDeactivated");
+      throw new BadRequestException(
+          msg("error.auth.accountDeactivated"), "auth", "accountDeactivated");
     }
 
     UserPrincipal principal = UserPrincipal.create(user);
@@ -105,7 +111,9 @@ public class AuthService {
     UUID userId =
         SecurityUtils.getCurrentUserId()
             .orElseThrow(
-                () -> new BadRequestException("No authenticated user", "auth", "notAuthenticated"));
+                () ->
+                    new BadRequestException(
+                        msg("error.auth.notAuthenticated"), "auth", "notAuthenticated"));
 
     User user =
         userRepository
@@ -113,5 +121,10 @@ public class AuthService {
             .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
 
     return userMapper.toDto(user);
+  }
+
+  private String msg(String key, Object... args) {
+    Locale locale = LocaleContextHolder.getLocale();
+    return messageSource.getMessage(key, args, key, locale);
   }
 }

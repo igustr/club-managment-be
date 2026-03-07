@@ -4,8 +4,12 @@ import java.net.URI;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -24,70 +28,86 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 @Slf4j
 @RestControllerAdvice
+@RequiredArgsConstructor
 public class ExceptionTranslator extends ResponseEntityExceptionHandler {
 
   private static final URI PROBLEM_BASE = URI.create("about:blank");
 
+  private final MessageSource messageSource;
+
   @ExceptionHandler(BadRequestException.class)
   public ResponseEntity<ProblemDetail> handleBadRequest(BadRequestException ex) {
+    Locale locale = LocaleContextHolder.getLocale();
     ProblemDetail problem =
         ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
     problem.setType(PROBLEM_BASE);
-    problem.setTitle("Bad Request");
+    problem.setTitle(msg("title.badRequest", locale));
     problem.setProperty("entityName", ex.getEntityName());
     problem.setProperty("errorKey", ex.getErrorKey());
+    problem.setProperty("message", ex.getMessage());
     problem.setProperty("timestamp", Instant.now());
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(problem);
   }
 
   @ExceptionHandler(ResourceNotFoundException.class)
   public ResponseEntity<ProblemDetail> handleNotFound(ResourceNotFoundException ex) {
-    ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+    Locale locale = LocaleContextHolder.getLocale();
+    String detail =
+        msg("error.notFound", locale, ex.getEntityName(), ex.getFieldName(), ex.getFieldValue());
+    ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, detail);
     problem.setType(PROBLEM_BASE);
-    problem.setTitle("Not Found");
+    problem.setTitle(msg("title.notFound", locale));
     problem.setProperty("entityName", ex.getEntityName());
+    problem.setProperty("message", detail);
     problem.setProperty("timestamp", Instant.now());
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(problem);
   }
 
   @ExceptionHandler(ConflictException.class)
   public ResponseEntity<ProblemDetail> handleConflict(ConflictException ex) {
+    Locale locale = LocaleContextHolder.getLocale();
     ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
     problem.setType(PROBLEM_BASE);
-    problem.setTitle("Conflict");
+    problem.setTitle(msg("title.conflict", locale));
     problem.setProperty("entityName", ex.getEntityName());
     problem.setProperty("errorKey", ex.getErrorKey());
+    problem.setProperty("message", ex.getMessage());
     problem.setProperty("timestamp", Instant.now());
     return ResponseEntity.status(HttpStatus.CONFLICT).body(problem);
   }
 
   @ExceptionHandler(BadCredentialsException.class)
   public ResponseEntity<ProblemDetail> handleBadCredentials(BadCredentialsException ex) {
-    ProblemDetail problem =
-        ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, "Invalid email or password");
+    Locale locale = LocaleContextHolder.getLocale();
+    String detail = msg("error.auth.invalidCredentials", locale);
+    ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, detail);
     problem.setType(PROBLEM_BASE);
-    problem.setTitle("Unauthorized");
+    problem.setTitle(msg("title.unauthorized", locale));
+    problem.setProperty("message", detail);
     problem.setProperty("timestamp", Instant.now());
     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(problem);
   }
 
   @ExceptionHandler(AuthenticationException.class)
   public ResponseEntity<ProblemDetail> handleAuthentication(AuthenticationException ex) {
-    ProblemDetail problem =
-        ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, ex.getMessage());
+    Locale locale = LocaleContextHolder.getLocale();
+    String detail = msg("error.unauthorized", locale);
+    ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, detail);
     problem.setType(PROBLEM_BASE);
-    problem.setTitle("Unauthorized");
+    problem.setTitle(msg("title.unauthorized", locale));
+    problem.setProperty("message", detail);
     problem.setProperty("timestamp", Instant.now());
     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(problem);
   }
 
   @ExceptionHandler(AccessDeniedException.class)
   public ResponseEntity<ProblemDetail> handleAccessDenied(AccessDeniedException ex) {
-    ProblemDetail problem =
-        ProblemDetail.forStatusAndDetail(
-            HttpStatus.FORBIDDEN, "You do not have permission to perform this action");
+    Locale locale = LocaleContextHolder.getLocale();
+    String detail = msg("error.forbidden", locale);
+    ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, detail);
     problem.setType(PROBLEM_BASE);
-    problem.setTitle("Forbidden");
+    problem.setTitle(msg("title.forbidden", locale));
+    problem.setProperty("message", detail);
     problem.setProperty("timestamp", Instant.now());
     return ResponseEntity.status(HttpStatus.FORBIDDEN).body(problem);
   }
@@ -99,10 +119,12 @@ public class ExceptionTranslator extends ResponseEntityExceptionHandler {
       @NonNull HttpStatusCode status,
       @NonNull WebRequest request) {
 
-    ProblemDetail problem =
-        ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Validation failed");
+    Locale locale = LocaleContextHolder.getLocale();
+    String detail = msg("error.validation", locale);
+    ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, detail);
     problem.setType(PROBLEM_BASE);
-    problem.setTitle("Validation Error");
+    problem.setTitle(msg("title.validationError", locale));
+    problem.setProperty("message", detail);
     problem.setProperty("timestamp", Instant.now());
 
     List<Map<String, String>> fieldErrors =
@@ -123,12 +145,18 @@ public class ExceptionTranslator extends ResponseEntityExceptionHandler {
   @ExceptionHandler(Exception.class)
   public ResponseEntity<ProblemDetail> handleGenericException(Exception ex) {
     log.error("Unhandled exception", ex);
+    Locale locale = LocaleContextHolder.getLocale();
+    String detail = msg("error.internalServerError", locale);
     ProblemDetail problem =
-        ProblemDetail.forStatusAndDetail(
-            HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred");
+        ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, detail);
     problem.setType(PROBLEM_BASE);
-    problem.setTitle("Internal Server Error");
+    problem.setTitle(msg("title.internalServerError", locale));
+    problem.setProperty("message", detail);
     problem.setProperty("timestamp", Instant.now());
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(problem);
+  }
+
+  private String msg(String key, Locale locale, Object... args) {
+    return messageSource.getMessage(key, args, key, locale);
   }
 }
