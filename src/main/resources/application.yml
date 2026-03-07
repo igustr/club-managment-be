@@ -40,3 +40,12 @@ springdoc:
 
 server:
   port: 8080
+
+application:
+  security:
+    jwt:
+      secret: Y2x1Yi1tYW5hZ2VtZW50LWp3dC1zZWNyZXQta2V5LXRoYXQtaXMtbG9uZy1lbm91Z2gtZm9yLWhtYWMtc2hhNTEy
+      token-validity-in-seconds: 86400
+      refresh-token-validity-in-seconds: 2592000
+  cors:
+    allowed-origins: http://localhost:3000

@@ -24,8 +24,7 @@ public class Message extends AbstractAuditingEntity<UUID> implements Serializabl
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
 
-  @NotBlank
-  @Column(name = "text", columnDefinition = "TEXT", nullable = false)
+  @NotBlank @Column(name = "text", columnDefinition = "TEXT", nullable = false)
   private String text;
 
   @NotNull @Column(name = "created_at", nullable = false)
