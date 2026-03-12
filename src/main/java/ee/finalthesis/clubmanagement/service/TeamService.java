@@ -41,6 +41,7 @@ public class TeamService {
   private final UserRepository userRepository;
   private final TeamMapper teamMapper;
   private final TeamMemberMapper teamMemberMapper;
+  private final ConversationService conversationService;
   private final MessageSource messageSource;
 
   @Transactional(readOnly = true)
@@ -78,6 +79,7 @@ public class TeamService {
             .build();
 
     team = teamRepository.save(team);
+    conversationService.createTeamConversation(team);
     return teamMapper.toDto(team);
   }
 
@@ -147,6 +149,7 @@ public class TeamService {
         TeamMember.builder().team(team).user(user).joinedDate(LocalDate.now()).build();
 
     teamMember = teamMemberRepository.save(teamMember);
+    conversationService.addParticipantToTeamConversation(teamId, user);
     return teamMemberMapper.toDto(teamMember);
   }
 
@@ -160,6 +163,7 @@ public class TeamService {
       throw new ResourceNotFoundException(msg("error.teamMember.notFound"), "teamMember", userId);
     }
 
+    conversationService.removeParticipantFromTeamConversation(teamId, userId);
     teamMemberRepository.deleteByTeamIdAndUserId(teamId, userId);
   }
 

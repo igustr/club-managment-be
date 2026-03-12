@@ -10,6 +10,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import ee.finalthesis.clubmanagement.IntegrationTest;
 import ee.finalthesis.clubmanagement.domain.User;
 import ee.finalthesis.clubmanagement.repository.AttendanceRepository;
+import ee.finalthesis.clubmanagement.repository.ConversationParticipantRepository;
+import ee.finalthesis.clubmanagement.repository.ConversationReadStatusRepository;
+import ee.finalthesis.clubmanagement.repository.ConversationRepository;
+import ee.finalthesis.clubmanagement.repository.MessageRepository;
 import ee.finalthesis.clubmanagement.repository.TeamMemberRepository;
 import ee.finalthesis.clubmanagement.repository.TrainingSessionRepository;
 import ee.finalthesis.clubmanagement.repository.UserRepository;
@@ -42,6 +46,10 @@ class AuthControllerIT {
   @Autowired private MockMvc mockMvc;
   @Autowired private ObjectMapper om;
   @Autowired private AttendanceRepository attendanceRepository;
+  @Autowired private ConversationReadStatusRepository conversationReadStatusRepository;
+  @Autowired private MessageRepository messageRepository;
+  @Autowired private ConversationParticipantRepository conversationParticipantRepository;
+  @Autowired private ConversationRepository conversationRepository;
   @Autowired private TrainingSessionRepository trainingSessionRepository;
   @Autowired private TeamMemberRepository teamMemberRepository;
   @Autowired private UserRepository userRepository;
@@ -51,6 +59,10 @@ class AuthControllerIT {
 
   @BeforeEach
   void setUp() {
+    conversationReadStatusRepository.deleteAll();
+    messageRepository.deleteAll();
+    conversationParticipantRepository.deleteAll();
+    conversationRepository.deleteAll();
     attendanceRepository.deleteAll();
     trainingSessionRepository.deleteAll();
     teamMemberRepository.deleteAll();
@@ -59,6 +71,10 @@ class AuthControllerIT {
 
   @AfterEach
   void tearDown() {
+    conversationReadStatusRepository.deleteAll();
+    messageRepository.deleteAll();
+    conversationParticipantRepository.deleteAll();
+    conversationRepository.deleteAll();
     attendanceRepository.deleteAll();
     trainingSessionRepository.deleteAll();
     teamMemberRepository.deleteAll();
