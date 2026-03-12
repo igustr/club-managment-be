@@ -11,8 +11,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ee.finalthesis.clubmanagement.IntegrationTest;
 import ee.finalthesis.clubmanagement.domain.Club;
+import ee.finalthesis.clubmanagement.domain.Conversation;
+import ee.finalthesis.clubmanagement.domain.Team;
+import ee.finalthesis.clubmanagement.domain.TeamMember;
 import ee.finalthesis.clubmanagement.domain.User;
 import ee.finalthesis.clubmanagement.domain.enumeration.ClubRole;
+import ee.finalthesis.clubmanagement.domain.enumeration.ConversationType;
 import ee.finalthesis.clubmanagement.repository.AttendanceRepository;
 import ee.finalthesis.clubmanagement.repository.ClubRepository;
 import ee.finalthesis.clubmanagement.repository.ConversationParticipantRepository;
@@ -20,11 +24,13 @@ import ee.finalthesis.clubmanagement.repository.ConversationReadStatusRepository
 import ee.finalthesis.clubmanagement.repository.ConversationRepository;
 import ee.finalthesis.clubmanagement.repository.MessageRepository;
 import ee.finalthesis.clubmanagement.repository.TeamMemberRepository;
+import ee.finalthesis.clubmanagement.repository.TeamRepository;
 import ee.finalthesis.clubmanagement.repository.TrainingSessionRepository;
 import ee.finalthesis.clubmanagement.repository.UserRepository;
 import ee.finalthesis.clubmanagement.security.JwtTokenProvider;
 import ee.finalthesis.clubmanagement.security.UserPrincipal;
 import ee.finalthesis.clubmanagement.service.dto.user.AddUserToClubDTO;
+import ee.finalthesis.clubmanagement.service.dto.user.LinkParentDTO;
 import ee.finalthesis.clubmanagement.service.dto.user.UpdateUserDTO;
 import java.time.LocalDate;
 import java.util.UUID;
@@ -34,6 +40,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -52,6 +59,8 @@ class UserControllerIT {
   @Autowired private TrainingSessionRepository trainingSessionRepository;
   @Autowired private UserRepository userRepository;
   @Autowired private TeamMemberRepository teamMemberRepository;
+  @Autowired private TeamRepository teamRepository;
+  @Autowired private JdbcTemplate jdbcTemplate;
   @Autowired private PasswordEncoder passwordEncoder;
   @Autowired private JwtTokenProvider jwtTokenProvider;
 
@@ -72,6 +81,8 @@ class UserControllerIT {
     attendanceRepository.deleteAll();
     trainingSessionRepository.deleteAll();
     teamMemberRepository.deleteAll();
+    teamRepository.deleteAll();
+    jdbcTemplate.execute("DELETE FROM user_parent");
     userRepository.deleteAll();
     clubRepository.deleteAll();
 
@@ -97,6 +108,8 @@ class UserControllerIT {
     attendanceRepository.deleteAll();
     trainingSessionRepository.deleteAll();
     teamMemberRepository.deleteAll();
+    teamRepository.deleteAll();
+    jdbcTemplate.execute("DELETE FROM user_parent");
     userRepository.deleteAll();
     clubRepository.deleteAll();
   }
@@ -286,6 +299,227 @@ class UserControllerIT {
                 .header("Authorization", "Bearer " + adminToken))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.content.length()").value(0));
+  }
+
+  // ========================
+  // GET /api/clubs/{clubId}/users/{userId}/parents
+  // ========================
+
+  @Test
+  void listParents_shouldReturnLinkedParents() throws Exception {
+    User parentUser = createUser("parent@test.com", ClubRole.PARENT, club);
+    playerUser.getParents().add(parentUser);
+    userRepository.saveAndFlush(playerUser);
+
+    mockMvc
+        .perform(
+            get("/api/clubs/{clubId}/users/{userId}/parents", club.getId(), playerUser.getId())
+                .header("Authorization", "Bearer " + adminToken))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.length()").value(1))
+        .andExpect(jsonPath("$[0].id").value(parentUser.getId().toString()));
+  }
+
+  @Test
+  void listParents_asNonMember_shouldReturn403() throws Exception {
+    String unaffiliatedToken = generateToken(unaffiliatedUser);
+
+    mockMvc
+        .perform(
+            get("/api/clubs/{clubId}/users/{userId}/parents", club.getId(), playerUser.getId())
+                .header("Authorization", "Bearer " + unaffiliatedToken))
+        .andExpect(status().isForbidden());
+  }
+
+  // ========================
+  // POST /api/clubs/{clubId}/users/{userId}/parents
+  // ========================
+
+  @Test
+  void linkParent_asAdmin_shouldLink() throws Exception {
+    User parentUser = createUser("parent@test.com", ClubRole.PARENT, club);
+
+    LinkParentDTO request = new LinkParentDTO();
+    request.setParentId(parentUser.getId());
+
+    mockMvc
+        .perform(
+            post("/api/clubs/{clubId}/users/{userId}/parents", club.getId(), playerUser.getId())
+                .header("Authorization", "Bearer " + adminToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(om.writeValueAsBytes(request)))
+        .andExpect(status().isCreated())
+        .andExpect(jsonPath("$.id").value(parentUser.getId().toString()))
+        .andExpect(jsonPath("$.role").value("PARENT"));
+
+    assertThat(userRepository.existsParentChildRelationship(playerUser.getId(), parentUser.getId()))
+        .isTrue();
+  }
+
+  @Test
+  void linkParent_shouldSyncTeamConversations() throws Exception {
+    User parentUser = createUser("parent@test.com", ClubRole.PARENT, club);
+
+    // Create a team with a conversation and add player to it
+    Team team = teamRepository.saveAndFlush(Team.builder().name("U18").club(club).build());
+    teamMemberRepository.saveAndFlush(
+        TeamMember.builder().team(team).user(playerUser).joinedDate(LocalDate.now()).build());
+    Conversation conversation =
+        conversationRepository.saveAndFlush(
+            Conversation.builder().type(ConversationType.TEAM).team(team).club(club).build());
+
+    LinkParentDTO request = new LinkParentDTO();
+    request.setParentId(parentUser.getId());
+
+    mockMvc
+        .perform(
+            post("/api/clubs/{clubId}/users/{userId}/parents", club.getId(), playerUser.getId())
+                .header("Authorization", "Bearer " + adminToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(om.writeValueAsBytes(request)))
+        .andExpect(status().isCreated());
+
+    // Parent should now be a participant in the team conversation
+    assertThat(
+            conversationParticipantRepository.existsByConversationIdAndUserId(
+                conversation.getId(), parentUser.getId()))
+        .isTrue();
+  }
+
+  @Test
+  void linkParent_alreadyLinked_shouldReturn409() throws Exception {
+    User parentUser = createUser("parent@test.com", ClubRole.PARENT, club);
+    playerUser.getParents().add(parentUser);
+    userRepository.saveAndFlush(playerUser);
+
+    LinkParentDTO request = new LinkParentDTO();
+    request.setParentId(parentUser.getId());
+
+    mockMvc
+        .perform(
+            post("/api/clubs/{clubId}/users/{userId}/parents", club.getId(), playerUser.getId())
+                .header("Authorization", "Bearer " + adminToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(om.writeValueAsBytes(request)))
+        .andExpect(status().isConflict());
+  }
+
+  @Test
+  void linkParent_parentRoleRequired_shouldReturn400() throws Exception {
+    LinkParentDTO request = new LinkParentDTO();
+    request.setParentId(coachUser.getId());
+
+    mockMvc
+        .perform(
+            post("/api/clubs/{clubId}/users/{userId}/parents", club.getId(), playerUser.getId())
+                .header("Authorization", "Bearer " + adminToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(om.writeValueAsBytes(request)))
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  void linkParent_selfLink_shouldReturn400() throws Exception {
+    LinkParentDTO request = new LinkParentDTO();
+    request.setParentId(playerUser.getId());
+
+    mockMvc
+        .perform(
+            post("/api/clubs/{clubId}/users/{userId}/parents", club.getId(), playerUser.getId())
+                .header("Authorization", "Bearer " + adminToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(om.writeValueAsBytes(request)))
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  void linkParent_parentNotInClub_shouldReturn400() throws Exception {
+    User otherParent = createUser("otherparent@test.com", ClubRole.PARENT, null);
+
+    LinkParentDTO request = new LinkParentDTO();
+    request.setParentId(otherParent.getId());
+
+    mockMvc
+        .perform(
+            post("/api/clubs/{clubId}/users/{userId}/parents", club.getId(), playerUser.getId())
+                .header("Authorization", "Bearer " + adminToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(om.writeValueAsBytes(request)))
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  void linkParent_asNonAdmin_shouldReturn403() throws Exception {
+    User parentUser = createUser("parent@test.com", ClubRole.PARENT, club);
+
+    LinkParentDTO request = new LinkParentDTO();
+    request.setParentId(parentUser.getId());
+
+    mockMvc
+        .perform(
+            post("/api/clubs/{clubId}/users/{userId}/parents", club.getId(), playerUser.getId())
+                .header("Authorization", "Bearer " + coachToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(om.writeValueAsBytes(request)))
+        .andExpect(status().isForbidden());
+  }
+
+  // ========================
+  // DELETE /api/clubs/{clubId}/users/{userId}/parents/{parentId}
+  // ========================
+
+  @Test
+  void unlinkParent_asAdmin_shouldUnlink() throws Exception {
+    User parentUser = createUser("parent@test.com", ClubRole.PARENT, club);
+    playerUser.getParents().add(parentUser);
+    userRepository.saveAndFlush(playerUser);
+
+    mockMvc
+        .perform(
+            delete(
+                    "/api/clubs/{clubId}/users/{userId}/parents/{parentId}",
+                    club.getId(),
+                    playerUser.getId(),
+                    parentUser.getId())
+                .header("Authorization", "Bearer " + adminToken))
+        .andExpect(status().isNoContent());
+
+    assertThat(userRepository.existsParentChildRelationship(playerUser.getId(), parentUser.getId()))
+        .isFalse();
+  }
+
+  @Test
+  void unlinkParent_notLinked_shouldReturn404() throws Exception {
+    User parentUser = createUser("parent@test.com", ClubRole.PARENT, club);
+
+    mockMvc
+        .perform(
+            delete(
+                    "/api/clubs/{clubId}/users/{userId}/parents/{parentId}",
+                    club.getId(),
+                    playerUser.getId(),
+                    parentUser.getId())
+                .header("Authorization", "Bearer " + adminToken))
+        .andExpect(status().isNotFound());
+  }
+
+  // ========================
+  // GET /api/clubs/{clubId}/users/{userId}/children
+  // ========================
+
+  @Test
+  void listChildren_shouldReturnLinkedChildren() throws Exception {
+    User parentUser = createUser("parent@test.com", ClubRole.PARENT, club);
+    playerUser.getParents().add(parentUser);
+    userRepository.saveAndFlush(playerUser);
+
+    mockMvc
+        .perform(
+            get("/api/clubs/{clubId}/users/{userId}/children", club.getId(), parentUser.getId())
+                .header("Authorization", "Bearer " + adminToken))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.length()").value(1))
+        .andExpect(jsonPath("$[0].id").value(playerUser.getId().toString()));
   }
 
   // ========================

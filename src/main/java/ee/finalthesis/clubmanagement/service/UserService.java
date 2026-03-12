@@ -4,15 +4,19 @@ import ee.finalthesis.clubmanagement.common.exception.BadRequestException;
 import ee.finalthesis.clubmanagement.common.exception.ConflictException;
 import ee.finalthesis.clubmanagement.common.exception.ResourceNotFoundException;
 import ee.finalthesis.clubmanagement.domain.Club;
+import ee.finalthesis.clubmanagement.domain.TeamMember;
 import ee.finalthesis.clubmanagement.domain.User;
+import ee.finalthesis.clubmanagement.domain.enumeration.ClubRole;
 import ee.finalthesis.clubmanagement.repository.ClubRepository;
 import ee.finalthesis.clubmanagement.repository.TeamMemberRepository;
 import ee.finalthesis.clubmanagement.repository.UserRepository;
 import ee.finalthesis.clubmanagement.security.SecurityUtils;
 import ee.finalthesis.clubmanagement.service.dto.auth.UserDTO;
 import ee.finalthesis.clubmanagement.service.dto.user.AddUserToClubDTO;
+import ee.finalthesis.clubmanagement.service.dto.user.LinkParentDTO;
 import ee.finalthesis.clubmanagement.service.dto.user.UpdateUserDTO;
 import ee.finalthesis.clubmanagement.service.mapper.UserMapper;
+import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +34,7 @@ public class UserService {
   private final UserRepository userRepository;
   private final ClubRepository clubRepository;
   private final TeamMemberRepository teamMemberRepository;
+  private final ConversationService conversationService;
   private final UserMapper userMapper;
   private final MessageSource messageSource;
 
@@ -129,6 +134,96 @@ public class UserService {
           .map(userMapper::toDto);
     }
     return userRepository.findByClubIdIsNull(pageable).map(userMapper::toDto);
+  }
+
+  @Transactional(readOnly = true)
+  public List<UserDTO> listParents(UUID clubId, UUID userId) {
+    validateUserInClub(clubId, userId);
+    return userRepository.findParentsByChildId(userId).stream().map(userMapper::toDto).toList();
+  }
+
+  @Transactional
+  public UserDTO linkParent(UUID clubId, UUID userId, LinkParentDTO dto) {
+    User child = validateUserInClub(clubId, userId);
+
+    if (userId.equals(dto.getParentId())) {
+      throw new BadRequestException(
+          msg("error.parentChild.cannotLinkSelf"), "parentChild", "cannotLinkSelf");
+    }
+
+    User parent =
+        userRepository
+            .findByIdAndClubId(dto.getParentId(), clubId)
+            .orElseThrow(
+                () ->
+                    new BadRequestException(
+                        msg("error.parentChild.parentNotInClub"),
+                        "parentChild",
+                        "parentNotInClub"));
+
+    if (parent.getRole() != ClubRole.PARENT) {
+      throw new BadRequestException(
+          msg("error.parentChild.parentRoleRequired"), "parentChild", "parentRoleRequired");
+    }
+
+    if (userRepository.existsParentChildRelationship(userId, dto.getParentId())) {
+      throw new ConflictException(
+          msg("error.parentChild.alreadyLinked"), "parentChild", "alreadyLinked");
+    }
+
+    child.getParents().add(parent);
+    userRepository.save(child);
+
+    // Sync conversations: add parent to child's team conversations
+    List<TeamMember> childTeamMemberships = teamMemberRepository.findByUserId(userId);
+    for (TeamMember tm : childTeamMemberships) {
+      conversationService.addParticipantToTeamConversation(tm.getTeam().getId(), parent);
+    }
+
+    return userMapper.toDto(parent);
+  }
+
+  @Transactional
+  public void unlinkParent(UUID clubId, UUID userId, UUID parentId) {
+    User child = validateUserInClub(clubId, userId);
+
+    if (!userRepository.existsParentChildRelationship(userId, parentId)) {
+      throw new ResourceNotFoundException(
+          msg("error.parentChild.notLinked"), "parentChild", parentId);
+    }
+
+    User parent = userRepository.findById(parentId).orElseThrow();
+    child.getParents().remove(parent);
+    userRepository.save(child);
+
+    // Sync conversations: remove parent from child's team conversations
+    // but only if parent has no other children in that team
+    List<TeamMember> childTeamMemberships = teamMemberRepository.findByUserId(userId);
+    List<User> parentOtherChildren = userRepository.findChildrenByParentId(parentId);
+
+    for (TeamMember tm : childTeamMemberships) {
+      UUID teamId = tm.getTeam().getId();
+      boolean parentHasOtherChildInTeam =
+          parentOtherChildren.stream()
+              .filter(c -> !c.getId().equals(userId))
+              .anyMatch(c -> teamMemberRepository.existsByTeamIdAndUserId(teamId, c.getId()));
+      if (!parentHasOtherChildInTeam) {
+        conversationService.removeParticipantFromTeamConversation(teamId, parentId);
+      }
+    }
+  }
+
+  @Transactional(readOnly = true)
+  public List<UserDTO> listChildren(UUID clubId, UUID userId) {
+    validateUserInClub(clubId, userId);
+    return userRepository.findChildrenByParentId(userId).stream().map(userMapper::toDto).toList();
+  }
+
+  private User validateUserInClub(UUID clubId, UUID userId) {
+    return userRepository
+        .findByIdAndClubId(userId, clubId)
+        .orElseThrow(
+            () -> new ResourceNotFoundException(msg("error.user.notInClub"), "user", userId));
   }
 
   private String msg(String key, Object... args) {

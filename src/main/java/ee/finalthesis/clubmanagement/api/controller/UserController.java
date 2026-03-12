@@ -3,8 +3,10 @@ package ee.finalthesis.clubmanagement.api.controller;
 import ee.finalthesis.clubmanagement.service.UserService;
 import ee.finalthesis.clubmanagement.service.dto.auth.UserDTO;
 import ee.finalthesis.clubmanagement.service.dto.user.AddUserToClubDTO;
+import ee.finalthesis.clubmanagement.service.dto.user.LinkParentDTO;
 import ee.finalthesis.clubmanagement.service.dto.user.UpdateUserDTO;
 import jakarta.validation.Valid;
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -71,5 +73,41 @@ public class UserController {
   public ResponseEntity<Page<UserDTO>> listUnaffiliatedUsers(
       @RequestParam(required = false) String search, Pageable pageable) {
     return ResponseEntity.ok(userService.listUnaffiliatedUsers(search, pageable));
+  }
+
+  // ========================
+  // Parent-child endpoints
+  // ========================
+
+  @GetMapping("/clubs/{clubId}/users/{userId}/parents")
+  @PreAuthorize("@clubSecurity.isMemberOfClub(#clubId)")
+  public ResponseEntity<List<UserDTO>> listParents(
+      @PathVariable UUID clubId, @PathVariable UUID userId) {
+    return ResponseEntity.ok(userService.listParents(clubId, userId));
+  }
+
+  @PostMapping("/clubs/{clubId}/users/{userId}/parents")
+  @PreAuthorize("@clubSecurity.isAdmin(#clubId)")
+  public ResponseEntity<UserDTO> linkParent(
+      @PathVariable UUID clubId,
+      @PathVariable UUID userId,
+      @Valid @RequestBody LinkParentDTO request) {
+    return ResponseEntity.status(HttpStatus.CREATED)
+        .body(userService.linkParent(clubId, userId, request));
+  }
+
+  @DeleteMapping("/clubs/{clubId}/users/{userId}/parents/{parentId}")
+  @PreAuthorize("@clubSecurity.isAdmin(#clubId)")
+  public ResponseEntity<Void> unlinkParent(
+      @PathVariable UUID clubId, @PathVariable UUID userId, @PathVariable UUID parentId) {
+    userService.unlinkParent(clubId, userId, parentId);
+    return ResponseEntity.noContent().build();
+  }
+
+  @GetMapping("/clubs/{clubId}/users/{userId}/children")
+  @PreAuthorize("@clubSecurity.isMemberOfClub(#clubId)")
+  public ResponseEntity<List<UserDTO>> listChildren(
+      @PathVariable UUID clubId, @PathVariable UUID userId) {
+    return ResponseEntity.ok(userService.listChildren(clubId, userId));
   }
 }
