@@ -197,6 +197,21 @@ class UserControllerIT {
         .andExpect(status().isNotFound());
   }
 
+  @Test
+  void addUserToClub_asNonAdmin_shouldReturn403() throws Exception {
+    AddUserToClubDTO request = new AddUserToClubDTO();
+    request.setUserId(unaffiliatedUser.getId());
+    request.setRole(ClubRole.PLAYER);
+
+    mockMvc
+        .perform(
+            post("/api/clubs/{clubId}/users", club.getId())
+                .header("Authorization", "Bearer " + coachToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(om.writeValueAsBytes(request)))
+        .andExpect(status().isForbidden());
+  }
+
   // ========================
   // GET /api/clubs/{clubId}/users/{userId}
   // ========================
@@ -259,6 +274,15 @@ class UserControllerIT {
             delete("/api/clubs/{clubId}/users/{userId}", club.getId(), adminUser.getId())
                 .header("Authorization", "Bearer " + adminToken))
         .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  void removeUserFromClub_asNonAdmin_shouldReturn403() throws Exception {
+    mockMvc
+        .perform(
+            delete("/api/clubs/{clubId}/users/{userId}", club.getId(), playerUser.getId())
+                .header("Authorization", "Bearer " + coachToken))
+        .andExpect(status().isForbidden());
   }
 
   // ========================

@@ -261,6 +261,17 @@ class PitchControllerIT {
     assertThat(pitchRepository.findByIdAndClubId(pitch.getId(), club.getId())).isEmpty();
   }
 
+  @Test
+  void deletePitch_asNonAdmin_shouldReturn403() throws Exception {
+    mockMvc
+        .perform(
+            delete("/api/clubs/{clubId}/pitches/{pitchId}", club.getId(), pitch.getId())
+                .header("Authorization", "Bearer " + coachToken))
+        .andExpect(status().isForbidden());
+
+    assertThat(pitchRepository.findByIdAndClubId(pitch.getId(), club.getId())).isPresent();
+  }
+
   // ========================
   // GET /api/clubs/{clubId}/pitches/{pitchId}/schedule
   // ========================

@@ -478,82 +478,80 @@ GET    /api/clubs/{clubId}/conversations/unread-count               # Total unre
 ### Phase 2: Club & Team Management
 **Goal:** Club structure, team CRUD, team roster management
 
-- [ ] Create DTOs (ClubDTO, TeamDTO, TeamMemberDTO, UserDTO)
-- [ ] Create MapStruct mappers
-- [ ] Create repositories
-- [ ] Create `ClubService`, `TeamService`, `UserService`
-- [ ] Create `ClubController`, `TeamController`, `UserController`
-- [ ] Implement admin flow: search unaffiliated users, add to club with role
-- [ ] Implement team membership: add/remove users to teams
-- [ ] Implement RBAC: admin sees all, coach sees own teams only
-- [ ] Write integration tests
+- [x] Create DTOs (ClubDTO, TeamDTO, TeamMemberDTO, UserDTO)
+- [x] Create MapStruct mappers
+- [x] Create repositories
+- [x] Create `ClubService`, `TeamService`, `UserService`
+- [x] Create `ClubController`, `TeamController`, `UserController`
+- [x] Implement admin flow: search unaffiliated users, add to club with role
+- [x] Implement team membership: add/remove users to teams
+- [x] Implement RBAC: admin sees all, coach sees own teams only
+- [x] Write integration tests
 
 ### Phase 3: Pitch & Training Session Management
 **Goal:** Pitch CRUD, training scheduling with recurrence and conflict detection
 
-- [ ] Create DTOs
-- [ ] Create MapStruct mappers
-- [ ] Create repositories with custom queries (pitch availability, schedule overlap)
-- [ ] Create `PitchService` with availability checking
-- [ ] Create `TrainingSessionService` with:
+- [x] Create DTOs
+- [x] Create MapStruct mappers
+- [x] Create repositories with custom queries (pitch availability, schedule overlap)
+- [x] Create `PitchService` with availability checking
+- [x] Create `TrainingSessionService` with:
   - Single training creation
   - Recurring training generation (weekly, until end date)
   - Conflict detection (pitch double-booking)
   - Training update/cancellation with notification trigger
-- [ ] Create `PitchController`, `TrainingSessionController`
-- [ ] Implement pitch schedule view (all teams, for admin coordination)
-- [ ] Write integration tests
+- [x] Create `PitchController`, `TrainingSessionController`
+- [x] Implement pitch schedule view (all teams, for admin coordination)
+- [x] Write integration tests
 
 ### Phase 4: Attendance Management
 **Goal:** Training attendance confirmation by players and parents
 
-- [ ] Create DTOs (AttendanceDTO, AttendanceSummaryDTO)
-- [ ] Create `AttendanceService` with:
+- [x] Create DTOs (AttendanceDTO, AttendanceSummaryDTO)
+- [x] Create `AttendanceService` with:
   - Auto-create PENDING attendance records when training is created
   - Confirm/decline by player (self) or parent (for child)
   - Attendance summary for coach
-- [ ] Create `AttendanceController`
-- [ ] RBAC: player confirms own, parent confirms child's
-- [ ] Write integration tests
+- [x] Create `AttendanceController`
+- [x] RBAC: player confirms own, parent confirms child's
+- [x] Write integration tests
 
 ### Phase 5: Chat System
 **Goal:** Team and direct messaging with unread tracking
 
-- [ ] Create Conversation, ConversationParticipant, Message, ConversationReadStatus entities (already done in Phase 0)
-- [ ] Create DTOs
-- [ ] Create MapStruct mappers
-- [ ] Create repositories with custom queries (user conversations, paginated messages)
-- [ ] Create `ConversationService` with:
+- [x] Create Conversation, ConversationParticipant, Message, ConversationReadStatus entities (already done in Phase 0)
+- [x] Create DTOs
+- [x] Create MapStruct mappers
+- [x] Create repositories with custom queries (user conversations, paginated messages)
+- [x] Create `ConversationService` with:
   - Team chat auto-created when team is created (future: auto-updates participants when team membership changes)
   - Direct chat creation (get-or-create between two users)
   - Parent auto-included in child's team chats
-- [ ] Create `MessageService` with:
+- [x] Create `MessageService` with:
   - Send message + update conversation preview (denormalized fields)
   - Increment unread_count for all participants except sender
   - Mark conversation as read (reset unread_count to 0)
-- [ ] Create `ConversationController`
-- [ ] RBAC: users can only see conversations they participate in
-- [ ] Write integration tests
+- [x] Create `ConversationController`
+- [x] RBAC: users can only see conversations they participate in
+- [x] Write integration tests
 - [ ] Future: WebSocket (STOMP) for real-time message delivery
 
 ### Phase 6: Testing & Quality
 **Goal:** Comprehensive test suite and code quality checks
 
-- [ ] ArchUnit test (enforce layered architecture, like emde-2-be)
-- [ ] Integration tests for all controllers (TestContainers PostgreSQL)
-- [ ] Unit tests for services (business logic)
-- [ ] Security tests (unauthorized access, role escalation)
-- [ ] Spotless verification (CI-ready)
-- [ ] OpenAPI spec generation and validation
+- [x] ArchUnit test (enforce layered architecture, like emde-2-be)
+- [x] Integration tests for all controllers (TestContainers PostgreSQL)
+- [x] Unit tests for services (business logic)
+- [x] Security tests (unauthorized access, role escalation)
+- [x] Spotless verification (CI-ready)
+- [x] OpenAPI spec generation and validation
 - [ ] Seed realistic test data via Liquibase (dev/faker context)
 
 ### Phase 7: Docker & DevOps
 **Goal:** One-command local setup, CI-ready
 
-- [ ] Finalize `docker-compose.yaml` (PostgreSQL + app)
-- [ ] Create Dockerfile for Spring Boot app
-- [ ] Document startup instructions in README
-- [ ] Environment-based configuration (dev/prod profiles)
+- [x] Finalize `docker-compose.yaml` (PostgreSQL for local dev)
+- [x] Document startup instructions in README
 
 ---
 
@@ -607,5 +605,5 @@ GET    /api/clubs/{clubId}/conversations/unread-count               # Total unre
 
 ## Current Status
 
-**Phase:** 1 (Authentication & User Management) — COMPLETE
-**Next action:** Phase 2 — Club & Team Management
+**Phase:** 7 (Docker & DevOps) — COMPLETE
+**All phases 0-7 implemented.** Remaining: seed realistic test data (Phase 6 optional), WebSocket chat (Phase 5 future).
