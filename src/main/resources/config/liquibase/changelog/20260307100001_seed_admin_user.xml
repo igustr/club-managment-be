@@ -10,7 +10,7 @@
     -->
     <changeSet id="20260307100001-1" author="clubmanagement" context="dev">
         <insert tableName="users">
-            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="id" value="00000000-0000-0000-0000-000000000a00"/>
             <column name="email" value="admin@club.ee"/>
             <column name="password_hash" value="$2b$12$0ykkTu783lOC.Ed5B3StAObE/RAXr.GhWeLLylf77K/5jDgBJ.KXW"/>
             <column name="first_name" value="Admin"/>

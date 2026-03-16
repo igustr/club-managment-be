@@ -37,7 +37,15 @@
         </insert>
     </changeSet>
 
-    <!-- 2. FC Flora club admin -->
+    <!-- 2. Link existing admin@club.ee to FC Flora -->
+    <changeSet id="20260316100002-link-admin" author="clubmanagement" context="dev">
+        <update tableName="users">
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <where>id = '00000000-0000-0000-0000-000000000a00'</where>
+        </update>
+    </changeSet>
+
+    <!-- 3. FC Flora club admin -->
     <changeSet id="20260316100002-2" author="clubmanagement" context="dev">
         <insert tableName="users">
             <column name="id" value="00000000-0000-0000-0000-000000000a01"/>
