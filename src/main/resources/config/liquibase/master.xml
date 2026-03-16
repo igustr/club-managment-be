@@ -44,4 +44,10 @@
     <include file="config/liquibase/changelog/20260313100003_add_logo_url_to_club.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20260313100004_seed_test_users.xml" relativeToChangelogFile="false"/>
 
+    <!-- Player position and surface type enums -->
+    <include file="config/liquibase/changelog/20260316100001_add_position_to_user_and_surface_type_enum.xml" relativeToChangelogFile="false"/>
+
+    <!-- Comprehensive seed data -->
+    <include file="config/liquibase/changelog/20260316100002_seed_comprehensive_data.xml" relativeToChangelogFile="false"/>
+
 </databaseChangeLog>

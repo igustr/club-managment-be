@@ -15,6 +15,7 @@ public interface AttendanceMapper {
   @Mapping(source = "user.lastName", target = "lastName")
   @Mapping(source = "user.email", target = "email")
   @Mapping(source = "user.role", target = "role")
+  @Mapping(source = "user.position", target = "position")
   AttendanceDTO toDto(Attendance attendance);
 
   List<AttendanceDTO> toDto(List<Attendance> attendances);

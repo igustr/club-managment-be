@@ -18,6 +18,8 @@ public interface ConversationReadStatusRepository
 
   void deleteByConversationIdAndUserId(UUID conversationId, UUID userId);
 
+  void deleteByUserId(UUID userId);
+
   @Query(
       "SELECT COALESCE(SUM(crs.unreadCount), 0) FROM ConversationReadStatus crs"
           + " WHERE crs.user.id = :userId AND crs.conversation.club.id = :clubId")

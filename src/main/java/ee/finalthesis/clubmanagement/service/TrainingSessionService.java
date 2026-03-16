@@ -45,12 +45,13 @@ public class TrainingSessionService {
   private final MessageSource messageSource;
 
   @Transactional(readOnly = true)
-  public List<TrainingSessionDTO> listTrainingsByClub(UUID clubId) {
+  public List<TrainingSessionDTO> listTrainingsByClub(UUID clubId, boolean myTeams) {
     ClubRole role = SecurityUtils.getCurrentUserRole().orElse(null);
     UUID userId = SecurityUtils.getCurrentUserId().orElse(null);
 
-    if (role == ClubRole.CLUB_ADMIN
-        || SecurityUtils.getCurrentUserSystemRole().orElse(null) == SystemRole.MASTER_ADMIN) {
+    if (!myTeams
+        && (role == ClubRole.CLUB_ADMIN
+            || SecurityUtils.getCurrentUserSystemRole().orElse(null) == SystemRole.MASTER_ADMIN)) {
       return trainingSessionMapper.toDto(trainingSessionRepository.findByTeamClubId(clubId));
     }
 

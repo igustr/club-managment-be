@@ -1,5 +1,6 @@
 package ee.finalthesis.clubmanagement.service.dto.pitch;
 
+import ee.finalthesis.clubmanagement.domain.enumeration.SurfaceType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -13,7 +14,7 @@ public class UpdatePitchDTO {
 
   @Size(max = 500) private String address;
 
-  @Size(max = 100) private String surfaceType;
+  private SurfaceType surfaceType;
 
   private Integer capacity;
 }

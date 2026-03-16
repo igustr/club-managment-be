@@ -1,6 +1,7 @@
 package ee.finalthesis.clubmanagement.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import ee.finalthesis.clubmanagement.domain.enumeration.SurfaceType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -29,8 +30,9 @@ public class Pitch extends AbstractAuditingEntity<UUID> implements Serializable 
   @Size(max = 500) @Column(name = "address", length = 500)
   private String address;
 
-  @Size(max = 100) @Column(name = "surface_type", length = 100)
-  private String surfaceType;
+  @Enumerated(EnumType.STRING)
+  @Column(name = "surface_type", length = 20)
+  private SurfaceType surfaceType;
 
   @Column(name = "capacity")
   private Integer capacity;

@@ -98,6 +98,9 @@ public class UserService {
     if (request.getRole() != null) {
       user.setRole(request.getRole());
     }
+    if (request.getPosition() != null) {
+      user.setPosition(request.getPosition());
+    }
     if (request.getActive() != null) {
       user.setActive(request.getActive());
     }
@@ -118,6 +121,9 @@ public class UserService {
             .findByIdAndClubId(userId, clubId)
             .orElseThrow(
                 () -> new ResourceNotFoundException(msg("error.user.notInClub"), "user", userId));
+
+    // Clean up conversation participations before removing team memberships
+    conversationService.removeAllUserConversationData(userId);
 
     teamMemberRepository.deleteByUserId(userId);
 

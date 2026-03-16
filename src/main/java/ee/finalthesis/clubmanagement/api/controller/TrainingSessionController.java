@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -30,8 +31,9 @@ public class TrainingSessionController {
 
   @GetMapping("/trainings")
   @PreAuthorize("@clubSecurity.isMemberOfClub(#clubId)")
-  public ResponseEntity<List<TrainingSessionDTO>> listTrainings(@PathVariable UUID clubId) {
-    return ResponseEntity.ok(trainingSessionService.listTrainingsByClub(clubId));
+  public ResponseEntity<List<TrainingSessionDTO>> listTrainings(
+      @PathVariable UUID clubId, @RequestParam(defaultValue = "false") boolean myTeams) {
+    return ResponseEntity.ok(trainingSessionService.listTrainingsByClub(clubId, myTeams));
   }
 
   @GetMapping("/trainings/{trainingId}")

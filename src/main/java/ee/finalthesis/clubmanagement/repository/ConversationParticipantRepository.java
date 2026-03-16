@@ -25,6 +25,8 @@ public interface ConversationParticipantRepository
           + " ORDER BY cp.conversation.lastMessageTime DESC NULLS LAST")
   List<Conversation> findConversationsByUserIdAndClubId(UUID userId, UUID clubId);
 
+  void deleteByUserId(UUID userId);
+
   @Query(
       "SELECT cp1.conversation FROM ConversationParticipant cp1 JOIN ConversationParticipant cp2 ON"
           + " cp1.conversation = cp2.conversation WHERE cp1.user.id = :userId1 AND cp2.user.id ="

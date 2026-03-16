@@ -16,6 +16,7 @@ import ee.finalthesis.clubmanagement.domain.Team;
 import ee.finalthesis.clubmanagement.domain.TrainingSession;
 import ee.finalthesis.clubmanagement.domain.User;
 import ee.finalthesis.clubmanagement.domain.enumeration.ClubRole;
+import ee.finalthesis.clubmanagement.domain.enumeration.SurfaceType;
 import ee.finalthesis.clubmanagement.repository.AttendanceRepository;
 import ee.finalthesis.clubmanagement.repository.ClubRepository;
 import ee.finalthesis.clubmanagement.repository.ConversationParticipantRepository;
@@ -99,7 +100,7 @@ class PitchControllerIT {
             Pitch.builder()
                 .name("Main Field")
                 .address("Stadium St 1")
-                .surfaceType("Natural grass")
+                .surfaceType(SurfaceType.NATURAL_GRASS)
                 .capacity(100)
                 .club(club)
                 .build());
@@ -159,7 +160,7 @@ class PitchControllerIT {
     CreatePitchDTO request = new CreatePitchDTO();
     request.setName("Training Ground");
     request.setAddress("Park Ave 5");
-    request.setSurfaceType("Artificial turf");
+    request.setSurfaceType(SurfaceType.ARTIFICIAL_TURF);
     request.setCapacity(50);
 
     mockMvc
@@ -216,7 +217,7 @@ class PitchControllerIT {
     UpdatePitchDTO request = new UpdatePitchDTO();
     request.setName("Main Field Updated");
     request.setAddress("New Address 10");
-    request.setSurfaceType("Artificial turf");
+    request.setSurfaceType(SurfaceType.ARTIFICIAL_TURF);
     request.setCapacity(200);
 
     mockMvc

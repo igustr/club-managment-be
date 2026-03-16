@@ -15,6 +15,7 @@ public interface TeamMemberMapper {
   @Mapping(source = "user.lastName", target = "lastName")
   @Mapping(source = "user.email", target = "email")
   @Mapping(source = "user.role", target = "role")
+  @Mapping(source = "user.position", target = "position")
   TeamMemberDTO toDto(TeamMember teamMember);
 
   List<TeamMemberDTO> toDto(List<TeamMember> teamMembers);

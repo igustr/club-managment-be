@@ -81,6 +81,12 @@ public class ConversationService {
     conversationParticipantRepository.deleteByConversationIdAndUserId(conversation.getId(), userId);
   }
 
+  @Transactional
+  public void removeAllUserConversationData(UUID userId) {
+    conversationReadStatusRepository.deleteByUserId(userId);
+    conversationParticipantRepository.deleteByUserId(userId);
+  }
+
   @Transactional(readOnly = true)
   public List<ConversationDTO> listConversations(UUID clubId) {
     UUID currentUserId =

@@ -17,6 +17,7 @@ import ee.finalthesis.clubmanagement.domain.TeamMember;
 import ee.finalthesis.clubmanagement.domain.TrainingSession;
 import ee.finalthesis.clubmanagement.domain.User;
 import ee.finalthesis.clubmanagement.domain.enumeration.ClubRole;
+import ee.finalthesis.clubmanagement.domain.enumeration.SurfaceType;
 import ee.finalthesis.clubmanagement.domain.enumeration.TrainingSessionStatus;
 import ee.finalthesis.clubmanagement.repository.AttendanceRepository;
 import ee.finalthesis.clubmanagement.repository.ClubRepository;
@@ -118,7 +119,7 @@ class TrainingSessionControllerIT {
             Pitch.builder()
                 .name("Main Field")
                 .address("Stadium St 1")
-                .surfaceType("Natural grass")
+                .surfaceType(SurfaceType.NATURAL_GRASS)
                 .capacity(100)
                 .club(club)
                 .build());

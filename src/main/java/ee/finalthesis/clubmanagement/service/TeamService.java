@@ -46,12 +46,13 @@ public class TeamService {
   private final MessageSource messageSource;
 
   @Transactional(readOnly = true)
-  public List<TeamDTO> listTeams(UUID clubId) {
+  public List<TeamDTO> listTeams(UUID clubId, boolean myTeams) {
     ClubRole role = SecurityUtils.getCurrentUserRole().orElse(null);
     UUID userId = SecurityUtils.getCurrentUserId().orElse(null);
 
-    if (role == ClubRole.CLUB_ADMIN
-        || SecurityUtils.getCurrentUserSystemRole().orElse(null) == SystemRole.MASTER_ADMIN) {
+    if (!myTeams
+        && (role == ClubRole.CLUB_ADMIN
+            || SecurityUtils.getCurrentUserSystemRole().orElse(null) == SystemRole.MASTER_ADMIN)) {
       List<Team> teams = teamRepository.findByClubId(clubId);
       return teamMapper.toDto(teams);
     }

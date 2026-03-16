@@ -1,6 +1,7 @@
 package ee.finalthesis.clubmanagement.service.dto.user;
 
 import ee.finalthesis.clubmanagement.domain.enumeration.ClubRole;
+import ee.finalthesis.clubmanagement.domain.enumeration.PlayerPosition;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,6 +19,8 @@ public class UpdateUserDTO {
   @Size(max = 500) private String photoUrl;
 
   private ClubRole role;
+
+  private PlayerPosition position;
 
   private Boolean active;
 }
