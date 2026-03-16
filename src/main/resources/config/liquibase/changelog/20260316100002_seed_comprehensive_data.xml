@@ -1,0 +1,1210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- =============================================
+         Comprehensive seed data for dev environment.
+         Password for all users: test123
+         ============================================= -->
+
+    <!-- 1. Clubs -->
+    <changeSet id="20260316100002-1" author="clubmanagement" context="dev">
+        <insert tableName="club">
+            <column name="id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="name" value="FC Flora Tallinn"/>
+            <column name="registration_code" value="80067230"/>
+            <column name="address" value="Asula 4c, 11312 Tallinn"/>
+            <column name="contact_email" value="info@fcflora.ee"/>
+            <column name="contact_phone" value="+372 6279 940"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="club">
+            <column name="id" value="00000000-0000-0000-0000-000000000c02"/>
+            <column name="name" value="FC Pelgu City"/>
+            <column name="registration_code" value="80123456"/>
+            <column name="address" value="Pelgulinna, Tallinn"/>
+            <column name="contact_email" value="info@pelgucity.ee"/>
+            <column name="contact_phone" value="+372 5551 000"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+    </changeSet>
+
+    <!-- 2. FC Flora club admin -->
+    <changeSet id="20260316100002-2" author="clubmanagement" context="dev">
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000000a01"/>
+            <column name="email" value="flora.admin@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Mart"/>
+            <column name="last_name" value="Saar"/>
+            <column name="date_of_birth" value="1975-06-15"/>
+            <column name="phone" value="+372 5551 100"/>
+            <column name="role" value="CLUB_ADMIN"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+    </changeSet>
+
+    <!-- 3. FC Flora coaches (3) -->
+    <changeSet id="20260316100002-3" author="clubmanagement" context="dev">
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000001001"/>
+            <column name="email" value="andres.rebane@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Andres"/>
+            <column name="last_name" value="Rebane"/>
+            <column name="date_of_birth" value="1980-04-12"/>
+            <column name="phone" value="+372 5551 201"/>
+            <column name="role" value="COACH"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000001002"/>
+            <column name="email" value="raivo.kallas@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Raivo"/>
+            <column name="last_name" value="Kallas"/>
+            <column name="date_of_birth" value="1978-08-23"/>
+            <column name="phone" value="+372 5551 202"/>
+            <column name="role" value="COACH"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000001003"/>
+            <column name="email" value="viktor.mihhailov@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Viktor"/>
+            <column name="last_name" value="Mihhailov"/>
+            <column name="date_of_birth" value="1982-11-05"/>
+            <column name="phone" value="+372 5551 203"/>
+            <column name="role" value="COACH"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+    </changeSet>
+
+    <!-- 4. FC Flora U15 players (10) - born 2011-2012 -->
+    <changeSet id="20260316100002-4" author="clubmanagement" context="dev">
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000002001"/>
+            <column name="email" value="oliver.tamm@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Oliver"/>
+            <column name="last_name" value="Tamm"/>
+            <column name="date_of_birth" value="2011-03-15"/>
+            <column name="phone" value="+372 5552 001"/>
+            <column name="role" value="PLAYER"/>
+            <column name="position" value="GOALKEEPER"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000002002"/>
+            <column name="email" value="rasmus.koppel@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Rasmus"/>
+            <column name="last_name" value="Koppel"/>
+            <column name="date_of_birth" value="2011-07-22"/>
+            <column name="phone" value="+372 5552 002"/>
+            <column name="role" value="PLAYER"/>
+            <column name="position" value="DEFENDER"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000002003"/>
+            <column name="email" value="mattias.oja@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Mattias"/>
+            <column name="last_name" value="Oja"/>
+            <column name="date_of_birth" value="2012-01-10"/>
+            <column name="phone" value="+372 5552 003"/>
+            <column name="role" value="PLAYER"/>
+            <column name="position" value="DEFENDER"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000002004"/>
+            <column name="email" value="karl.nurk@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Karl"/>
+            <column name="last_name" value="Nurk"/>
+            <column name="date_of_birth" value="2011-09-05"/>
+            <column name="phone" value="+372 5552 004"/>
+            <column name="role" value="PLAYER"/>
+            <column name="position" value="DEFENDER"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000002005"/>
+            <column name="email" value="markus.vaher@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Markus"/>
+            <column name="last_name" value="Vaher"/>
+            <column name="date_of_birth" value="2012-04-18"/>
+            <column name="phone" value="+372 5552 005"/>
+            <column name="role" value="PLAYER"/>
+            <column name="position" value="MIDFIELDER"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000002006"/>
+            <column name="email" value="robin.laas@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Robin"/>
+            <column name="last_name" value="Laas"/>
+            <column name="date_of_birth" value="2011-11-30"/>
+            <column name="phone" value="+372 5552 006"/>
+            <column name="role" value="PLAYER"/>
+            <column name="position" value="MIDFIELDER"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000002007"/>
+            <column name="email" value="siim.pihlak@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Siim"/>
+            <column name="last_name" value="Pihlak"/>
+            <column name="date_of_birth" value="2012-06-08"/>
+            <column name="phone" value="+372 5552 007"/>
+            <column name="role" value="PLAYER"/>
+            <column name="position" value="MIDFIELDER"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000002008"/>
+            <column name="email" value="henri.kukk@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Henri"/>
+            <column name="last_name" value="Kukk"/>
+            <column name="date_of_birth" value="2011-02-14"/>
+            <column name="phone" value="+372 5552 008"/>
+            <column name="role" value="PLAYER"/>
+            <column name="position" value="MIDFIELDER"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000002009"/>
+            <column name="email" value="kevin.palm@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Kevin"/>
+            <column name="last_name" value="Palm"/>
+            <column name="date_of_birth" value="2012-08-25"/>
+            <column name="phone" value="+372 5552 009"/>
+            <column name="role" value="PLAYER"/>
+            <column name="position" value="STRIKER"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000002010"/>
+            <column name="email" value="artjom.volkov@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Artjom"/>
+            <column name="last_name" value="Volkov"/>
+            <column name="date_of_birth" value="2011-12-03"/>
+            <column name="phone" value="+372 5552 010"/>
+            <column name="role" value="PLAYER"/>
+            <column name="position" value="STRIKER"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+    </changeSet>
+
+    <!-- 5. FC Flora U19 players (10) - born 2007-2008 -->
+    <changeSet id="20260316100002-5" author="clubmanagement" context="dev">
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000002011"/>
+            <column name="email" value="sander.mets@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Sander"/>
+            <column name="last_name" value="Mets"/>
+            <column name="date_of_birth" value="2007-05-20"/>
+            <column name="phone" value="+372 5552 011"/>
+            <column name="role" value="PLAYER"/>
+            <column name="position" value="GOALKEEPER"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000002012"/>
+            <column name="email" value="erik.leppik@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Erik"/>
+            <column name="last_name" value="Leppik"/>
+            <column name="date_of_birth" value="2008-01-14"/>
+            <column name="phone" value="+372 5552 012"/>
+            <column name="role" value="PLAYER"/>
+            <column name="position" value="DEFENDER"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000002013"/>
+            <column name="email" value="patrik.ilves@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Patrik"/>
+            <column name="last_name" value="Ilves"/>
+            <column name="date_of_birth" value="2007-09-08"/>
+            <column name="phone" value="+372 5552 013"/>
+            <column name="role" value="PLAYER"/>
+            <column name="position" value="DEFENDER"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000002014"/>
+            <column name="email" value="kristjan.raud@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Kristjan"/>
+            <column name="last_name" value="Raud"/>
+            <column name="date_of_birth" value="2008-03-27"/>
+            <column name="phone" value="+372 5552 014"/>
+            <column name="role" value="PLAYER"/>
+            <column name="position" value="DEFENDER"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000002015"/>
+            <column name="email" value="mihkel.jarv@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Mihkel"/>
+            <column name="last_name" value="Jarv"/>
+            <column name="date_of_birth" value="2007-07-11"/>
+            <column name="phone" value="+372 5552 015"/>
+            <column name="role" value="PLAYER"/>
+            <column name="position" value="MIDFIELDER"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000002016"/>
+            <column name="email" value="oskar.puu@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Oskar"/>
+            <column name="last_name" value="Puu"/>
+            <column name="date_of_birth" value="2008-10-02"/>
+            <column name="phone" value="+372 5552 016"/>
+            <column name="role" value="PLAYER"/>
+            <column name="position" value="MIDFIELDER"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000002017"/>
+            <column name="email" value="nikita.kuznetsov@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Nikita"/>
+            <column name="last_name" value="Kuznetsov"/>
+            <column name="date_of_birth" value="2007-04-16"/>
+            <column name="phone" value="+372 5552 017"/>
+            <column name="role" value="PLAYER"/>
+            <column name="position" value="MIDFIELDER"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000002018"/>
+            <column name="email" value="robert.kivi@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Robert"/>
+            <column name="last_name" value="Kivi"/>
+            <column name="date_of_birth" value="2008-12-09"/>
+            <column name="phone" value="+372 5552 018"/>
+            <column name="role" value="PLAYER"/>
+            <column name="position" value="MIDFIELDER"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000002019"/>
+            <column name="email" value="gregor.saar@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Gregor"/>
+            <column name="last_name" value="Saar"/>
+            <column name="date_of_birth" value="2007-06-30"/>
+            <column name="phone" value="+372 5552 019"/>
+            <column name="role" value="PLAYER"/>
+            <column name="position" value="STRIKER"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000002020"/>
+            <column name="email" value="daniil.popov@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Daniil"/>
+            <column name="last_name" value="Popov"/>
+            <column name="date_of_birth" value="2008-02-22"/>
+            <column name="phone" value="+372 5552 020"/>
+            <column name="role" value="PLAYER"/>
+            <column name="position" value="STRIKER"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+    </changeSet>
+
+    <!-- 6. FC Flora unassigned players (20) - in club but not on any team -->
+    <changeSet id="20260316100002-6" author="clubmanagement" context="dev">
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000002021"/>
+            <column name="email" value="alex.lepp@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Alex"/>
+            <column name="last_name" value="Lepp"/>
+            <column name="date_of_birth" value="2009-03-11"/>
+            <column name="phone" value="+372 5552 021"/>
+            <column name="role" value="PLAYER"/>
+            <column name="position" value="GOALKEEPER"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000002022"/>
+            <column name="email" value="taavi.kask@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Taavi"/>
+            <column name="last_name" value="Kask"/>
+            <column name="date_of_birth" value="2010-07-04"/>
+            <column name="phone" value="+372 5552 022"/>
+            <column name="role" value="PLAYER"/>
+            <column name="position" value="DEFENDER"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000002023"/>
+            <column name="email" value="madis.sepp@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Madis"/>
+            <column name="last_name" value="Sepp"/>
+            <column name="date_of_birth" value="2009-11-18"/>
+            <column name="phone" value="+372 5552 023"/>
+            <column name="role" value="PLAYER"/>
+            <column name="position" value="DEFENDER"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000002024"/>
+            <column name="email" value="joonas.rand@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Joonas"/>
+            <column name="last_name" value="Rand"/>
+            <column name="date_of_birth" value="2010-02-28"/>
+            <column name="phone" value="+372 5552 024"/>
+            <column name="role" value="PLAYER"/>
+            <column name="position" value="DEFENDER"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000002025"/>
+            <column name="email" value="artur.kallas@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Artur"/>
+            <column name="last_name" value="Kallas"/>
+            <column name="date_of_birth" value="2009-08-15"/>
+            <column name="phone" value="+372 5552 025"/>
+            <column name="role" value="PLAYER"/>
+            <column name="position" value="MIDFIELDER"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000002026"/>
+            <column name="email" value="kirill.fedorov@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Kirill"/>
+            <column name="last_name" value="Fedorov"/>
+            <column name="date_of_birth" value="2010-05-21"/>
+            <column name="phone" value="+372 5552 026"/>
+            <column name="role" value="PLAYER"/>
+            <column name="position" value="MIDFIELDER"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000002027"/>
+            <column name="email" value="rainer.maesalu@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Rainer"/>
+            <column name="last_name" value="Maesalu"/>
+            <column name="date_of_birth" value="2009-01-07"/>
+            <column name="phone" value="+372 5552 027"/>
+            <column name="role" value="PLAYER"/>
+            <column name="position" value="MIDFIELDER"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000002028"/>
+            <column name="email" value="lennart.orav@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Lennart"/>
+            <column name="last_name" value="Orav"/>
+            <column name="date_of_birth" value="2010-09-12"/>
+            <column name="phone" value="+372 5552 028"/>
+            <column name="role" value="PLAYER"/>
+            <column name="position" value="MIDFIELDER"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000002029"/>
+            <column name="email" value="daniel.teder@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Daniel"/>
+            <column name="last_name" value="Teder"/>
+            <column name="date_of_birth" value="2009-06-25"/>
+            <column name="phone" value="+372 5552 029"/>
+            <column name="role" value="PLAYER"/>
+            <column name="position" value="STRIKER"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000002030"/>
+            <column name="email" value="roman.sidorov@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Roman"/>
+            <column name="last_name" value="Sidorov"/>
+            <column name="date_of_birth" value="2010-12-01"/>
+            <column name="phone" value="+372 5552 030"/>
+            <column name="role" value="PLAYER"/>
+            <column name="position" value="STRIKER"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000002031"/>
+            <column name="email" value="martin.parn@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Martin"/>
+            <column name="last_name" value="Parn"/>
+            <column name="date_of_birth" value="2009-04-09"/>
+            <column name="phone" value="+372 5552 031"/>
+            <column name="role" value="PLAYER"/>
+            <column name="position" value="GOALKEEPER"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000002032"/>
+            <column name="email" value="sten.ilves@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Sten"/>
+            <column name="last_name" value="Ilves"/>
+            <column name="date_of_birth" value="2010-08-17"/>
+            <column name="phone" value="+372 5552 032"/>
+            <column name="role" value="PLAYER"/>
+            <column name="position" value="DEFENDER"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000002033"/>
+            <column name="email" value="kristofer.liiv@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Kristofer"/>
+            <column name="last_name" value="Liiv"/>
+            <column name="date_of_birth" value="2009-10-30"/>
+            <column name="phone" value="+372 5552 033"/>
+            <column name="role" value="PLAYER"/>
+            <column name="position" value="DEFENDER"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000002034"/>
+            <column name="email" value="marten.aas@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Marten"/>
+            <column name="last_name" value="Aas"/>
+            <column name="date_of_birth" value="2010-01-19"/>
+            <column name="phone" value="+372 5552 034"/>
+            <column name="role" value="PLAYER"/>
+            <column name="position" value="MIDFIELDER"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000002035"/>
+            <column name="email" value="indrek.kuusik@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Indrek"/>
+            <column name="last_name" value="Kuusik"/>
+            <column name="date_of_birth" value="2009-12-05"/>
+            <column name="phone" value="+372 5552 035"/>
+            <column name="role" value="PLAYER"/>
+            <column name="position" value="MIDFIELDER"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000002036"/>
+            <column name="email" value="ivan.morozov@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Ivan"/>
+            <column name="last_name" value="Morozov"/>
+            <column name="date_of_birth" value="2010-04-14"/>
+            <column name="phone" value="+372 5552 036"/>
+            <column name="role" value="PLAYER"/>
+            <column name="position" value="MIDFIELDER"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000002037"/>
+            <column name="email" value="jaak.tamme@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Jaak"/>
+            <column name="last_name" value="Tamme"/>
+            <column name="date_of_birth" value="2009-07-22"/>
+            <column name="phone" value="+372 5552 037"/>
+            <column name="role" value="PLAYER"/>
+            <column name="position" value="STRIKER"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000002038"/>
+            <column name="email" value="pavel.novikov@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Pavel"/>
+            <column name="last_name" value="Novikov"/>
+            <column name="date_of_birth" value="2010-11-08"/>
+            <column name="phone" value="+372 5552 038"/>
+            <column name="role" value="PLAYER"/>
+            <column name="position" value="STRIKER"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000002039"/>
+            <column name="email" value="kaur.pold@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Kaur"/>
+            <column name="last_name" value="Pold"/>
+            <column name="date_of_birth" value="2009-09-16"/>
+            <column name="phone" value="+372 5552 039"/>
+            <column name="role" value="PLAYER"/>
+            <column name="position" value="DEFENDER"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000002040"/>
+            <column name="email" value="maksim.orlov@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Maksim"/>
+            <column name="last_name" value="Orlov"/>
+            <column name="date_of_birth" value="2010-06-03"/>
+            <column name="phone" value="+372 5552 040"/>
+            <column name="role" value="PLAYER"/>
+            <column name="position" value="GOALKEEPER"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+    </changeSet>
+
+    <!-- 7. Teams -->
+    <changeSet id="20260316100002-7" author="clubmanagement" context="dev">
+        <insert tableName="team">
+            <column name="id" value="00000000-0000-0000-0000-000000003001"/>
+            <column name="name" value="FC Flora U15"/>
+            <column name="age_group" value="U15"/>
+            <column name="season" value="2025/2026"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="team">
+            <column name="id" value="00000000-0000-0000-0000-000000003002"/>
+            <column name="name" value="FC Flora U19"/>
+            <column name="age_group" value="U19"/>
+            <column name="season" value="2025/2026"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+    </changeSet>
+
+    <!-- 8. Team members: U15 = coach Andres Rebane + assistant Viktor Mihhailov + 10 players -->
+    <changeSet id="20260316100002-8" author="clubmanagement" context="dev">
+        <!-- Coach Andres Rebane -> U15 -->
+        <insert tableName="team_member">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="team_id" value="00000000-0000-0000-0000-000000003001"/>
+            <column name="user_id" value="00000000-0000-0000-0000-000000001001"/>
+            <column name="joined_date" value="2025-08-01"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <!-- Assistant coach Viktor Mihhailov -> U15 -->
+        <insert tableName="team_member">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="team_id" value="00000000-0000-0000-0000-000000003001"/>
+            <column name="user_id" value="00000000-0000-0000-0000-000000001003"/>
+            <column name="joined_date" value="2025-08-01"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <!-- U15 players (2001-2010) -->
+        <insert tableName="team_member">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="team_id" value="00000000-0000-0000-0000-000000003001"/>
+            <column name="user_id" value="00000000-0000-0000-0000-000000002001"/>
+            <column name="joined_date" value="2025-08-01"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="team_member">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="team_id" value="00000000-0000-0000-0000-000000003001"/>
+            <column name="user_id" value="00000000-0000-0000-0000-000000002002"/>
+            <column name="joined_date" value="2025-08-01"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="team_member">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="team_id" value="00000000-0000-0000-0000-000000003001"/>
+            <column name="user_id" value="00000000-0000-0000-0000-000000002003"/>
+            <column name="joined_date" value="2025-08-01"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="team_member">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="team_id" value="00000000-0000-0000-0000-000000003001"/>
+            <column name="user_id" value="00000000-0000-0000-0000-000000002004"/>
+            <column name="joined_date" value="2025-08-01"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="team_member">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="team_id" value="00000000-0000-0000-0000-000000003001"/>
+            <column name="user_id" value="00000000-0000-0000-0000-000000002005"/>
+            <column name="joined_date" value="2025-08-01"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="team_member">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="team_id" value="00000000-0000-0000-0000-000000003001"/>
+            <column name="user_id" value="00000000-0000-0000-0000-000000002006"/>
+            <column name="joined_date" value="2025-08-01"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="team_member">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="team_id" value="00000000-0000-0000-0000-000000003001"/>
+            <column name="user_id" value="00000000-0000-0000-0000-000000002007"/>
+            <column name="joined_date" value="2025-08-01"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="team_member">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="team_id" value="00000000-0000-0000-0000-000000003001"/>
+            <column name="user_id" value="00000000-0000-0000-0000-000000002008"/>
+            <column name="joined_date" value="2025-08-01"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="team_member">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="team_id" value="00000000-0000-0000-0000-000000003001"/>
+            <column name="user_id" value="00000000-0000-0000-0000-000000002009"/>
+            <column name="joined_date" value="2025-08-01"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="team_member">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="team_id" value="00000000-0000-0000-0000-000000003001"/>
+            <column name="user_id" value="00000000-0000-0000-0000-000000002010"/>
+            <column name="joined_date" value="2025-08-01"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+    </changeSet>
+
+    <!-- 9. Team members: U19 = coach Raivo Kallas + 10 players -->
+    <changeSet id="20260316100002-9" author="clubmanagement" context="dev">
+        <!-- Coach Raivo Kallas -> U19 -->
+        <insert tableName="team_member">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="team_id" value="00000000-0000-0000-0000-000000003002"/>
+            <column name="user_id" value="00000000-0000-0000-0000-000000001002"/>
+            <column name="joined_date" value="2025-08-01"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <!-- U19 players (2011-2020) -->
+        <insert tableName="team_member">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="team_id" value="00000000-0000-0000-0000-000000003002"/>
+            <column name="user_id" value="00000000-0000-0000-0000-000000002011"/>
+            <column name="joined_date" value="2025-08-01"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="team_member">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="team_id" value="00000000-0000-0000-0000-000000003002"/>
+            <column name="user_id" value="00000000-0000-0000-0000-000000002012"/>
+            <column name="joined_date" value="2025-08-01"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="team_member">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="team_id" value="00000000-0000-0000-0000-000000003002"/>
+            <column name="user_id" value="00000000-0000-0000-0000-000000002013"/>
+            <column name="joined_date" value="2025-08-01"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="team_member">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="team_id" value="00000000-0000-0000-0000-000000003002"/>
+            <column name="user_id" value="00000000-0000-0000-0000-000000002014"/>
+            <column name="joined_date" value="2025-08-01"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="team_member">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="team_id" value="00000000-0000-0000-0000-000000003002"/>
+            <column name="user_id" value="00000000-0000-0000-0000-000000002015"/>
+            <column name="joined_date" value="2025-08-01"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="team_member">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="team_id" value="00000000-0000-0000-0000-000000003002"/>
+            <column name="user_id" value="00000000-0000-0000-0000-000000002016"/>
+            <column name="joined_date" value="2025-08-01"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="team_member">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="team_id" value="00000000-0000-0000-0000-000000003002"/>
+            <column name="user_id" value="00000000-0000-0000-0000-000000002017"/>
+            <column name="joined_date" value="2025-08-01"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="team_member">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="team_id" value="00000000-0000-0000-0000-000000003002"/>
+            <column name="user_id" value="00000000-0000-0000-0000-000000002018"/>
+            <column name="joined_date" value="2025-08-01"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="team_member">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="team_id" value="00000000-0000-0000-0000-000000003002"/>
+            <column name="user_id" value="00000000-0000-0000-0000-000000002019"/>
+            <column name="joined_date" value="2025-08-01"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="team_member">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="team_id" value="00000000-0000-0000-0000-000000003002"/>
+            <column name="user_id" value="00000000-0000-0000-0000-000000002020"/>
+            <column name="joined_date" value="2025-08-01"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+    </changeSet>
+
+    <!-- 10. Pitches (3) for FC Flora -->
+    <changeSet id="20260316100002-10" author="clubmanagement" context="dev">
+        <insert tableName="pitch">
+            <column name="id" value="00000000-0000-0000-0000-000000004001"/>
+            <column name="name" value="Sportland Arena"/>
+            <column name="address" value="Haabersti 6, 13516 Tallinn"/>
+            <column name="surface_type" value="INDOOR"/>
+            <column name="capacity" value="200"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="pitch">
+            <column name="id" value="00000000-0000-0000-0000-000000004002"/>
+            <column name="name" value="Nike Arena"/>
+            <column name="address" value="Asula 4c, 11312 Tallinn"/>
+            <column name="surface_type" value="ARTIFICIAL_TURF"/>
+            <column name="capacity" value="500"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="pitch">
+            <column name="id" value="00000000-0000-0000-0000-000000004003"/>
+            <column name="name" value="Flora harjutusväljak"/>
+            <column name="address" value="Asula 4c, 11312 Tallinn"/>
+            <column name="surface_type" value="NATURAL_GRASS"/>
+            <column name="capacity" value="100"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+    </changeSet>
+
+    <!-- 11. Training sessions in June 2026 (3 per team, Mon/Wed/Fri) -->
+    <changeSet id="20260316100002-11" author="clubmanagement" context="dev">
+        <!-- U15 trainings at Flora harjutusväljak -->
+        <insert tableName="training_session">
+            <column name="id" value="00000000-0000-0000-0000-000000005001"/>
+            <column name="date" value="2026-06-01"/>
+            <column name="start_time" value="16:00:00"/>
+            <column name="end_time" value="17:30:00"/>
+            <column name="recurrence_group_id" value="00000000-0000-0000-0000-00000000f001"/>
+            <column name="status" value="SCHEDULED"/>
+            <column name="notes" value="U15 regular training"/>
+            <column name="team_id" value="00000000-0000-0000-0000-000000003001"/>
+            <column name="pitch_id" value="00000000-0000-0000-0000-000000004003"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="training_session">
+            <column name="id" value="00000000-0000-0000-0000-000000005002"/>
+            <column name="date" value="2026-06-03"/>
+            <column name="start_time" value="16:00:00"/>
+            <column name="end_time" value="17:30:00"/>
+            <column name="recurrence_group_id" value="00000000-0000-0000-0000-00000000f001"/>
+            <column name="status" value="SCHEDULED"/>
+            <column name="notes" value="U15 regular training"/>
+            <column name="team_id" value="00000000-0000-0000-0000-000000003001"/>
+            <column name="pitch_id" value="00000000-0000-0000-0000-000000004003"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="training_session">
+            <column name="id" value="00000000-0000-0000-0000-000000005003"/>
+            <column name="date" value="2026-06-05"/>
+            <column name="start_time" value="16:00:00"/>
+            <column name="end_time" value="17:30:00"/>
+            <column name="recurrence_group_id" value="00000000-0000-0000-0000-00000000f001"/>
+            <column name="status" value="SCHEDULED"/>
+            <column name="notes" value="U15 regular training"/>
+            <column name="team_id" value="00000000-0000-0000-0000-000000003001"/>
+            <column name="pitch_id" value="00000000-0000-0000-0000-000000004003"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+
+        <!-- U19 trainings at Nike Arena -->
+        <insert tableName="training_session">
+            <column name="id" value="00000000-0000-0000-0000-000000005004"/>
+            <column name="date" value="2026-06-01"/>
+            <column name="start_time" value="18:00:00"/>
+            <column name="end_time" value="19:30:00"/>
+            <column name="recurrence_group_id" value="00000000-0000-0000-0000-00000000f002"/>
+            <column name="status" value="SCHEDULED"/>
+            <column name="notes" value="U19 regular training"/>
+            <column name="team_id" value="00000000-0000-0000-0000-000000003002"/>
+            <column name="pitch_id" value="00000000-0000-0000-0000-000000004002"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="training_session">
+            <column name="id" value="00000000-0000-0000-0000-000000005005"/>
+            <column name="date" value="2026-06-03"/>
+            <column name="start_time" value="18:00:00"/>
+            <column name="end_time" value="19:30:00"/>
+            <column name="recurrence_group_id" value="00000000-0000-0000-0000-00000000f002"/>
+            <column name="status" value="SCHEDULED"/>
+            <column name="notes" value="U19 regular training"/>
+            <column name="team_id" value="00000000-0000-0000-0000-000000003002"/>
+            <column name="pitch_id" value="00000000-0000-0000-0000-000000004002"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="training_session">
+            <column name="id" value="00000000-0000-0000-0000-000000005006"/>
+            <column name="date" value="2026-06-05"/>
+            <column name="start_time" value="18:00:00"/>
+            <column name="end_time" value="19:30:00"/>
+            <column name="recurrence_group_id" value="00000000-0000-0000-0000-00000000f002"/>
+            <column name="status" value="SCHEDULED"/>
+            <column name="notes" value="U19 regular training"/>
+            <column name="team_id" value="00000000-0000-0000-0000-000000003002"/>
+            <column name="pitch_id" value="00000000-0000-0000-0000-000000004002"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

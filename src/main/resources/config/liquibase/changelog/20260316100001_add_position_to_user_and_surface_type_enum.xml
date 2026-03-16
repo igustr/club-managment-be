@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!--
+        Add position column to users table.
+        Values: GOALKEEPER, DEFENDER, MIDFIELDER, STRIKER
+    -->
+    <changeSet id="20260316100001-1" author="clubmanagement">
+        <addColumn tableName="users">
+            <column name="position" type="varchar(20)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <!--
+        Change surface_type column on pitch from varchar(100) to varchar(20).
+        Now stores SurfaceType enum: NATURAL_GRASS, ARTIFICIAL_TURF, INDOOR
+    -->
+    <changeSet id="20260316100001-2" author="clubmanagement">
+        <modifyDataType tableName="pitch" columnName="surface_type" newDataType="varchar(20)"/>
+    </changeSet>
+
+</databaseChangeLog>
