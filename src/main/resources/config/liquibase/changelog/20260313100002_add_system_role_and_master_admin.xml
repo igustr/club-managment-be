@@ -5,19 +5,28 @@
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
     <!--
-        Seed default admin user for development.
-        Email: admin@club.ee / Password: admin123
+        Add system_role column to users table for platform-level roles.
     -->
-    <changeSet id="20260307100001-1" author="clubmanagement" context="dev">
+    <changeSet id="20260313100002-1" author="clubmanagement">
+        <addColumn tableName="users">
+            <column name="system_role" type="varchar(20)"/>
+        </addColumn>
+    </changeSet>
+
+    <!--
+        Seed master admin user for platform management.
+        Email: master@admin.ee / Password: admin
+    -->
+    <changeSet id="20260313100002-2" author="clubmanagement">
         <insert tableName="users">
             <column name="id" valueComputed="gen_random_uuid()"/>
-            <column name="email" value="admin@club.ee"/>
-            <column name="password_hash" value="$2b$12$0ykkTu783lOC.Ed5B3StAObE/RAXr.GhWeLLylf77K/5jDgBJ.KXW"/>
-            <column name="first_name" value="Admin"/>
-            <column name="last_name" value="User"/>
+            <column name="email" value="master@admin.ee"/>
+            <column name="password_hash" value="$2b$12$64gxN6McXNrI6Z5/vEguyedaH5M5tXsPkblnOyQbEUUs4Pi/OvIK2"/>
+            <column name="first_name" value="Master"/>
+            <column name="last_name" value="Admin"/>
             <column name="date_of_birth" value="1990-01-01"/>
-            <column name="phone" value="+372 5551234"/>
-            <column name="role" value="CLUB_ADMIN"/>
+            <column name="phone" value="+372 5550000"/>
+            <column name="system_role" value="MASTER_ADMIN"/>
             <column name="active" valueBoolean="true"/>
             <column name="created_by" value="system"/>
             <column name="created_date" valueComputed="current_timestamp"/>

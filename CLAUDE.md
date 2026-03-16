@@ -142,6 +142,10 @@ docker compose up -d
 ./gradlew build
 ```
 
+## Frontend
+
+The React frontend for this project is at: `/Users/igorustritski/club-managment-fe`
+
 ## Reference Projects
 
 Patterns borrowed from these production projects:

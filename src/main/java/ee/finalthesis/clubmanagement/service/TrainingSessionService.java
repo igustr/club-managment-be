@@ -7,6 +7,7 @@ import ee.finalthesis.clubmanagement.domain.Pitch;
 import ee.finalthesis.clubmanagement.domain.Team;
 import ee.finalthesis.clubmanagement.domain.TrainingSession;
 import ee.finalthesis.clubmanagement.domain.enumeration.ClubRole;
+import ee.finalthesis.clubmanagement.domain.enumeration.SystemRole;
 import ee.finalthesis.clubmanagement.domain.enumeration.TrainingSessionStatus;
 import ee.finalthesis.clubmanagement.repository.PitchRepository;
 import ee.finalthesis.clubmanagement.repository.TeamMemberRepository;
@@ -48,7 +49,8 @@ public class TrainingSessionService {
     ClubRole role = SecurityUtils.getCurrentUserRole().orElse(null);
     UUID userId = SecurityUtils.getCurrentUserId().orElse(null);
 
-    if (role == ClubRole.ADMIN) {
+    if (role == ClubRole.CLUB_ADMIN
+        || SecurityUtils.getCurrentUserSystemRole().orElse(null) == SystemRole.MASTER_ADMIN) {
       return trainingSessionMapper.toDto(trainingSessionRepository.findByTeamClubId(clubId));
     }
 

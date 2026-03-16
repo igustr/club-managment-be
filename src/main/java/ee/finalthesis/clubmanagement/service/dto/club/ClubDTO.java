@@ -14,4 +14,5 @@ public class ClubDTO {
   private String address;
   private String contactEmail;
   private String contactPhone;
+  private String logoUrl;
 }

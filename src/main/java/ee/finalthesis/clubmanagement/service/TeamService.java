@@ -8,6 +8,7 @@ import ee.finalthesis.clubmanagement.domain.Team;
 import ee.finalthesis.clubmanagement.domain.TeamMember;
 import ee.finalthesis.clubmanagement.domain.User;
 import ee.finalthesis.clubmanagement.domain.enumeration.ClubRole;
+import ee.finalthesis.clubmanagement.domain.enumeration.SystemRole;
 import ee.finalthesis.clubmanagement.repository.ClubRepository;
 import ee.finalthesis.clubmanagement.repository.TeamMemberRepository;
 import ee.finalthesis.clubmanagement.repository.TeamRepository;
@@ -49,7 +50,8 @@ public class TeamService {
     ClubRole role = SecurityUtils.getCurrentUserRole().orElse(null);
     UUID userId = SecurityUtils.getCurrentUserId().orElse(null);
 
-    if (role == ClubRole.ADMIN) {
+    if (role == ClubRole.CLUB_ADMIN
+        || SecurityUtils.getCurrentUserSystemRole().orElse(null) == SystemRole.MASTER_ADMIN) {
       List<Team> teams = teamRepository.findByClubId(clubId);
       return teamMapper.toDto(teams);
     }

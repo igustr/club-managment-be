@@ -40,6 +40,9 @@ public class Club extends AbstractAuditingEntity<UUID> implements Serializable {
   @Size(max = 50) @Column(name = "contact_phone", length = 50)
   private String contactPhone;
 
+  @Size(max = 500) @Column(name = "logo_url", length = 500)
+  private String logoUrl;
+
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "club")
   @JsonIgnoreProperties(
       value = {"club"},

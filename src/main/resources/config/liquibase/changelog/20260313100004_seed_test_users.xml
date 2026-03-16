@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!--
+        Seed 10 unaffiliated test users (no club, no role).
+        All passwords: test123
+        bcrypt hash: $2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty
+    -->
+    <changeSet id="20260313100004-1" author="clubmanagement" context="dev">
+        <insert tableName="users">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="email" value="jaan.tamm@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Jaan"/>
+            <column name="last_name" value="Tamm"/>
+            <column name="date_of_birth" value="1995-03-15"/>
+            <column name="phone" value="+372 5550001"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+
+        <insert tableName="users">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="email" value="mari.kask@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Mari"/>
+            <column name="last_name" value="Kask"/>
+            <column name="date_of_birth" value="1998-07-22"/>
+            <column name="phone" value="+372 5550002"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+
+        <insert tableName="users">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="email" value="peeter.sepp@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Peeter"/>
+            <column name="last_name" value="Sepp"/>
+            <column name="date_of_birth" value="1992-11-08"/>
+            <column name="phone" value="+372 5550003"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+
+        <insert tableName="users">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="email" value="anna.lepik@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Anna"/>
+            <column name="last_name" value="Lepik"/>
+            <column name="date_of_birth" value="2010-05-30"/>
+            <column name="phone" value="+372 5550004"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+
+        <insert tableName="users">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="email" value="martin.mets@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Martin"/>
+            <column name="last_name" value="Mets"/>
+            <column name="date_of_birth" value="1988-09-12"/>
+            <column name="phone" value="+372 5550005"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+
+        <insert tableName="users">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="email" value="kristina.ivanova@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Kristina"/>
+            <column name="last_name" value="Ivanova"/>
+            <column name="date_of_birth" value="2000-01-25"/>
+            <column name="phone" value="+372 5550006"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+
+        <insert tableName="users">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="email" value="aleksei.petrov@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Aleksei"/>
+            <column name="last_name" value="Petrov"/>
+            <column name="date_of_birth" value="2011-08-19"/>
+            <column name="phone" value="+372 5550007"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+
+        <insert tableName="users">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="email" value="liisa.kuusk@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Liisa"/>
+            <column name="last_name" value="Kuusk"/>
+            <column name="date_of_birth" value="1997-04-03"/>
+            <column name="phone" value="+372 5550008"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+
+        <insert tableName="users">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="email" value="dmitri.sokolov@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Dmitri"/>
+            <column name="last_name" value="Sokolov"/>
+            <column name="date_of_birth" value="1985-12-01"/>
+            <column name="phone" value="+372 5550009"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+
+        <insert tableName="users">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="email" value="katrin.parn@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Katrin"/>
+            <column name="last_name" value="Parn"/>
+            <column name="date_of_birth" value="2012-06-14"/>
+            <column name="phone" value="+372 5550010"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

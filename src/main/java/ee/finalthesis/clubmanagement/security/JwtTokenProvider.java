@@ -2,6 +2,7 @@ package ee.finalthesis.clubmanagement.security;
 
 import ee.finalthesis.clubmanagement.config.SecurityProperties;
 import ee.finalthesis.clubmanagement.domain.enumeration.ClubRole;
+import ee.finalthesis.clubmanagement.domain.enumeration.SystemRole;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -23,6 +24,7 @@ public class JwtTokenProvider {
   private static final String CLAIM_EMAIL = "email";
   private static final String CLAIM_ROLE = "role";
   private static final String CLAIM_CLUB_ID = "clubId";
+  private static final String CLAIM_SYSTEM_ROLE = "systemRole";
   private static final String CLAIM_TYPE = "type";
   private static final String TOKEN_TYPE_ACCESS = "access";
   private static final String TOKEN_TYPE_REFRESH = "refresh";
@@ -46,6 +48,9 @@ public class JwtTokenProvider {
         .claim(CLAIM_ROLE, principal.getRole() != null ? principal.getRole().name() : null)
         .claim(
             CLAIM_CLUB_ID, principal.getClubId() != null ? principal.getClubId().toString() : null)
+        .claim(
+            CLAIM_SYSTEM_ROLE,
+            principal.getSystemRole() != null ? principal.getSystemRole().name() : null)
         .claim(CLAIM_TYPE, TOKEN_TYPE_ACCESS)
         .issuedAt(new Date(now))
         .expiration(new Date(now + validity))
@@ -72,11 +77,13 @@ public class JwtTokenProvider {
     String email = claims.get(CLAIM_EMAIL, String.class);
     String roleName = claims.get(CLAIM_ROLE, String.class);
     String clubIdStr = claims.get(CLAIM_CLUB_ID, String.class);
+    String systemRoleName = claims.get(CLAIM_SYSTEM_ROLE, String.class);
 
     ClubRole role = roleName != null ? ClubRole.valueOf(roleName) : null;
     UUID clubId = clubIdStr != null ? UUID.fromString(clubIdStr) : null;
+    SystemRole systemRole = systemRoleName != null ? SystemRole.valueOf(systemRoleName) : null;
 
-    UserPrincipal principal = UserPrincipal.fromToken(userId, email, role, clubId);
+    UserPrincipal principal = UserPrincipal.fromToken(userId, email, role, systemRole, clubId);
     return new UsernamePasswordAuthenticationToken(principal, token, principal.getAuthorities());
   }
 

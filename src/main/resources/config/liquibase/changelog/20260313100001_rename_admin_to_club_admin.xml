@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!--
+        Rename ClubRole.ADMIN to CLUB_ADMIN in the users table.
+    -->
+    <changeSet id="20260313100001-1" author="clubmanagement">
+        <update tableName="users">
+            <column name="role" value="CLUB_ADMIN"/>
+            <where>role = 'ADMIN'</where>
+        </update>
+    </changeSet>
+
+</databaseChangeLog>

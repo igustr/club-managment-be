@@ -31,6 +31,21 @@ public interface UserRepository extends JpaRepository<User, UUID> {
           + "LOWER(u.lastName) LIKE LOWER(CONCAT('%', :search, '%')))")
   Page<User> findUnaffiliatedBySearch(@Param("search") String search, Pageable pageable);
 
+  @Query(
+      "SELECT u FROM User u WHERE "
+          + "LOWER(u.email) LIKE LOWER(CONCAT('%', :search, '%')) OR "
+          + "LOWER(u.firstName) LIKE LOWER(CONCAT('%', :search, '%')) OR "
+          + "LOWER(u.lastName) LIKE LOWER(CONCAT('%', :search, '%'))")
+  Page<User> findBySearch(@Param("search") String search, Pageable pageable);
+
+  @Query(
+      "SELECT u FROM User u WHERE u.club.id = :clubId AND ("
+          + "LOWER(u.email) LIKE LOWER(CONCAT('%', :search, '%')) OR "
+          + "LOWER(u.firstName) LIKE LOWER(CONCAT('%', :search, '%')) OR "
+          + "LOWER(u.lastName) LIKE LOWER(CONCAT('%', :search, '%')))")
+  Page<User> findByClubIdAndSearch(
+      @Param("clubId") UUID clubId, @Param("search") String search, Pageable pageable);
+
   @Query("SELECT p FROM User u JOIN u.parents p WHERE u.id = :childId")
   List<User> findParentsByChildId(@Param("childId") UUID childId);
 
@@ -41,4 +56,6 @@ public interface UserRepository extends JpaRepository<User, UUID> {
       "SELECT COUNT(u) > 0 FROM User u JOIN u.parents p WHERE u.id = :childId AND p.id = :parentId")
   boolean existsParentChildRelationship(
       @Param("childId") UUID childId, @Param("parentId") UUID parentId);
+
+  long countByClubId(UUID clubId);
 }

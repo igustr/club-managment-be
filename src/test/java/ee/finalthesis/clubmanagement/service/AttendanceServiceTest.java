@@ -255,7 +255,7 @@ class AttendanceServiceTest {
 
   private void setSecurityContext(UUID userId) {
     UserPrincipal principal =
-        UserPrincipal.fromToken(userId, "test@test.com", ClubRole.PLAYER, UUID.randomUUID());
+        UserPrincipal.fromToken(userId, "test@test.com", ClubRole.PLAYER, null, UUID.randomUUID());
     UsernamePasswordAuthenticationToken auth =
         new UsernamePasswordAuthenticationToken(principal, null, principal.getAuthorities());
     SecurityContextHolder.getContext().setAuthentication(auth);

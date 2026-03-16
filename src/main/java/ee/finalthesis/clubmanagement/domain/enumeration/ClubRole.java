@@ -1,7 +1,7 @@
 package ee.finalthesis.clubmanagement.domain.enumeration;
 
 public enum ClubRole {
-  ADMIN,
+  CLUB_ADMIN,
   COACH,
   PLAYER,
   PARENT,

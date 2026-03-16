@@ -54,6 +54,8 @@ public class SecurityConfiguration {
                         "/swagger-ui.html",
                         "/actuator/health")
                     .permitAll()
+                    .requestMatchers("/api/admin/**")
+                    .hasRole("MASTER_ADMIN")
                     .anyRequest()
                     .authenticated())
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

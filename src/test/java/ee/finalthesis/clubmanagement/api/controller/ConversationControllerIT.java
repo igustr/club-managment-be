@@ -99,11 +99,11 @@ class ConversationControllerIT {
         clubRepository.saveAndFlush(
             Club.builder().name("FC Tartu").registrationCode("87654321").build());
 
-    adminUser = createUser("admin@test.com", ClubRole.ADMIN, club);
+    adminUser = createUser("admin@test.com", ClubRole.CLUB_ADMIN, club);
     coachUser = createUser("coach@test.com", ClubRole.COACH, club);
     playerUser = createUser("player@test.com", ClubRole.PLAYER, club);
     parentUser = createUser("parent@test.com", ClubRole.PARENT, club);
-    otherClubUser = createUser("other@test.com", ClubRole.ADMIN, otherClub);
+    otherClubUser = createUser("other@test.com", ClubRole.CLUB_ADMIN, otherClub);
 
     // Set up parent-child relationship: parentUser is parent of playerUser
     playerUser.setParents(new HashSet<>(Set.of(parentUser)));

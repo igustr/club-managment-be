@@ -1,6 +1,7 @@
 package ee.finalthesis.clubmanagement.security;
 
 import ee.finalthesis.clubmanagement.domain.enumeration.ClubRole;
+import ee.finalthesis.clubmanagement.domain.enumeration.SystemRole;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.AccessLevel;
@@ -25,6 +26,10 @@ public final class SecurityUtils {
 
   public static Optional<UUID> getCurrentUserClubId() {
     return getPrincipal().map(UserPrincipal::getClubId);
+  }
+
+  public static Optional<SystemRole> getCurrentUserSystemRole() {
+    return getPrincipal().map(UserPrincipal::getSystemRole);
   }
 
   public static boolean isAuthenticated() {

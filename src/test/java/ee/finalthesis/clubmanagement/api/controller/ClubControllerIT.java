@@ -84,7 +84,7 @@ class ClubControllerIT {
         clubRepository.saveAndFlush(
             Club.builder().name("FC Tartu").registrationCode("87654321").build());
 
-    adminUser = createUser("admin@test.com", ClubRole.ADMIN, club);
+    adminUser = createUser("admin@test.com", ClubRole.CLUB_ADMIN, club);
     coachUser = createUser("coach@test.com", ClubRole.COACH, club);
 
     adminToken = generateToken(adminUser);

@@ -90,7 +90,7 @@ class UserControllerIT {
         clubRepository.saveAndFlush(
             Club.builder().name("FC Tallinn").registrationCode("12345678").build());
 
-    adminUser = createUser("admin@test.com", ClubRole.ADMIN, club);
+    adminUser = createUser("admin@test.com", ClubRole.CLUB_ADMIN, club);
     coachUser = createUser("coach@test.com", ClubRole.COACH, club);
     playerUser = createUser("player@test.com", ClubRole.PLAYER, club);
     unaffiliatedUser = createUser("unaffiliated@test.com", null, null);
@@ -235,7 +235,7 @@ class UserControllerIT {
   @Test
   void updateUser_shouldUpdateRole() throws Exception {
     UpdateUserDTO request = new UpdateUserDTO();
-    request.setRole(ClubRole.ADMIN);
+    request.setRole(ClubRole.CLUB_ADMIN);
 
     mockMvc
         .perform(
@@ -244,10 +244,10 @@ class UserControllerIT {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(om.writeValueAsBytes(request)))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.role").value("ADMIN"));
+        .andExpect(jsonPath("$.role").value("CLUB_ADMIN"));
 
     User updated = userRepository.findById(coachUser.getId()).orElseThrow();
-    assertThat(updated.getRole()).isEqualTo(ClubRole.ADMIN);
+    assertThat(updated.getRole()).isEqualTo(ClubRole.CLUB_ADMIN);
   }
 
   // ========================

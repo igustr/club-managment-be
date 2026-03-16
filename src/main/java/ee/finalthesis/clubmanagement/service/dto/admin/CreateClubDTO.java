@@ -1,4 +1,4 @@
-package ee.finalthesis.clubmanagement.service.dto.club;
+package ee.finalthesis.clubmanagement.service.dto.admin;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -7,7 +7,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class UpdateClubDTO {
+public class CreateClubDTO {
 
   @NotBlank @Size(max = 255) private String name;
 

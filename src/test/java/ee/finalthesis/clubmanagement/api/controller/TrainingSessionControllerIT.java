@@ -95,7 +95,7 @@ class TrainingSessionControllerIT {
         clubRepository.saveAndFlush(
             Club.builder().name("FC Tallinn").registrationCode("12345678").build());
 
-    adminUser = createUser("admin@test.com", ClubRole.ADMIN, club);
+    adminUser = createUser("admin@test.com", ClubRole.CLUB_ADMIN, club);
     coachUser = createUser("coach@test.com", ClubRole.COACH, club);
     playerUser = createUser("player@test.com", ClubRole.PLAYER, club);
 

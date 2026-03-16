@@ -39,6 +39,7 @@ public class ClubService {
     club.setAddress(request.getAddress());
     club.setContactEmail(request.getContactEmail());
     club.setContactPhone(request.getContactPhone());
+    club.setLogoUrl(request.getLogoUrl());
 
     club = clubRepository.save(club);
     return clubMapper.toDto(club);

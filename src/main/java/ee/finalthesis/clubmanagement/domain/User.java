@@ -3,6 +3,7 @@ package ee.finalthesis.clubmanagement.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import ee.finalthesis.clubmanagement.domain.enumeration.ClubRole;
+import ee.finalthesis.clubmanagement.domain.enumeration.SystemRole;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -54,6 +55,10 @@ public class User extends AbstractAuditingEntity<UUID> implements Serializable {
   @Enumerated(EnumType.STRING)
   @Column(name = "role", length = 20)
   private ClubRole role;
+
+  @Enumerated(EnumType.STRING)
+  @Column(name = "system_role", length = 20)
+  private SystemRole systemRole;
 
   @NotNull @Column(name = "active", nullable = false)
   @Builder.Default

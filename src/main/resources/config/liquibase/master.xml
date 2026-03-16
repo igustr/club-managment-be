@@ -38,4 +38,10 @@
     <!-- Seed data -->
     <include file="config/liquibase/changelog/20260307100001_seed_admin_user.xml" relativeToChangelogFile="false"/>
 
+    <!-- Role rename and master admin -->
+    <include file="config/liquibase/changelog/20260313100001_rename_admin_to_club_admin.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260313100002_add_system_role_and_master_admin.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260313100003_add_logo_url_to_club.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260313100004_seed_test_users.xml" relativeToChangelogFile="false"/>
+
 </databaseChangeLog>

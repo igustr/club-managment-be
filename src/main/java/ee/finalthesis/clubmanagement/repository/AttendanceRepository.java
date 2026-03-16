@@ -17,4 +17,11 @@ public interface AttendanceRepository extends JpaRepository<Attendance, UUID> {
   boolean existsByTrainingSessionIdAndUserId(UUID trainingSessionId, UUID userId);
 
   void deleteByTrainingSessionId(UUID trainingSessionId);
+
+  List<Attendance> findByTrainingSessionTeamClubId(UUID clubId);
+
+  List<Attendance> findByUserIdAndTrainingSessionTeamClubId(UUID userId, UUID clubId);
+
+  List<Attendance> findByTrainingSessionTeamIdAndTrainingSessionTeamClubId(
+      UUID teamId, UUID clubId);
 }

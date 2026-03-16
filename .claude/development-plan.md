@@ -192,6 +192,7 @@ Club
 ├── address: String (nullable)
 ├── contact_email: String
 ├── contact_phone: String (nullable)
+├── logo_url: String (nullable, max 500 — club logo URL)
 └── audit fields
 
 Team

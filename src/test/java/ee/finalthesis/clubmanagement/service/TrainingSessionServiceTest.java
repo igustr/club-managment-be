@@ -250,7 +250,7 @@ class TrainingSessionServiceTest {
   @Test
   void listTrainings_asAdmin_shouldReturnAll() {
     UUID clubId = UUID.randomUUID();
-    setSecurityContext(ClubRole.ADMIN);
+    setSecurityContext(ClubRole.CLUB_ADMIN);
 
     when(trainingSessionRepository.findByTeamClubId(clubId)).thenReturn(List.of());
     when(trainingSessionMapper.toDto(anyList())).thenReturn(List.of());
@@ -288,7 +288,7 @@ class TrainingSessionServiceTest {
   }
 
   private void setSecurityContext(UUID userId, ClubRole role, UUID clubId) {
-    UserPrincipal principal = UserPrincipal.fromToken(userId, "test@test.com", role, clubId);
+    UserPrincipal principal = UserPrincipal.fromToken(userId, "test@test.com", role, null, clubId);
     UsernamePasswordAuthenticationToken auth =
         new UsernamePasswordAuthenticationToken(principal, null, principal.getAuthorities());
     SecurityContextHolder.getContext().setAuthentication(auth);

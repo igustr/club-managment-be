@@ -91,7 +91,7 @@ class PitchControllerIT {
         clubRepository.saveAndFlush(
             Club.builder().name("FC Tartu").registrationCode("87654321").build());
 
-    adminUser = createUser("admin@test.com", ClubRole.ADMIN, club);
+    adminUser = createUser("admin@test.com", ClubRole.CLUB_ADMIN, club);
     coachUser = createUser("coach@test.com", ClubRole.COACH, club);
 
     pitch =
@@ -140,7 +140,7 @@ class PitchControllerIT {
 
   @Test
   void listPitches_asNonMember_shouldReturn403() throws Exception {
-    User otherUser = createUser("other@test.com", ClubRole.ADMIN, otherClub);
+    User otherUser = createUser("other@test.com", ClubRole.CLUB_ADMIN, otherClub);
     String otherToken = generateToken(otherUser);
 
     mockMvc

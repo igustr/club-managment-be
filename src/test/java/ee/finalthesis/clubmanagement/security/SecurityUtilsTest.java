@@ -46,7 +46,7 @@ class SecurityUtilsTest {
   @Test
   void getCurrentUserClubId_shouldReturnClubId() {
     UUID clubId = UUID.randomUUID();
-    setAuthentication(UUID.randomUUID(), "user@test.com", ClubRole.ADMIN, clubId);
+    setAuthentication(UUID.randomUUID(), "user@test.com", ClubRole.CLUB_ADMIN, clubId);
 
     assertThat(SecurityUtils.getCurrentUserClubId()).isPresent().contains(clubId);
   }
@@ -60,7 +60,7 @@ class SecurityUtilsTest {
 
   @Test
   void isAuthenticated_withUserPrincipal_shouldReturnTrue() {
-    setAuthentication(UUID.randomUUID(), "user@test.com", ClubRole.ADMIN, UUID.randomUUID());
+    setAuthentication(UUID.randomUUID(), "user@test.com", ClubRole.CLUB_ADMIN, UUID.randomUUID());
 
     assertThat(SecurityUtils.isAuthenticated()).isTrue();
   }
@@ -80,7 +80,7 @@ class SecurityUtilsTest {
   }
 
   private void setAuthentication(UUID userId, String email, ClubRole role, UUID clubId) {
-    UserPrincipal principal = UserPrincipal.fromToken(userId, email, role, clubId);
+    UserPrincipal principal = UserPrincipal.fromToken(userId, email, role, null, clubId);
     UsernamePasswordAuthenticationToken auth =
         new UsernamePasswordAuthenticationToken(principal, null, principal.getAuthorities());
     SecurityContextHolder.getContext().setAuthentication(auth);
