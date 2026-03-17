@@ -15,7 +15,6 @@ import ee.finalthesis.clubmanagement.service.dto.chat.MessageDTO;
 import ee.finalthesis.clubmanagement.service.dto.chat.SendMessageDTO;
 import ee.finalthesis.clubmanagement.service.mapper.MessageMapper;
 import java.time.Instant;
-import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -93,14 +92,8 @@ public class MessageService {
     conversationRepository.save(conversation);
 
     // Increment unread count for all participants except sender
-    List<ConversationReadStatus> readStatuses =
-        conversationReadStatusRepository.findByConversationId(conversationId);
-    for (ConversationReadStatus rs : readStatuses) {
-      if (!rs.getUser().getId().equals(currentUserId)) {
-        rs.setUnreadCount(rs.getUnreadCount() + 1);
-        conversationReadStatusRepository.save(rs);
-      }
-    }
+    conversationReadStatusRepository.incrementUnreadCountExcludingUser(
+        conversationId, currentUserId);
 
     return messageMapper.toDto(message);
   }

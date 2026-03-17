@@ -197,12 +197,12 @@ class AttendanceServiceTest {
     TeamMember tm1 = TeamMember.builder().user(user1).team(team).build();
     TeamMember tm2 = TeamMember.builder().user(user2).team(team).build();
 
+    when(attendanceRepository.findUserIdsByTrainingSessionId(trainingId)).thenReturn(List.of());
     when(teamMemberRepository.findByTeamId(teamId)).thenReturn(List.of(tm1, tm2));
-    when(attendanceRepository.existsByTrainingSessionIdAndUserId(any(), any())).thenReturn(false);
 
     attendanceService.createAttendanceForTraining(training);
 
-    verify(attendanceRepository, times(2)).save(any(Attendance.class));
+    verify(attendanceRepository).saveAll(anyList());
   }
 
   @Test
@@ -219,15 +219,16 @@ class AttendanceServiceTest {
     TeamMember tm1 = TeamMember.builder().user(user1).team(team).build();
     TeamMember tm2 = TeamMember.builder().user(user2).team(team).build();
 
+    when(attendanceRepository.findUserIdsByTrainingSessionId(trainingId))
+        .thenReturn(List.of(user1.getId()));
     when(teamMemberRepository.findByTeamId(teamId)).thenReturn(List.of(tm1, tm2));
-    when(attendanceRepository.existsByTrainingSessionIdAndUserId(trainingId, user1.getId()))
-        .thenReturn(true);
-    when(attendanceRepository.existsByTrainingSessionIdAndUserId(trainingId, user2.getId()))
-        .thenReturn(false);
 
     attendanceService.createAttendanceForTraining(training);
 
-    verify(attendanceRepository, times(1)).save(any(Attendance.class));
+    @SuppressWarnings("unchecked")
+    var captor = org.mockito.ArgumentCaptor.forClass(List.class);
+    verify(attendanceRepository).saveAll(captor.capture());
+    assertThat(captor.getValue()).hasSize(1);
   }
 
   @Test

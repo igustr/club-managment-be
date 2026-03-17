@@ -211,7 +211,9 @@ class UserServiceTest {
     when(userRepository.findById(parentId)).thenReturn(Optional.of(parent));
     when(teamMemberRepository.findByUserId(childId)).thenReturn(List.of(tm));
     when(userRepository.findChildrenByParentId(parentId)).thenReturn(List.of(child, otherChild));
-    when(teamMemberRepository.existsByTeamIdAndUserId(teamId, otherChildId)).thenReturn(true);
+    when(teamMemberRepository.findTeamIdsByUserIdsAndTeamIds(
+            List.of(otherChildId), List.of(teamId)))
+        .thenReturn(List.of(teamId));
 
     userService.unlinkParent(clubId, childId, parentId);
 

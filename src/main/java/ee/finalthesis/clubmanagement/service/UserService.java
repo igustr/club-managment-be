@@ -39,8 +39,7 @@ public class UserService {
   private final MessageSource messageSource;
 
   @Transactional(readOnly = true)
-  public Page<UserDTO> listClubUsers(
-      UUID clubId, String search, ClubRole role, Pageable pageable) {
+  public Page<UserDTO> listClubUsers(UUID clubId, String search, ClubRole role, Pageable pageable) {
     boolean hasSearch = search != null && !search.isBlank();
     boolean hasRole = role != null;
 
@@ -221,13 +220,21 @@ public class UserService {
     List<TeamMember> childTeamMemberships = teamMemberRepository.findByUserId(userId);
     List<User> parentOtherChildren = userRepository.findChildrenByParentId(parentId);
 
+    List<UUID> otherChildIds =
+        parentOtherChildren.stream().map(User::getId).filter(id -> !id.equals(userId)).toList();
+
+    List<UUID> teamIds = childTeamMemberships.stream().map(tm -> tm.getTeam().getId()).toList();
+
+    // Batch-fetch which teams the parent's other children belong to
+    java.util.Set<UUID> teamsWithOtherChildren =
+        otherChildIds.isEmpty() || teamIds.isEmpty()
+            ? java.util.Set.of()
+            : new java.util.HashSet<>(
+                teamMemberRepository.findTeamIdsByUserIdsAndTeamIds(otherChildIds, teamIds));
+
     for (TeamMember tm : childTeamMemberships) {
       UUID teamId = tm.getTeam().getId();
-      boolean parentHasOtherChildInTeam =
-          parentOtherChildren.stream()
-              .filter(c -> !c.getId().equals(userId))
-              .anyMatch(c -> teamMemberRepository.existsByTeamIdAndUserId(teamId, c.getId()));
-      if (!parentHasOtherChildInTeam) {
+      if (!teamsWithOtherChildren.contains(teamId)) {
         conversationService.removeParticipantFromTeamConversation(teamId, parentId);
       }
     }

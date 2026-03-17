@@ -52,4 +52,15 @@ public interface TrainingSessionRepository extends JpaRepository<TrainingSession
       @Param("pitchId") UUID pitchId,
       @Param("startDate") LocalDate startDate,
       @Param("endDate") LocalDate endDate);
+
+  long countByTeamId(UUID teamId);
+
+  long countByTeamClubId(UUID clubId);
+
+  @Query(
+      "SELECT ts.team.id, COUNT(ts) FROM TrainingSession ts"
+          + " WHERE ts.team.club.id = :clubId GROUP BY ts.team.id")
+  List<Object[]> countByTeamIdGroupByTeam(@Param("clubId") UUID clubId);
+
+  List<TrainingSession> findByTeamIdIn(List<UUID> teamIds);
 }

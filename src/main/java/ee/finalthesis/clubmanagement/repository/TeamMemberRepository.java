@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -23,4 +25,17 @@ public interface TeamMemberRepository extends JpaRepository<TeamMember, UUID> {
   void deleteByTeamIdAndUserId(UUID teamId, UUID userId);
 
   void deleteByUserId(UUID userId);
+
+  long countByTeamId(UUID teamId);
+
+  @Query(
+      "SELECT tm.team.id, COUNT(tm) FROM TeamMember tm"
+          + " WHERE tm.team.club.id = :clubId GROUP BY tm.team.id")
+  List<Object[]> countByTeamIdGroupByTeam(@Param("clubId") UUID clubId);
+
+  @Query(
+      "SELECT tm.team.id FROM TeamMember tm"
+          + " WHERE tm.user.id IN :userIds AND tm.team.id IN :teamIds")
+  List<UUID> findTeamIdsByUserIdsAndTeamIds(
+      @Param("userIds") List<UUID> userIds, @Param("teamIds") List<UUID> teamIds);
 }

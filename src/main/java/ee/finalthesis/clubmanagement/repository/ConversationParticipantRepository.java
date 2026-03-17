@@ -2,6 +2,7 @@ package ee.finalthesis.clubmanagement.repository;
 
 import ee.finalthesis.clubmanagement.domain.Conversation;
 import ee.finalthesis.clubmanagement.domain.ConversationParticipant;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -34,4 +35,9 @@ public interface ConversationParticipantRepository
           + " ee.finalthesis.clubmanagement.domain.enumeration.ConversationType.DIRECT AND"
           + " cp1.conversation.club.id = :clubId")
   Optional<Conversation> findDirectConversation(UUID userId1, UUID userId2, UUID clubId);
+
+  @Query(
+      "SELECT cp FROM ConversationParticipant cp JOIN FETCH cp.user"
+          + " WHERE cp.conversation.id IN :conversationIds")
+  List<ConversationParticipant> findByConversationIdIn(Collection<UUID> conversationIds);
 }

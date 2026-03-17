@@ -3,6 +3,7 @@ package ee.finalthesis.clubmanagement.service;
 import ee.finalthesis.clubmanagement.common.exception.ResourceNotFoundException;
 import ee.finalthesis.clubmanagement.domain.Attendance;
 import ee.finalthesis.clubmanagement.domain.Team;
+import ee.finalthesis.clubmanagement.domain.User;
 import ee.finalthesis.clubmanagement.domain.enumeration.AttendanceStatus;
 import ee.finalthesis.clubmanagement.repository.AttendanceRepository;
 import ee.finalthesis.clubmanagement.repository.TeamMemberRepository;
@@ -13,8 +14,9 @@ import ee.finalthesis.clubmanagement.service.dto.statistics.ClubStatisticsDTO;
 import ee.finalthesis.clubmanagement.service.dto.statistics.MonthlyAttendanceDTO;
 import ee.finalthesis.clubmanagement.service.dto.statistics.PlayerStatisticsDTO;
 import ee.finalthesis.clubmanagement.service.dto.statistics.TeamStatisticsDTO;
-import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
+import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -35,22 +37,18 @@ public class StatisticsService {
 
   @Transactional(readOnly = true)
   public PlayerStatisticsDTO getPlayerStatistics(UUID clubId, UUID userId) {
-    userRepository
-        .findByIdAndClubId(userId, clubId)
-        .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
+    User user =
+        userRepository
+            .findByIdAndClubId(userId, clubId)
+            .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
 
-    List<Attendance> attendances =
-        attendanceRepository.findByUserIdAndTrainingSessionTeamClubId(userId, clubId);
+    Map<AttendanceStatus, Long> statusCounts =
+        toStatusMap(attendanceRepository.countByStatusForUserAndClub(userId, clubId));
 
-    int total = attendances.size();
-    int confirmed =
-        (int) attendances.stream().filter(a -> a.getStatus() == AttendanceStatus.CONFIRMED).count();
-    int declined =
-        (int) attendances.stream().filter(a -> a.getStatus() == AttendanceStatus.DECLINED).count();
-    int pending =
-        (int) attendances.stream().filter(a -> a.getStatus() == AttendanceStatus.PENDING).count();
-
-    var user = userRepository.findByIdAndClubId(userId, clubId).get();
+    int confirmed = statusCounts.getOrDefault(AttendanceStatus.CONFIRMED, 0L).intValue();
+    int declined = statusCounts.getOrDefault(AttendanceStatus.DECLINED, 0L).intValue();
+    int pending = statusCounts.getOrDefault(AttendanceStatus.PENDING, 0L).intValue();
+    int total = confirmed + declined + pending;
 
     return PlayerStatisticsDTO.builder()
         .userId(userId)
@@ -71,14 +69,14 @@ public class StatisticsService {
             .findByIdAndClubId(teamId, clubId)
             .orElseThrow(() -> new ResourceNotFoundException("Team", "id", teamId));
 
+    long totalTrainings = trainingSessionRepository.countByTeamId(teamId);
+    long memberCount = teamMemberRepository.countByTeamId(teamId);
+
+    // Load all attendance for this team and group by user in Java
     List<Attendance> teamAttendances =
         attendanceRepository.findByTrainingSessionTeamIdAndTrainingSessionTeamClubId(
             teamId, clubId);
 
-    int totalTrainings = trainingSessionRepository.findByTeamId(teamId).size();
-    int memberCount = teamMemberRepository.findByTeamId(teamId).size();
-
-    // Group by user to get per-player stats
     Map<UUID, List<Attendance>> byUser =
         teamAttendances.stream().collect(Collectors.groupingBy(a -> a.getUser().getId()));
 
@@ -86,7 +84,7 @@ public class StatisticsService {
         byUser.entrySet().stream()
             .map(
                 entry -> {
-                  UUID userId = entry.getKey();
+                  UUID uid = entry.getKey();
                   List<Attendance> userAttendances = entry.getValue();
                   int total = userAttendances.size();
                   int confirmed =
@@ -104,12 +102,12 @@ public class StatisticsService {
                           userAttendances.stream()
                               .filter(a -> a.getStatus() == AttendanceStatus.PENDING)
                               .count();
-                  var user = userAttendances.get(0).getUser();
+                  var u = userAttendances.get(0).getUser();
 
                   return PlayerStatisticsDTO.builder()
-                      .userId(userId)
-                      .firstName(user.getFirstName())
-                      .lastName(user.getLastName())
+                      .userId(uid)
+                      .firstName(u.getFirstName())
+                      .lastName(u.getLastName())
                       .totalTrainings(total)
                       .confirmedCount(confirmed)
                       .declinedCount(declined)
@@ -135,8 +133,8 @@ public class StatisticsService {
     return TeamStatisticsDTO.builder()
         .teamId(teamId)
         .teamName(team.getName())
-        .memberCount(memberCount)
-        .totalTrainings(totalTrainings)
+        .memberCount((int) memberCount)
+        .totalTrainings((int) totalTrainings)
         .averageAttendanceRate(avgRate)
         .playerStatistics(playerStats)
         .build();
@@ -146,85 +144,97 @@ public class StatisticsService {
   public ClubStatisticsDTO getClubStatistics(UUID clubId) {
     long totalMembers = userRepository.countByClubId(clubId);
     List<Team> teams = teamRepository.findByClubId(clubId);
-    int totalTrainings = trainingSessionRepository.findByTeamClubId(clubId).size();
+    long totalTrainings = trainingSessionRepository.countByTeamClubId(clubId);
 
-    List<Attendance> allAttendances = attendanceRepository.findByTrainingSessionTeamClubId(clubId);
-
-    // Overall attendance rate
-    long totalConfirmed =
-        allAttendances.stream().filter(a -> a.getStatus() == AttendanceStatus.CONFIRMED).count();
+    // Club-wide attendance counts via GROUP BY
+    Map<AttendanceStatus, Long> clubStatusCounts =
+        toStatusMap(attendanceRepository.countByStatusForClub(clubId));
+    long totalConfirmed = clubStatusCounts.getOrDefault(AttendanceStatus.CONFIRMED, 0L);
+    long totalAttendances = clubStatusCounts.values().stream().mapToLong(Long::longValue).sum();
     double overallRate =
-        allAttendances.isEmpty()
-            ? 0.0
-            : Math.round(totalConfirmed * 1000.0 / allAttendances.size()) / 10.0;
+        totalAttendances == 0 ? 0.0 : Math.round(totalConfirmed * 1000.0 / totalAttendances) / 10.0;
 
-    // Per-team statistics (summary only, no player details)
+    // Per-team training counts (single query)
+    Map<UUID, Long> trainingCountsByTeam = new HashMap<>();
+    for (Object[] row : trainingSessionRepository.countByTeamIdGroupByTeam(clubId)) {
+      trainingCountsByTeam.put((UUID) row[0], (Long) row[1]);
+    }
+
+    // Per-team member counts (single query)
+    Map<UUID, Long> memberCountsByTeam = new HashMap<>();
+    for (Object[] row : teamMemberRepository.countByTeamIdGroupByTeam(clubId)) {
+      memberCountsByTeam.put((UUID) row[0], (Long) row[1]);
+    }
+
+    // Per-team attendance by status (single query)
+    // Map: teamId -> status -> count
+    Map<UUID, Map<AttendanceStatus, Long>> teamAttendanceCounts = new HashMap<>();
+    for (Object[] row : attendanceRepository.countByTeamAndStatusForClub(clubId)) {
+      UUID teamId = (UUID) row[0];
+      AttendanceStatus status = (AttendanceStatus) row[1];
+      long count = (Long) row[2];
+      teamAttendanceCounts
+          .computeIfAbsent(teamId, k -> new EnumMap<>(AttendanceStatus.class))
+          .put(status, count);
+    }
+
     List<TeamStatisticsDTO> teamStats =
         teams.stream()
             .map(
                 team -> {
-                  List<Attendance> teamAttendances =
-                      allAttendances.stream()
-                          .filter(
-                              a -> a.getTrainingSession().getTeam().getId().equals(team.getId()))
-                          .toList();
-
-                  int teamTrainings = trainingSessionRepository.findByTeamId(team.getId()).size();
-                  int memberCount = teamMemberRepository.findByTeamId(team.getId()).size();
-
-                  long teamConfirmed =
-                      teamAttendances.stream()
-                          .filter(a -> a.getStatus() == AttendanceStatus.CONFIRMED)
-                          .count();
+                  long teamTrainings = trainingCountsByTeam.getOrDefault(team.getId(), 0L);
+                  long members = memberCountsByTeam.getOrDefault(team.getId(), 0L);
+                  Map<AttendanceStatus, Long> statusMap =
+                      teamAttendanceCounts.getOrDefault(
+                          team.getId(), new EnumMap<>(AttendanceStatus.class));
+                  long teamTotal = statusMap.values().stream().mapToLong(Long::longValue).sum();
+                  long teamConfirmed = statusMap.getOrDefault(AttendanceStatus.CONFIRMED, 0L);
                   double teamRate =
-                      teamAttendances.isEmpty()
-                          ? 0.0
-                          : Math.round(teamConfirmed * 1000.0 / teamAttendances.size()) / 10.0;
+                      teamTotal == 0 ? 0.0 : Math.round(teamConfirmed * 1000.0 / teamTotal) / 10.0;
 
                   return TeamStatisticsDTO.builder()
                       .teamId(team.getId())
                       .teamName(team.getName())
-                      .memberCount(memberCount)
-                      .totalTrainings(teamTrainings)
+                      .memberCount((int) members)
+                      .totalTrainings((int) teamTrainings)
                       .averageAttendanceRate(teamRate)
                       .build();
                 })
             .sorted(Comparator.comparing(TeamStatisticsDTO::getTeamName))
             .toList();
 
-    // Monthly attendance (last 12 months)
-    DateTimeFormatter monthFormatter = DateTimeFormatter.ofPattern("yyyy-MM");
-    Map<String, List<Attendance>> byMonth =
-        allAttendances.stream()
-            .collect(
-                Collectors.groupingBy(
-                    a -> a.getTrainingSession().getDate().format(monthFormatter)));
+    // Monthly attendance via GROUP BY
+    Map<String, Map<AttendanceStatus, Long>> monthlyStatusCounts = new HashMap<>();
+    for (Object[] row : attendanceRepository.countByMonthAndStatusForClub(clubId)) {
+      String month = (String) row[0];
+      AttendanceStatus status = (AttendanceStatus) row[1];
+      long count = (Long) row[2];
+      monthlyStatusCounts
+          .computeIfAbsent(month, k -> new EnumMap<>(AttendanceStatus.class))
+          .put(status, count);
+    }
 
     List<MonthlyAttendanceDTO> monthlyAttendance =
-        byMonth.entrySet().stream()
+        monthlyStatusCounts.entrySet().stream()
             .map(
                 entry -> {
-                  List<Attendance> monthAttendances = entry.getValue();
-                  long monthConfirmed =
-                      monthAttendances.stream()
-                          .filter(a -> a.getStatus() == AttendanceStatus.CONFIRMED)
-                          .count();
-                  long monthTrainings =
-                      monthAttendances.stream()
-                          .map(a -> a.getTrainingSession().getId())
-                          .distinct()
-                          .count();
+                  String month = entry.getKey();
+                  Map<AttendanceStatus, Long> statusMap = entry.getValue();
+                  long monthTotal = statusMap.values().stream().mapToLong(Long::longValue).sum();
+                  long monthConfirmed = statusMap.getOrDefault(AttendanceStatus.CONFIRMED, 0L);
+                  int monthTrainings =
+                      attendanceRepository.countDistinctTrainingSessionsByClubAndMonth(
+                          clubId, month);
 
                   return MonthlyAttendanceDTO.builder()
-                      .month(entry.getKey())
-                      .totalTrainings((int) monthTrainings)
-                      .totalAttendances(monthAttendances.size())
+                      .month(month)
+                      .totalTrainings(monthTrainings)
+                      .totalAttendances((int) monthTotal)
                       .confirmedCount((int) monthConfirmed)
                       .attendanceRate(
-                          monthAttendances.isEmpty()
+                          monthTotal == 0
                               ? 0.0
-                              : Math.round(monthConfirmed * 1000.0 / monthAttendances.size())
-                                  / 10.0)
+                              : Math.round(monthConfirmed * 1000.0 / monthTotal) / 10.0)
                       .build();
                 })
             .sorted(Comparator.comparing(MonthlyAttendanceDTO::getMonth))
@@ -233,10 +243,18 @@ public class StatisticsService {
     return ClubStatisticsDTO.builder()
         .totalMembers((int) totalMembers)
         .totalTeams(teams.size())
-        .totalTrainings(totalTrainings)
+        .totalTrainings((int) totalTrainings)
         .overallAttendanceRate(overallRate)
         .teamStatistics(teamStats)
         .monthlyAttendance(monthlyAttendance)
         .build();
+  }
+
+  private Map<AttendanceStatus, Long> toStatusMap(List<Object[]> rows) {
+    Map<AttendanceStatus, Long> map = new EnumMap<>(AttendanceStatus.class);
+    for (Object[] row : rows) {
+      map.put((AttendanceStatus) row[0], (Long) row[1]);
+    }
+    return map;
   }
 }

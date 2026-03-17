@@ -19,10 +19,13 @@ import ee.finalthesis.clubmanagement.service.dto.chat.CreateDirectConversationDT
 import ee.finalthesis.clubmanagement.service.dto.chat.CreateGroupConversationDTO;
 import ee.finalthesis.clubmanagement.service.dto.chat.ParticipantDTO;
 import ee.finalthesis.clubmanagement.service.mapper.ConversationMapper;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -97,7 +100,32 @@ public class ConversationService {
     List<Conversation> conversations =
         conversationParticipantRepository.findConversationsByUserIdAndClubId(currentUserId, clubId);
 
-    return conversations.stream().map(c -> enrichConversationDto(c, currentUserId)).toList();
+    if (conversations.isEmpty()) {
+      return List.of();
+    }
+
+    List<UUID> conversationIds = conversations.stream().map(Conversation::getId).toList();
+
+    // Batch-fetch participants and read statuses for all conversations
+    Map<UUID, List<ConversationParticipant>> participantsByConversation =
+        conversationParticipantRepository.findByConversationIdIn(conversationIds).stream()
+            .collect(Collectors.groupingBy(cp -> cp.getConversation().getId()));
+
+    Map<UUID, ConversationReadStatus> readStatusByConversation =
+        conversationReadStatusRepository
+            .findByUserIdAndConversationIdIn(currentUserId, conversationIds)
+            .stream()
+            .collect(Collectors.toMap(rs -> rs.getConversation().getId(), rs -> rs));
+
+    return conversations.stream()
+        .map(
+            c ->
+                enrichConversationDtoBatch(
+                    c,
+                    currentUserId,
+                    participantsByConversation.getOrDefault(c.getId(), List.of()),
+                    readStatusByConversation.get(c.getId())))
+        .toList();
   }
 
   @Transactional
@@ -167,21 +195,30 @@ public class ConversationService {
     // Add the creator as participant
     addParticipantWithReadStatus(conversation, currentUser);
 
-    // Add all requested participants
-    for (UUID participantId : request.getParticipantIds()) {
-      if (participantId.equals(currentUserId)) {
-        continue; // skip creator, already added
+    // Batch-load all requested participants
+    List<UUID> otherIds =
+        request.getParticipantIds().stream().filter(id -> !id.equals(currentUserId)).toList();
+
+    if (!otherIds.isEmpty()) {
+      List<User> participants = userRepository.findByIdInAndClubId(otherIds, clubId);
+      if (participants.size() != otherIds.size()) {
+        throw new BadRequestException(
+            msg("error.conversation.participantNotInClub"), "conversation", "participantNotInClub");
       }
-      User participant =
-          userRepository
-              .findByIdAndClubId(participantId, clubId)
-              .orElseThrow(
-                  () ->
-                      new BadRequestException(
-                          msg("error.conversation.participantNotInClub"),
-                          "conversation",
-                          "participantNotInClub"));
-      addParticipantWithReadStatus(conversation, participant);
+      List<ConversationParticipant> newParticipants = new ArrayList<>();
+      List<ConversationReadStatus> newReadStatuses = new ArrayList<>();
+      for (User participant : participants) {
+        newParticipants.add(
+            ConversationParticipant.builder().conversation(conversation).user(participant).build());
+        newReadStatuses.add(
+            ConversationReadStatus.builder()
+                .conversation(conversation)
+                .user(participant)
+                .unreadCount(0)
+                .build());
+      }
+      conversationParticipantRepository.saveAll(newParticipants);
+      conversationReadStatusRepository.saveAll(newReadStatuses);
     }
 
     return enrichConversationDto(conversation, currentUserId);
@@ -242,6 +279,41 @@ public class ConversationService {
             .unreadCount(0)
             .build();
     conversationReadStatusRepository.save(readStatus);
+  }
+
+  private ConversationDTO enrichConversationDtoBatch(
+      Conversation conversation,
+      UUID currentUserId,
+      List<ConversationParticipant> participants,
+      ConversationReadStatus readStatus) {
+    ConversationDTO dto = conversationMapper.toDto(conversation);
+
+    List<ParticipantDTO> participantDtos = conversationMapper.toParticipantDto(participants);
+    dto.setParticipants(participantDtos);
+
+    if (conversation.getType() == ConversationType.TEAM && conversation.getTeam() != null) {
+      dto.setName(conversation.getTeam().getName());
+    } else if (conversation.getType() == ConversationType.GROUP && conversation.getName() != null) {
+      dto.setName(conversation.getName());
+    } else if (conversation.getType() == ConversationType.DIRECT) {
+      participantDtos.stream()
+          .filter(p -> !p.getUserId().equals(currentUserId))
+          .findFirst()
+          .ifPresent(p -> dto.setName(p.getFirstName() + " " + p.getLastName()));
+    }
+
+    if (conversation.getLastMessageSender() != null) {
+      dto.setLastMessageSenderName(
+          conversation.getLastMessageSender().getFirstName()
+              + " "
+              + conversation.getLastMessageSender().getLastName());
+    }
+
+    if (readStatus != null) {
+      dto.setUnreadCount(readStatus.getUnreadCount());
+    }
+
+    return dto;
   }
 
   private ConversationDTO enrichConversationDto(Conversation conversation, UUID currentUserId) {

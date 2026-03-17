@@ -39,17 +39,19 @@ public class AttendanceService {
 
   @Transactional
   public void createAttendanceForTraining(TrainingSession training) {
-    teamMemberRepository.findByTeamId(training.getTeam().getId()).stream()
-        .filter(
-            tm ->
-                !attendanceRepository.existsByTrainingSessionIdAndUserId(
-                    training.getId(), tm.getUser().getId()))
-        .forEach(
-            tm -> {
-              Attendance attendance =
-                  Attendance.builder().trainingSession(training).user(tm.getUser()).build();
-              attendanceRepository.save(attendance);
-            });
+    List<UUID> existingUserIds =
+        attendanceRepository.findUserIdsByTrainingSessionId(training.getId());
+    var existingSet = new java.util.HashSet<>(existingUserIds);
+
+    List<Attendance> newAttendances =
+        teamMemberRepository.findByTeamId(training.getTeam().getId()).stream()
+            .filter(tm -> !existingSet.contains(tm.getUser().getId()))
+            .map(tm -> Attendance.builder().trainingSession(training).user(tm.getUser()).build())
+            .toList();
+
+    if (!newAttendances.isEmpty()) {
+      attendanceRepository.saveAll(newAttendances);
+    }
   }
 
   @Transactional(readOnly = true)

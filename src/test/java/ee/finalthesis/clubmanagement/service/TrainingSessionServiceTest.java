@@ -255,7 +255,7 @@ class TrainingSessionServiceTest {
     when(trainingSessionRepository.findByTeamClubId(clubId)).thenReturn(List.of());
     when(trainingSessionMapper.toDto(anyList())).thenReturn(List.of());
 
-    trainingSessionService.listTrainingsByClub(clubId);
+    trainingSessionService.listTrainingsByClub(clubId, false);
 
     verify(trainingSessionRepository).findByTeamClubId(clubId);
     verify(teamMemberRepository, never()).findByUserId(any());
@@ -274,12 +274,12 @@ class TrainingSessionServiceTest {
     TeamMember tm = TeamMember.builder().team(team).build();
 
     when(teamMemberRepository.findByUserId(userId)).thenReturn(List.of(tm));
-    when(trainingSessionRepository.findByTeamId(teamId)).thenReturn(List.of());
+    when(trainingSessionRepository.findByTeamIdIn(List.of(teamId))).thenReturn(List.of());
     when(trainingSessionMapper.toDto(anyList())).thenReturn(List.of());
 
-    trainingSessionService.listTrainingsByClub(clubId);
+    trainingSessionService.listTrainingsByClub(clubId, false);
 
-    verify(trainingSessionRepository).findByTeamId(teamId);
+    verify(trainingSessionRepository).findByTeamIdIn(List.of(teamId));
     verify(trainingSessionRepository, never()).findByTeamClubId(any());
   }
 

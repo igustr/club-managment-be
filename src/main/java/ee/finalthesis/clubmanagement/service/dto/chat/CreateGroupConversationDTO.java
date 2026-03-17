@@ -12,9 +12,7 @@ import lombok.Setter;
 @Setter
 public class CreateGroupConversationDTO {
 
-  @NotBlank
-  @Size(max = 200)
-  private String name;
+  @NotBlank @Size(max = 200) private String name;
 
   @NotEmpty private List<UUID> participantIds;
 }

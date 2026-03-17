@@ -62,11 +62,10 @@ public class TrainingSessionService {
             .map(tm -> tm.getTeam().getId())
             .collect(Collectors.toList());
 
-    List<TrainingSession> sessions = new ArrayList<>();
-    for (UUID teamId : teamIds) {
-      sessions.addAll(trainingSessionRepository.findByTeamId(teamId));
+    if (teamIds.isEmpty()) {
+      return List.of();
     }
-    return trainingSessionMapper.toDto(sessions);
+    return trainingSessionMapper.toDto(trainingSessionRepository.findByTeamIdIn(teamIds));
   }
 
   @Transactional(readOnly = true)

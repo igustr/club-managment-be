@@ -72,4 +72,6 @@ public interface UserRepository extends JpaRepository<User, UUID> {
       @Param("childId") UUID childId, @Param("parentId") UUID parentId);
 
   long countByClubId(UUID clubId);
+
+  List<User> findByIdInAndClubId(List<UUID> ids, UUID clubId);
 }
