@@ -31,6 +31,9 @@ public class Conversation extends AbstractAuditingEntity<UUID> implements Serial
   @Column(name = "type", length = 20, nullable = false)
   private ConversationType type;
 
+  @Size(max = 200) @Column(name = "name", length = 200)
+  private String name;
+
   @Size(max = 1000) @Column(name = "last_message_text", length = 1000)
   private String lastMessageText;
 

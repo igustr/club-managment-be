@@ -39,8 +39,22 @@ public class UserService {
   private final MessageSource messageSource;
 
   @Transactional(readOnly = true)
-  public Page<UserDTO> listClubUsers(UUID clubId, Pageable pageable) {
-    return userRepository.findByClubId(clubId, pageable).map(userMapper::toDto);
+  public Page<UserDTO> listClubUsers(
+      UUID clubId, String search, ClubRole role, Pageable pageable) {
+    boolean hasSearch = search != null && !search.isBlank();
+    boolean hasRole = role != null;
+
+    Page<User> page;
+    if (hasSearch && hasRole) {
+      page = userRepository.findByClubIdAndRoleAndSearch(clubId, role, search, pageable);
+    } else if (hasSearch) {
+      page = userRepository.findByClubIdAndSearch(clubId, search, pageable);
+    } else if (hasRole) {
+      page = userRepository.findByClubIdAndRole(clubId, role, pageable);
+    } else {
+      page = userRepository.findByClubId(clubId, pageable);
+    }
+    return page.map(userMapper::toDto);
   }
 
   @Transactional(readOnly = true)

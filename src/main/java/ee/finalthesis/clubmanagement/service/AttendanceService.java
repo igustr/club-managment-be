@@ -5,6 +5,8 @@ import ee.finalthesis.clubmanagement.domain.Attendance;
 import ee.finalthesis.clubmanagement.domain.TrainingSession;
 import ee.finalthesis.clubmanagement.domain.User;
 import ee.finalthesis.clubmanagement.domain.enumeration.AttendanceStatus;
+import ee.finalthesis.clubmanagement.domain.enumeration.ClubRole;
+import ee.finalthesis.clubmanagement.domain.enumeration.SystemRole;
 import ee.finalthesis.clubmanagement.repository.AttendanceRepository;
 import ee.finalthesis.clubmanagement.repository.TeamMemberRepository;
 import ee.finalthesis.clubmanagement.repository.TrainingSessionRepository;
@@ -92,15 +94,25 @@ public class AttendanceService {
 
     // Allow if the current user is updating their own attendance
     if (!currentUserId.equals(userId)) {
-      // Check if current user is a parent of the target user
-      User targetUser =
-          userRepository
-              .findById(userId)
-              .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
-      boolean isParent =
-          targetUser.getParents().stream().anyMatch(p -> p.getId().equals(currentUserId));
-      if (!isParent) {
-        throw new AccessDeniedException(msg("error.attendance.notAuthorized"));
+      // Allow CLUB_ADMIN, COACH, or MASTER_ADMIN to update anyone's attendance
+      ClubRole clubRole = SecurityUtils.getCurrentUserRole().orElse(null);
+      SystemRole systemRole = SecurityUtils.getCurrentUserSystemRole().orElse(null);
+      boolean isAdminOrCoach =
+          clubRole == ClubRole.CLUB_ADMIN
+              || clubRole == ClubRole.COACH
+              || systemRole == SystemRole.MASTER_ADMIN;
+
+      if (!isAdminOrCoach) {
+        // Check if current user is a parent of the target user
+        User targetUser =
+            userRepository
+                .findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
+        boolean isParent =
+            targetUser.getParents().stream().anyMatch(p -> p.getId().equals(currentUserId));
+        if (!isParent) {
+          throw new AccessDeniedException(msg("error.attendance.notAuthorized"));
+        }
       }
     }
 

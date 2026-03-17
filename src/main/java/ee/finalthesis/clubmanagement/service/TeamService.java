@@ -152,6 +152,7 @@ public class TeamService {
         TeamMember.builder().team(team).user(user).joinedDate(LocalDate.now()).build();
 
     teamMember = teamMemberRepository.save(teamMember);
+    conversationService.ensureTeamConversationExists(team);
     conversationService.addParticipantToTeamConversation(teamId, user);
     return teamMemberMapper.toDto(teamMember);
   }

@@ -47,6 +47,9 @@
     <!-- Player position and surface type enums -->
     <include file="config/liquibase/changelog/20260316100001_add_position_to_user_and_surface_type_enum.xml" relativeToChangelogFile="false"/>
 
+    <!-- Add name column to conversation for group chats -->
+    <include file="config/liquibase/changelog/20260316100003_add_name_to_conversation.xml" relativeToChangelogFile="false"/>
+
     <!-- Comprehensive seed data -->
     <include file="config/liquibase/changelog/20260316100002_seed_comprehensive_data.xml" relativeToChangelogFile="false"/>
 

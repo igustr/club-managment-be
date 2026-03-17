@@ -1,5 +1,6 @@
 package ee.finalthesis.clubmanagement.api.controller;
 
+import ee.finalthesis.clubmanagement.domain.enumeration.ClubRole;
 import ee.finalthesis.clubmanagement.service.UserService;
 import ee.finalthesis.clubmanagement.service.dto.auth.UserDTO;
 import ee.finalthesis.clubmanagement.service.dto.user.AddUserToClubDTO;
@@ -33,8 +34,12 @@ public class UserController {
 
   @GetMapping("/clubs/{clubId}/users")
   @PreAuthorize("@clubSecurity.isMemberOfClub(#clubId)")
-  public ResponseEntity<Page<UserDTO>> listClubUsers(@PathVariable UUID clubId, Pageable pageable) {
-    return ResponseEntity.ok(userService.listClubUsers(clubId, pageable));
+  public ResponseEntity<Page<UserDTO>> listClubUsers(
+      @PathVariable UUID clubId,
+      @RequestParam(required = false) String search,
+      @RequestParam(required = false) ClubRole role,
+      Pageable pageable) {
+    return ResponseEntity.ok(userService.listClubUsers(clubId, search, role, pageable));
   }
 
   @PostMapping("/clubs/{clubId}/users")

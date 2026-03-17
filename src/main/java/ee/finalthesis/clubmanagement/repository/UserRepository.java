@@ -1,6 +1,7 @@
 package ee.finalthesis.clubmanagement.repository;
 
 import ee.finalthesis.clubmanagement.domain.User;
+import ee.finalthesis.clubmanagement.domain.enumeration.ClubRole;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -45,6 +46,19 @@ public interface UserRepository extends JpaRepository<User, UUID> {
           + "LOWER(u.lastName) LIKE LOWER(CONCAT('%', :search, '%')))")
   Page<User> findByClubIdAndSearch(
       @Param("clubId") UUID clubId, @Param("search") String search, Pageable pageable);
+
+  Page<User> findByClubIdAndRole(UUID clubId, ClubRole role, Pageable pageable);
+
+  @Query(
+      "SELECT u FROM User u WHERE u.club.id = :clubId AND u.role = :role AND ("
+          + "LOWER(u.email) LIKE LOWER(CONCAT('%', :search, '%')) OR "
+          + "LOWER(u.firstName) LIKE LOWER(CONCAT('%', :search, '%')) OR "
+          + "LOWER(u.lastName) LIKE LOWER(CONCAT('%', :search, '%')))")
+  Page<User> findByClubIdAndRoleAndSearch(
+      @Param("clubId") UUID clubId,
+      @Param("role") ClubRole role,
+      @Param("search") String search,
+      Pageable pageable);
 
   @Query("SELECT p FROM User u JOIN u.parents p WHERE u.id = :childId")
   List<User> findParentsByChildId(@Param("childId") UUID childId);

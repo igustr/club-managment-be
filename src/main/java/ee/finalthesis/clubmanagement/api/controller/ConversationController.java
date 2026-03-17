@@ -4,6 +4,7 @@ import ee.finalthesis.clubmanagement.service.ConversationService;
 import ee.finalthesis.clubmanagement.service.MessageService;
 import ee.finalthesis.clubmanagement.service.dto.chat.ConversationDTO;
 import ee.finalthesis.clubmanagement.service.dto.chat.CreateDirectConversationDTO;
+import ee.finalthesis.clubmanagement.service.dto.chat.CreateGroupConversationDTO;
 import ee.finalthesis.clubmanagement.service.dto.chat.MessageDTO;
 import ee.finalthesis.clubmanagement.service.dto.chat.SendMessageDTO;
 import jakarta.validation.Valid;
@@ -44,6 +45,14 @@ public class ConversationController {
       @PathVariable UUID clubId, @Valid @RequestBody CreateDirectConversationDTO request) {
     return ResponseEntity.status(HttpStatus.CREATED)
         .body(conversationService.createDirectConversation(clubId, request));
+  }
+
+  @PostMapping("/group")
+  @PreAuthorize("@clubSecurity.isAdminOrCoach(#clubId)")
+  public ResponseEntity<ConversationDTO> createGroupConversation(
+      @PathVariable UUID clubId, @Valid @RequestBody CreateGroupConversationDTO request) {
+    return ResponseEntity.status(HttpStatus.CREATED)
+        .body(conversationService.createGroupConversation(clubId, request));
   }
 
   @GetMapping("/{conversationId}")

@@ -16,6 +16,7 @@ import ee.finalthesis.clubmanagement.repository.UserRepository;
 import ee.finalthesis.clubmanagement.security.SecurityUtils;
 import ee.finalthesis.clubmanagement.service.dto.chat.ConversationDTO;
 import ee.finalthesis.clubmanagement.service.dto.chat.CreateDirectConversationDTO;
+import ee.finalthesis.clubmanagement.service.dto.chat.CreateGroupConversationDTO;
 import ee.finalthesis.clubmanagement.service.dto.chat.ParticipantDTO;
 import ee.finalthesis.clubmanagement.service.mapper.ConversationMapper;
 import java.util.List;
@@ -144,6 +145,56 @@ public class ConversationService {
     return enrichConversationDto(conversation, currentUserId);
   }
 
+  @Transactional
+  public ConversationDTO createGroupConversation(UUID clubId, CreateGroupConversationDTO request) {
+    UUID currentUserId =
+        SecurityUtils.getCurrentUserId()
+            .orElseThrow(() -> new AccessDeniedException(msg("error.auth.notAuthenticated")));
+
+    User currentUser =
+        userRepository
+            .findById(currentUserId)
+            .orElseThrow(() -> new ResourceNotFoundException("User", "id", currentUserId));
+
+    Conversation conversation =
+        Conversation.builder()
+            .type(ConversationType.GROUP)
+            .name(request.getName())
+            .club(currentUser.getClub())
+            .build();
+    conversation = conversationRepository.save(conversation);
+
+    // Add the creator as participant
+    addParticipantWithReadStatus(conversation, currentUser);
+
+    // Add all requested participants
+    for (UUID participantId : request.getParticipantIds()) {
+      if (participantId.equals(currentUserId)) {
+        continue; // skip creator, already added
+      }
+      User participant =
+          userRepository
+              .findByIdAndClubId(participantId, clubId)
+              .orElseThrow(
+                  () ->
+                      new BadRequestException(
+                          msg("error.conversation.participantNotInClub"),
+                          "conversation",
+                          "participantNotInClub"));
+      addParticipantWithReadStatus(conversation, participant);
+    }
+
+    return enrichConversationDto(conversation, currentUserId);
+  }
+
+  @Transactional
+  public void ensureTeamConversationExists(Team team) {
+    Optional<Conversation> existingOpt = conversationRepository.findByTeamId(team.getId());
+    if (existingOpt.isEmpty()) {
+      createTeamConversation(team);
+    }
+  }
+
   @Transactional(readOnly = true)
   public ConversationDTO getConversation(UUID clubId, UUID conversationId) {
     UUID currentUserId =
@@ -205,6 +256,8 @@ public class ConversationService {
     // Set name
     if (conversation.getType() == ConversationType.TEAM && conversation.getTeam() != null) {
       dto.setName(conversation.getTeam().getName());
+    } else if (conversation.getType() == ConversationType.GROUP && conversation.getName() != null) {
+      dto.setName(conversation.getName());
     } else if (conversation.getType() == ConversationType.DIRECT) {
       participantDtos.stream()
           .filter(p -> !p.getUserId().equals(currentUserId))
