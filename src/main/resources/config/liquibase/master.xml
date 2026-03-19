@@ -66,4 +66,7 @@
     <include file="config/liquibase/changelog/20260319100008_added_entity_constraints_GameSquadMember.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20260319100009_added_entity_constraints_TournamentSquadMember.xml" relativeToChangelogFile="false"/>
 
+    <!-- Remove venue_type from tournament -->
+    <include file="config/liquibase/changelog/20260319100010_remove_venue_type_from_tournament.xml" relativeToChangelogFile="false"/>
+
 </databaseChangeLog>

@@ -9,7 +9,6 @@ import ee.finalthesis.clubmanagement.domain.Tournament;
 import ee.finalthesis.clubmanagement.domain.enumeration.ClubRole;
 import ee.finalthesis.clubmanagement.domain.enumeration.SystemRole;
 import ee.finalthesis.clubmanagement.domain.enumeration.TournamentStatus;
-import ee.finalthesis.clubmanagement.domain.enumeration.VenueType;
 import ee.finalthesis.clubmanagement.repository.ClubRepository;
 import ee.finalthesis.clubmanagement.repository.PitchRepository;
 import ee.finalthesis.clubmanagement.repository.TeamMemberRepository;
@@ -119,18 +118,16 @@ public class TournamentService {
 
     validateDateRange(request);
 
-    Pitch pitch = resolveVenue(clubId, request.getVenueType(), request.getPitchId());
+    Pitch pitch = resolvePitch(clubId, request.getPitchId());
 
     Tournament tournament =
         Tournament.builder()
             .name(request.getName())
             .startDate(request.getStartDate())
             .endDate(request.getEndDate())
-            .venueType(request.getVenueType())
             .pitch(pitch)
-            .venueName(request.getVenueType() == VenueType.AWAY ? request.getVenueName() : null)
-            .venueAddress(
-                request.getVenueType() == VenueType.AWAY ? request.getVenueAddress() : null)
+            .venueName(request.getVenueName())
+            .venueAddress(request.getVenueAddress())
             .notes(request.getNotes())
             .team(team)
             .club(club)
@@ -150,17 +147,14 @@ public class TournamentService {
 
     validateDateRange(request);
 
-    Pitch pitch = resolveVenue(clubId, request.getVenueType(), request.getPitchId());
+    Pitch pitch = resolvePitch(clubId, request.getPitchId());
 
     tournament.setName(request.getName());
     tournament.setStartDate(request.getStartDate());
     tournament.setEndDate(request.getEndDate());
-    tournament.setVenueType(request.getVenueType());
     tournament.setPitch(pitch);
-    tournament.setVenueName(
-        request.getVenueType() == VenueType.AWAY ? request.getVenueName() : null);
-    tournament.setVenueAddress(
-        request.getVenueType() == VenueType.AWAY ? request.getVenueAddress() : null);
+    tournament.setVenueName(request.getVenueName());
+    tournament.setVenueAddress(request.getVenueAddress());
     tournament.setNotes(request.getNotes());
 
     tournament = tournamentRepository.save(tournament);
@@ -207,17 +201,13 @@ public class TournamentService {
     }
   }
 
-  private Pitch resolveVenue(UUID clubId, VenueType venueType, UUID pitchId) {
-    if (venueType == VenueType.HOME) {
-      if (pitchId == null) {
-        throw new BadRequestException(
-            msg("error.tournament.pitchRequiredForHome"), "tournament", "pitchRequiredForHome");
-      }
-      return pitchRepository
-          .findByIdAndClubId(pitchId, clubId)
-          .orElseThrow(() -> new ResourceNotFoundException("Pitch", "id", pitchId));
+  private Pitch resolvePitch(UUID clubId, UUID pitchId) {
+    if (pitchId == null) {
+      return null;
     }
-    return null;
+    return pitchRepository
+        .findByIdAndClubId(pitchId, clubId)
+        .orElseThrow(() -> new ResourceNotFoundException("Pitch", "id", pitchId));
   }
 
   private String msg(String key, Object... args) {

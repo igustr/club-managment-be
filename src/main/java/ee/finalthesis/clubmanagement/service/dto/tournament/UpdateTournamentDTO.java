@@ -1,6 +1,5 @@
 package ee.finalthesis.clubmanagement.service.dto.tournament;
 
-import ee.finalthesis.clubmanagement.domain.enumeration.VenueType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -18,8 +17,6 @@ public class UpdateTournamentDTO {
   @NotNull private LocalDate startDate;
 
   @NotNull private LocalDate endDate;
-
-  @NotNull private VenueType venueType;
 
   private UUID pitchId;
 

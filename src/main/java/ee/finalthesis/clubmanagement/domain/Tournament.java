@@ -2,7 +2,6 @@ package ee.finalthesis.clubmanagement.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import ee.finalthesis.clubmanagement.domain.enumeration.TournamentStatus;
-import ee.finalthesis.clubmanagement.domain.enumeration.VenueType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -37,10 +36,6 @@ public class Tournament extends AbstractAuditingEntity<UUID> implements Serializ
 
   @NotNull @Column(name = "end_date", nullable = false)
   private LocalDate endDate;
-
-  @NotNull @Enumerated(EnumType.STRING)
-  @Column(name = "venue_type", length = 20, nullable = false)
-  private VenueType venueType;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "pitch_id")

@@ -1,7 +1,6 @@
 package ee.finalthesis.clubmanagement.service.dto.tournament;
 
 import ee.finalthesis.clubmanagement.domain.enumeration.TournamentStatus;
-import ee.finalthesis.clubmanagement.domain.enumeration.VenueType;
 import java.time.LocalDate;
 import java.util.UUID;
 import lombok.Getter;
@@ -15,7 +14,6 @@ public class TournamentDTO {
   private String name;
   private LocalDate startDate;
   private LocalDate endDate;
-  private VenueType venueType;
   private UUID pitchId;
   private String pitchName;
   private String venueName;

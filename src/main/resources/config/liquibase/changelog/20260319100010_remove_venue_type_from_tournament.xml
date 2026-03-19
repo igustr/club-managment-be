@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!--
+        Remove venue_type column from tournament table.
+        Tournaments do not have home/away distinction.
+    -->
+    <changeSet id="20260319100010-1" author="clubmanagement">
+        <dropColumn tableName="tournament" columnName="venue_type"/>
+    </changeSet>
+
+</databaseChangeLog>
