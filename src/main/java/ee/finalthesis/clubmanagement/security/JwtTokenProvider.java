@@ -83,7 +83,8 @@ public class JwtTokenProvider {
     UUID clubId = clubIdStr != null ? UUID.fromString(clubIdStr) : null;
     SystemRole systemRole = systemRoleName != null ? SystemRole.valueOf(systemRoleName) : null;
 
-    UserPrincipal principal = UserPrincipal.fromToken(userId, email, role, systemRole, clubId);
+    UserPrincipal principal =
+        UserPrincipal.fromToken(userId, email, role, systemRole, clubId, true);
     return new UsernamePasswordAuthenticationToken(principal, token, principal.getAuthorities());
   }
 

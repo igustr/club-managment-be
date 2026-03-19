@@ -58,10 +58,10 @@ public class UserPrincipal implements UserDetails {
   }
 
   public static UserPrincipal fromToken(
-      UUID id, String email, ClubRole role, SystemRole systemRole, UUID clubId) {
+      UUID id, String email, ClubRole role, SystemRole systemRole, UUID clubId, boolean active) {
     List<GrantedAuthority> authorities = buildAuthorities(role, systemRole);
 
-    return new UserPrincipal(id, email, null, role, systemRole, clubId, true, authorities);
+    return new UserPrincipal(id, email, null, role, systemRole, clubId, active, authorities);
   }
 
   private static List<GrantedAuthority> buildAuthorities(ClubRole role, SystemRole systemRole) {

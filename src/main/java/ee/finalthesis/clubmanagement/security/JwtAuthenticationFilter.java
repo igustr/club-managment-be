@@ -1,10 +1,12 @@
 package ee.finalthesis.clubmanagement.security;
 
+import ee.finalthesis.clubmanagement.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.Authentication;
@@ -22,12 +24,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   private static final String BEARER_PREFIX = "Bearer ";
 
   private final JwtTokenProvider jwtTokenProvider;
+  private final UserRepository userRepository;
   private final HandlerExceptionResolver exceptionResolver;
 
   public JwtAuthenticationFilter(
       JwtTokenProvider jwtTokenProvider,
+      UserRepository userRepository,
       @Qualifier("handlerExceptionResolver") HandlerExceptionResolver exceptionResolver) {
     this.jwtTokenProvider = jwtTokenProvider;
+    this.userRepository = userRepository;
     this.exceptionResolver = exceptionResolver;
   }
 
@@ -42,8 +47,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       if (StringUtils.hasText(token)
           && jwtTokenProvider.validateToken(token)
           && !jwtTokenProvider.isRefreshToken(token)) {
-        Authentication authentication = jwtTokenProvider.getAuthentication(token);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        UUID userId = jwtTokenProvider.getUserIdFromToken(token);
+        if (userRepository.existsByIdAndActiveTrue(userId)) {
+          Authentication authentication = jwtTokenProvider.getAuthentication(token);
+          SecurityContextHolder.getContext().setAuthentication(authentication);
+        }
       }
 
       filterChain.doFilter(request, response);

@@ -74,4 +74,6 @@ public interface UserRepository extends JpaRepository<User, UUID> {
   long countByClubId(UUID clubId);
 
   List<User> findByIdInAndClubId(List<UUID> ids, UUID clubId);
+
+  boolean existsByIdAndActiveTrue(UUID id);
 }

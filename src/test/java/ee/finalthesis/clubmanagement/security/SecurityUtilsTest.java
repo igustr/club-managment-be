@@ -80,7 +80,7 @@ class SecurityUtilsTest {
   }
 
   private void setAuthentication(UUID userId, String email, ClubRole role, UUID clubId) {
-    UserPrincipal principal = UserPrincipal.fromToken(userId, email, role, null, clubId);
+    UserPrincipal principal = UserPrincipal.fromToken(userId, email, role, null, clubId, true);
     UsernamePasswordAuthenticationToken auth =
         new UsernamePasswordAuthenticationToken(principal, null, principal.getAuthorities());
     SecurityContextHolder.getContext().setAuthentication(auth);
