@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!--
+        Added the constraints for entity TournamentSquadMember.
+    -->
+    <changeSet id="20260319100009-1" author="clubmanagement">
+
+        <addForeignKeyConstraint baseColumnNames="tournament_id"
+                                 baseTableName="tournament_squad_member"
+                                 constraintName="fk_tournament_squad_member__tournament_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="tournament"/>
+
+        <addForeignKeyConstraint baseColumnNames="user_id"
+                                 baseTableName="tournament_squad_member"
+                                 constraintName="fk_tournament_squad_member__user_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="users"/>
+    </changeSet>
+
+</databaseChangeLog>

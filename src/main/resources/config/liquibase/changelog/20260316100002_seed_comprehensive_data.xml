@@ -69,10 +69,10 @@
     <changeSet id="20260316100002-3" author="clubmanagement" context="dev">
         <insert tableName="users">
             <column name="id" value="00000000-0000-0000-0000-000000001001"/>
-            <column name="email" value="andres.rebane@test.ee"/>
+            <column name="email" value="dmitri.ustritski@test.ee"/>
             <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
-            <column name="first_name" value="Andres"/>
-            <column name="last_name" value="Rebane"/>
+            <column name="first_name" value="Dmitri"/>
+            <column name="last_name" value="Ustritski"/>
             <column name="date_of_birth" value="1980-04-12"/>
             <column name="phone" value="+372 5551 201"/>
             <column name="role" value="COACH"/>
@@ -835,9 +835,9 @@
         </insert>
     </changeSet>
 
-    <!-- 8. Team members: U15 = coach Andres Rebane + assistant Viktor Mihhailov + 10 players -->
+    <!-- 8. Team members: U15 = coach Dmitri Ustritski + assistant Viktor Mihhailov + 10 players -->
     <changeSet id="20260316100002-8" author="clubmanagement" context="dev">
-        <!-- Coach Andres Rebane -> U15 -->
+        <!-- Coach Dmitri Ustritski -> U15 -->
         <insert tableName="team_member">
             <column name="id" valueComputed="gen_random_uuid()"/>
             <column name="team_id" value="00000000-0000-0000-0000-000000003001"/>

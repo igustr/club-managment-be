@@ -38,4 +38,13 @@ public interface TeamMemberRepository extends JpaRepository<TeamMember, UUID> {
           + " WHERE tm.user.id IN :userIds AND tm.team.id IN :teamIds")
   List<UUID> findTeamIdsByUserIdsAndTeamIds(
       @Param("userIds") List<UUID> userIds, @Param("teamIds") List<UUID> teamIds);
+
+  @Query(
+      "SELECT DISTINCT tm FROM TeamMember tm"
+          + " JOIN FETCH tm.user u"
+          + " LEFT JOIN FETCH u.parents p"
+          + " LEFT JOIN FETCH u.club"
+          + " LEFT JOIN FETCH p.club"
+          + " WHERE tm.team.id = :teamId")
+  List<TeamMember> findByTeamIdWithUsersAndParents(@Param("teamId") UUID teamId);
 }

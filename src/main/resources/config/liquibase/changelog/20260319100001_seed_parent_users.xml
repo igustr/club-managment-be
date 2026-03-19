@@ -1,0 +1,728 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- =============================================
+         Seed parent users for U15 and U19 players.
+         Password for all users: test123
+         ============================================= -->
+
+    <!-- 1. Parents for U15 players -->
+    <changeSet id="20260319100001-1" author="clubmanagement" context="dev">
+
+        <!-- Oliver Tamm (2001) - 2 parents -->
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000006001"/>
+            <column name="email" value="andrus.tamm@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Andrus"/>
+            <column name="last_name" value="Tamm"/>
+            <column name="date_of_birth" value="1982-07-10"/>
+            <column name="phone" value="+372 5556 001"/>
+            <column name="role" value="PARENT"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000006002"/>
+            <column name="email" value="kaire.tamm@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Kaire"/>
+            <column name="last_name" value="Tamm"/>
+            <column name="date_of_birth" value="1984-03-22"/>
+            <column name="phone" value="+372 5556 002"/>
+            <column name="role" value="PARENT"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+
+        <!-- Rasmus Koppel (2002) - 1 parent -->
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000006003"/>
+            <column name="email" value="toomas.koppel@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Toomas"/>
+            <column name="last_name" value="Koppel"/>
+            <column name="date_of_birth" value="1980-11-05"/>
+            <column name="phone" value="+372 5556 003"/>
+            <column name="role" value="PARENT"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+
+        <!-- Mattias Oja (2003) - 2 parents -->
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000006004"/>
+            <column name="email" value="rando.oja@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Rando"/>
+            <column name="last_name" value="Oja"/>
+            <column name="date_of_birth" value="1983-06-18"/>
+            <column name="phone" value="+372 5556 004"/>
+            <column name="role" value="PARENT"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000006005"/>
+            <column name="email" value="sirje.oja@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Sirje"/>
+            <column name="last_name" value="Oja"/>
+            <column name="date_of_birth" value="1985-01-29"/>
+            <column name="phone" value="+372 5556 005"/>
+            <column name="role" value="PARENT"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+
+        <!-- Karl Nurk (2004) - 1 parent -->
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000006006"/>
+            <column name="email" value="juri.nurk@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Juri"/>
+            <column name="last_name" value="Nurk"/>
+            <column name="date_of_birth" value="1979-09-14"/>
+            <column name="phone" value="+372 5556 006"/>
+            <column name="role" value="PARENT"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+
+        <!-- Markus Vaher (2005) - 2 parents -->
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000006007"/>
+            <column name="email" value="meelis.vaher@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Meelis"/>
+            <column name="last_name" value="Vaher"/>
+            <column name="date_of_birth" value="1981-04-03"/>
+            <column name="phone" value="+372 5556 007"/>
+            <column name="role" value="PARENT"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000006008"/>
+            <column name="email" value="tiina.vaher@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Tiina"/>
+            <column name="last_name" value="Vaher"/>
+            <column name="date_of_birth" value="1983-08-17"/>
+            <column name="phone" value="+372 5556 008"/>
+            <column name="role" value="PARENT"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+
+        <!-- Robin Laas (2006) - 1 parent -->
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000006009"/>
+            <column name="email" value="katrin.laas@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Katrin"/>
+            <column name="last_name" value="Laas"/>
+            <column name="date_of_birth" value="1984-12-01"/>
+            <column name="phone" value="+372 5556 009"/>
+            <column name="role" value="PARENT"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+
+        <!-- Siim Pihlak (2007) - 2 parents -->
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000006010"/>
+            <column name="email" value="vello.pihlak@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Vello"/>
+            <column name="last_name" value="Pihlak"/>
+            <column name="date_of_birth" value="1980-02-25"/>
+            <column name="phone" value="+372 5556 010"/>
+            <column name="role" value="PARENT"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000006011"/>
+            <column name="email" value="anu.pihlak@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Anu"/>
+            <column name="last_name" value="Pihlak"/>
+            <column name="date_of_birth" value="1982-05-13"/>
+            <column name="phone" value="+372 5556 011"/>
+            <column name="role" value="PARENT"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+
+        <!-- Henri Kukk (2008) - 1 parent -->
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000006012"/>
+            <column name="email" value="priit.kukk@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Priit"/>
+            <column name="last_name" value="Kukk"/>
+            <column name="date_of_birth" value="1978-10-20"/>
+            <column name="phone" value="+372 5556 012"/>
+            <column name="role" value="PARENT"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+
+        <!-- Kevin Palm (2009) - 2 parents -->
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000006013"/>
+            <column name="email" value="margus.palm@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Margus"/>
+            <column name="last_name" value="Palm"/>
+            <column name="date_of_birth" value="1981-07-08"/>
+            <column name="phone" value="+372 5556 013"/>
+            <column name="role" value="PARENT"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000006014"/>
+            <column name="email" value="eve.palm@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Eve"/>
+            <column name="last_name" value="Palm"/>
+            <column name="date_of_birth" value="1983-11-26"/>
+            <column name="phone" value="+372 5556 014"/>
+            <column name="role" value="PARENT"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+
+        <!-- Artjom Volkov (2010) - 2 parents -->
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000006015"/>
+            <column name="email" value="igor.volkov@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Igor"/>
+            <column name="last_name" value="Volkov"/>
+            <column name="date_of_birth" value="1979-04-15"/>
+            <column name="phone" value="+372 5556 015"/>
+            <column name="role" value="PARENT"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000006016"/>
+            <column name="email" value="jelena.volkova@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Jelena"/>
+            <column name="last_name" value="Volkova"/>
+            <column name="date_of_birth" value="1981-08-30"/>
+            <column name="phone" value="+372 5556 016"/>
+            <column name="role" value="PARENT"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+    </changeSet>
+
+    <!-- 2. Parents for U19 players -->
+    <changeSet id="20260319100001-2" author="clubmanagement" context="dev">
+
+        <!-- Sander Mets (2011) - 2 parents -->
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000006017"/>
+            <column name="email" value="tonu.mets@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Tonu"/>
+            <column name="last_name" value="Mets"/>
+            <column name="date_of_birth" value="1978-03-12"/>
+            <column name="phone" value="+372 5556 017"/>
+            <column name="role" value="PARENT"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000006018"/>
+            <column name="email" value="liina.mets@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Liina"/>
+            <column name="last_name" value="Mets"/>
+            <column name="date_of_birth" value="1980-09-28"/>
+            <column name="phone" value="+372 5556 018"/>
+            <column name="role" value="PARENT"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+
+        <!-- Erik Leppik (2012) - 1 parent -->
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000006019"/>
+            <column name="email" value="heli.leppik@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Heli"/>
+            <column name="last_name" value="Leppik"/>
+            <column name="date_of_birth" value="1982-06-04"/>
+            <column name="phone" value="+372 5556 019"/>
+            <column name="role" value="PARENT"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+
+        <!-- Patrik Ilves (2013) - 2 parents -->
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000006020"/>
+            <column name="email" value="rein.ilves@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Rein"/>
+            <column name="last_name" value="Ilves"/>
+            <column name="date_of_birth" value="1977-11-19"/>
+            <column name="phone" value="+372 5556 020"/>
+            <column name="role" value="PARENT"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000006021"/>
+            <column name="email" value="kadri.ilves@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Kadri"/>
+            <column name="last_name" value="Ilves"/>
+            <column name="date_of_birth" value="1980-02-07"/>
+            <column name="phone" value="+372 5556 021"/>
+            <column name="role" value="PARENT"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+
+        <!-- Kristjan Raud (2014) - 1 parent -->
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000006022"/>
+            <column name="email" value="urve.raud@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Urve"/>
+            <column name="last_name" value="Raud"/>
+            <column name="date_of_birth" value="1981-05-23"/>
+            <column name="phone" value="+372 5556 022"/>
+            <column name="role" value="PARENT"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+
+        <!-- Mihkel Jarv (2015) - 2 parents -->
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000006023"/>
+            <column name="email" value="ain.jarv@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Ain"/>
+            <column name="last_name" value="Jarv"/>
+            <column name="date_of_birth" value="1976-08-16"/>
+            <column name="phone" value="+372 5556 023"/>
+            <column name="role" value="PARENT"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000006024"/>
+            <column name="email" value="merle.jarv@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Merle"/>
+            <column name="last_name" value="Jarv"/>
+            <column name="date_of_birth" value="1979-01-30"/>
+            <column name="phone" value="+372 5556 024"/>
+            <column name="role" value="PARENT"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+
+        <!-- Oskar Puu (2016) - 1 parent -->
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000006025"/>
+            <column name="email" value="peep.puu@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Peep"/>
+            <column name="last_name" value="Puu"/>
+            <column name="date_of_birth" value="1983-12-11"/>
+            <column name="phone" value="+372 5556 025"/>
+            <column name="role" value="PARENT"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+
+        <!-- Nikita Kuznetsov (2017) - 2 parents -->
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000006026"/>
+            <column name="email" value="sergei.kuznetsov@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Sergei"/>
+            <column name="last_name" value="Kuznetsov"/>
+            <column name="date_of_birth" value="1977-06-22"/>
+            <column name="phone" value="+372 5556 026"/>
+            <column name="role" value="PARENT"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000006027"/>
+            <column name="email" value="natalja.kuznetsova@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Natalja"/>
+            <column name="last_name" value="Kuznetsova"/>
+            <column name="date_of_birth" value="1980-10-05"/>
+            <column name="phone" value="+372 5556 027"/>
+            <column name="role" value="PARENT"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+
+        <!-- Robert Kivi (2018) - 1 parent -->
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000006028"/>
+            <column name="email" value="agne.kivi@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Agne"/>
+            <column name="last_name" value="Kivi"/>
+            <column name="date_of_birth" value="1984-04-18"/>
+            <column name="phone" value="+372 5556 028"/>
+            <column name="role" value="PARENT"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+
+        <!-- Gregor Saar (2019) - 2 parents -->
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000006029"/>
+            <column name="email" value="jaanus.saar@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Jaanus"/>
+            <column name="last_name" value="Saar"/>
+            <column name="date_of_birth" value="1978-09-07"/>
+            <column name="phone" value="+372 5556 029"/>
+            <column name="role" value="PARENT"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000006030"/>
+            <column name="email" value="eha.saar@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Eha"/>
+            <column name="last_name" value="Saar"/>
+            <column name="date_of_birth" value="1981-01-14"/>
+            <column name="phone" value="+372 5556 030"/>
+            <column name="role" value="PARENT"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+
+        <!-- Daniil Popov (2020) - 1 parent -->
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000006031"/>
+            <column name="email" value="marina.popova@test.ee"/>
+            <column name="password_hash" value="$2b$12$MKjO5d4.TSk9F4e4e3M1CerQfvTIblSrqkxDHCS/D.SOIhk77Fgty"/>
+            <column name="first_name" value="Marina"/>
+            <column name="last_name" value="Popova"/>
+            <column name="date_of_birth" value="1982-07-25"/>
+            <column name="phone" value="+372 5556 031"/>
+            <column name="role" value="PARENT"/>
+            <column name="club_id" value="00000000-0000-0000-0000-000000000c01"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+            <column name="created_date" valueComputed="current_timestamp"/>
+            <column name="last_modified_by" value="system"/>
+            <column name="last_modified_date" valueComputed="current_timestamp"/>
+        </insert>
+    </changeSet>
+
+    <!-- 3. Parent-child relationships (user_parent join table) -->
+    <changeSet id="20260319100001-3" author="clubmanagement" context="dev">
+
+        <!-- U15 parent-child links -->
+
+        <!-- Oliver Tamm -> Andrus Tamm + Kaire Tamm -->
+        <insert tableName="user_parent">
+            <column name="child_id" value="00000000-0000-0000-0000-000000002001"/>
+            <column name="parent_id" value="00000000-0000-0000-0000-000000006001"/>
+        </insert>
+        <insert tableName="user_parent">
+            <column name="child_id" value="00000000-0000-0000-0000-000000002001"/>
+            <column name="parent_id" value="00000000-0000-0000-0000-000000006002"/>
+        </insert>
+
+        <!-- Rasmus Koppel -> Toomas Koppel -->
+        <insert tableName="user_parent">
+            <column name="child_id" value="00000000-0000-0000-0000-000000002002"/>
+            <column name="parent_id" value="00000000-0000-0000-0000-000000006003"/>
+        </insert>
+
+        <!-- Mattias Oja -> Rando Oja + Sirje Oja -->
+        <insert tableName="user_parent">
+            <column name="child_id" value="00000000-0000-0000-0000-000000002003"/>
+            <column name="parent_id" value="00000000-0000-0000-0000-000000006004"/>
+        </insert>
+        <insert tableName="user_parent">
+            <column name="child_id" value="00000000-0000-0000-0000-000000002003"/>
+            <column name="parent_id" value="00000000-0000-0000-0000-000000006005"/>
+        </insert>
+
+        <!-- Karl Nurk -> Juri Nurk -->
+        <insert tableName="user_parent">
+            <column name="child_id" value="00000000-0000-0000-0000-000000002004"/>
+            <column name="parent_id" value="00000000-0000-0000-0000-000000006006"/>
+        </insert>
+
+        <!-- Markus Vaher -> Meelis Vaher + Tiina Vaher -->
+        <insert tableName="user_parent">
+            <column name="child_id" value="00000000-0000-0000-0000-000000002005"/>
+            <column name="parent_id" value="00000000-0000-0000-0000-000000006007"/>
+        </insert>
+        <insert tableName="user_parent">
+            <column name="child_id" value="00000000-0000-0000-0000-000000002005"/>
+            <column name="parent_id" value="00000000-0000-0000-0000-000000006008"/>
+        </insert>
+
+        <!-- Robin Laas -> Katrin Laas -->
+        <insert tableName="user_parent">
+            <column name="child_id" value="00000000-0000-0000-0000-000000002006"/>
+            <column name="parent_id" value="00000000-0000-0000-0000-000000006009"/>
+        </insert>
+
+        <!-- Siim Pihlak -> Vello Pihlak + Anu Pihlak -->
+        <insert tableName="user_parent">
+            <column name="child_id" value="00000000-0000-0000-0000-000000002007"/>
+            <column name="parent_id" value="00000000-0000-0000-0000-000000006010"/>
+        </insert>
+        <insert tableName="user_parent">
+            <column name="child_id" value="00000000-0000-0000-0000-000000002007"/>
+            <column name="parent_id" value="00000000-0000-0000-0000-000000006011"/>
+        </insert>
+
+        <!-- Henri Kukk -> Priit Kukk -->
+        <insert tableName="user_parent">
+            <column name="child_id" value="00000000-0000-0000-0000-000000002008"/>
+            <column name="parent_id" value="00000000-0000-0000-0000-000000006012"/>
+        </insert>
+
+        <!-- Kevin Palm -> Margus Palm + Eve Palm -->
+        <insert tableName="user_parent">
+            <column name="child_id" value="00000000-0000-0000-0000-000000002009"/>
+            <column name="parent_id" value="00000000-0000-0000-0000-000000006013"/>
+        </insert>
+        <insert tableName="user_parent">
+            <column name="child_id" value="00000000-0000-0000-0000-000000002009"/>
+            <column name="parent_id" value="00000000-0000-0000-0000-000000006014"/>
+        </insert>
+
+        <!-- Artjom Volkov -> Igor Volkov + Jelena Volkova -->
+        <insert tableName="user_parent">
+            <column name="child_id" value="00000000-0000-0000-0000-000000002010"/>
+            <column name="parent_id" value="00000000-0000-0000-0000-000000006015"/>
+        </insert>
+        <insert tableName="user_parent">
+            <column name="child_id" value="00000000-0000-0000-0000-000000002010"/>
+            <column name="parent_id" value="00000000-0000-0000-0000-000000006016"/>
+        </insert>
+
+        <!-- U19 parent-child links -->
+
+        <!-- Sander Mets -> Tonu Mets + Liina Mets -->
+        <insert tableName="user_parent">
+            <column name="child_id" value="00000000-0000-0000-0000-000000002011"/>
+            <column name="parent_id" value="00000000-0000-0000-0000-000000006017"/>
+        </insert>
+        <insert tableName="user_parent">
+            <column name="child_id" value="00000000-0000-0000-0000-000000002011"/>
+            <column name="parent_id" value="00000000-0000-0000-0000-000000006018"/>
+        </insert>
+
+        <!-- Erik Leppik -> Heli Leppik -->
+        <insert tableName="user_parent">
+            <column name="child_id" value="00000000-0000-0000-0000-000000002012"/>
+            <column name="parent_id" value="00000000-0000-0000-0000-000000006019"/>
+        </insert>
+
+        <!-- Patrik Ilves -> Rein Ilves + Kadri Ilves -->
+        <insert tableName="user_parent">
+            <column name="child_id" value="00000000-0000-0000-0000-000000002013"/>
+            <column name="parent_id" value="00000000-0000-0000-0000-000000006020"/>
+        </insert>
+        <insert tableName="user_parent">
+            <column name="child_id" value="00000000-0000-0000-0000-000000002013"/>
+            <column name="parent_id" value="00000000-0000-0000-0000-000000006021"/>
+        </insert>
+
+        <!-- Kristjan Raud -> Urve Raud -->
+        <insert tableName="user_parent">
+            <column name="child_id" value="00000000-0000-0000-0000-000000002014"/>
+            <column name="parent_id" value="00000000-0000-0000-0000-000000006022"/>
+        </insert>
+
+        <!-- Mihkel Jarv -> Ain Jarv + Merle Jarv -->
+        <insert tableName="user_parent">
+            <column name="child_id" value="00000000-0000-0000-0000-000000002015"/>
+            <column name="parent_id" value="00000000-0000-0000-0000-000000006023"/>
+        </insert>
+        <insert tableName="user_parent">
+            <column name="child_id" value="00000000-0000-0000-0000-000000002015"/>
+            <column name="parent_id" value="00000000-0000-0000-0000-000000006024"/>
+        </insert>
+
+        <!-- Oskar Puu -> Peep Puu -->
+        <insert tableName="user_parent">
+            <column name="child_id" value="00000000-0000-0000-0000-000000002016"/>
+            <column name="parent_id" value="00000000-0000-0000-0000-000000006025"/>
+        </insert>
+
+        <!-- Nikita Kuznetsov -> Sergei Kuznetsov + Natalja Kuznetsova -->
+        <insert tableName="user_parent">
+            <column name="child_id" value="00000000-0000-0000-0000-000000002017"/>
+            <column name="parent_id" value="00000000-0000-0000-0000-000000006026"/>
+        </insert>
+        <insert tableName="user_parent">
+            <column name="child_id" value="00000000-0000-0000-0000-000000002017"/>
+            <column name="parent_id" value="00000000-0000-0000-0000-000000006027"/>
+        </insert>
+
+        <!-- Robert Kivi -> Agne Kivi -->
+        <insert tableName="user_parent">
+            <column name="child_id" value="00000000-0000-0000-0000-000000002018"/>
+            <column name="parent_id" value="00000000-0000-0000-0000-000000006028"/>
+        </insert>
+
+        <!-- Gregor Saar -> Jaanus Saar + Eha Saar -->
+        <insert tableName="user_parent">
+            <column name="child_id" value="00000000-0000-0000-0000-000000002019"/>
+            <column name="parent_id" value="00000000-0000-0000-0000-000000006029"/>
+        </insert>
+        <insert tableName="user_parent">
+            <column name="child_id" value="00000000-0000-0000-0000-000000002019"/>
+            <column name="parent_id" value="00000000-0000-0000-0000-000000006030"/>
+        </insert>
+
+        <!-- Daniil Popov -> Marina Popova -->
+        <insert tableName="user_parent">
+            <column name="child_id" value="00000000-0000-0000-0000-000000002020"/>
+            <column name="parent_id" value="00000000-0000-0000-0000-000000006031"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

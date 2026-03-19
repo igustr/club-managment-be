@@ -1,0 +1,98 @@
+package ee.finalthesis.clubmanagement.domain;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import ee.finalthesis.clubmanagement.domain.enumeration.TournamentStatus;
+import ee.finalthesis.clubmanagement.domain.enumeration.VenueType;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import java.io.Serializable;
+import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
+import lombok.*;
+
+@Entity
+@Table(name = "tournament")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class Tournament extends AbstractAuditingEntity<UUID> implements Serializable {
+
+  private static final long serialVersionUID = 1L;
+
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private UUID id;
+
+  @NotBlank @Size(max = 255) @Column(name = "name", nullable = false)
+  private String name;
+
+  @NotNull @Column(name = "start_date", nullable = false)
+  private LocalDate startDate;
+
+  @NotNull @Column(name = "end_date", nullable = false)
+  private LocalDate endDate;
+
+  @NotNull @Enumerated(EnumType.STRING)
+  @Column(name = "venue_type", length = 20, nullable = false)
+  private VenueType venueType;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "pitch_id")
+  @JsonIgnoreProperties(
+      value = {"club"},
+      allowSetters = true)
+  private Pitch pitch;
+
+  @Size(max = 255) @Column(name = "venue_name")
+  private String venueName;
+
+  @Size(max = 500) @Column(name = "venue_address", length = 500)
+  private String venueAddress;
+
+  @NotNull @Enumerated(EnumType.STRING)
+  @Column(name = "status", length = 20, nullable = false)
+  @Builder.Default
+  private TournamentStatus status = TournamentStatus.SCHEDULED;
+
+  @Size(max = 1000) @Column(name = "notes", length = 1000)
+  private String notes;
+
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @JoinColumn(name = "team_id", nullable = false)
+  @JsonIgnoreProperties(
+      value = {"teamMembers", "trainingSessions", "club"},
+      allowSetters = true)
+  private Team team;
+
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @JoinColumn(name = "club_id", nullable = false)
+  @JsonIgnoreProperties(
+      value = {"users", "teams", "pitches"},
+      allowSetters = true)
+  private Club club;
+
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "tournament")
+  @JsonIgnoreProperties(
+      value = {"tournament"},
+      allowSetters = true)
+  @Builder.Default
+  private Set<TournamentSquadMember> squadMembers = new HashSet<>();
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof Tournament)) return false;
+    return getId() != null && getId().equals(((Tournament) o).getId());
+  }
+
+  @Override
+  public int hashCode() {
+    return getClass().hashCode();
+  }
+}

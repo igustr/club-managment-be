@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!--
+        Added the entity GameSquadMember.
+    -->
+    <changeSet id="20260319100004-1" author="clubmanagement">
+        <createTable tableName="game_squad_member">
+            <column name="id" type="${uuidType}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="status" type="varchar(20)" defaultValue="PENDING">
+                <constraints nullable="false"/>
+            </column>
+            <column name="game_id" type="${uuidType}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="${uuidType}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="${datetimeType}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_by" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_date" type="${datetimeType}">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addUniqueConstraint tableName="game_squad_member" columnNames="game_id, user_id" constraintName="uc_game_squad_member_game_id_user_id"/>
+        <dropDefaultValue tableName="game_squad_member" columnName="created_date" columnDataType="${datetimeType}"/>
+        <dropDefaultValue tableName="game_squad_member" columnName="last_modified_date" columnDataType="${datetimeType}"/>
+    </changeSet>
+
+</databaseChangeLog>

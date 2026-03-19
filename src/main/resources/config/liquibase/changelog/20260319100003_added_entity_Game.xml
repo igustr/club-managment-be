@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!--
+        Added the entity Game.
+    -->
+    <changeSet id="20260319100003-1" author="clubmanagement">
+        <createTable tableName="game">
+            <column name="id" type="${uuidType}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="date" type="${dateType}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="start_time" type="${timeType}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="end_time" type="${timeType}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="opponent" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="venue_type" type="varchar(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="pitch_id" type="${uuidType}">
+                <constraints nullable="true"/>
+            </column>
+            <column name="venue_name" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="venue_address" type="varchar(500)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="status" type="varchar(20)" defaultValue="SCHEDULED">
+                <constraints nullable="false"/>
+            </column>
+            <column name="notes" type="varchar(1000)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="team_id" type="${uuidType}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="club_id" type="${uuidType}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="${datetimeType}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_by" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_date" type="${datetimeType}">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createIndex indexName="idx_game_date" tableName="game">
+            <column name="date"/>
+        </createIndex>
+        <createIndex indexName="idx_game_team_id" tableName="game">
+            <column name="team_id"/>
+        </createIndex>
+        <createIndex indexName="idx_game_club_id" tableName="game">
+            <column name="club_id"/>
+        </createIndex>
+        <dropDefaultValue tableName="game" columnName="created_date" columnDataType="${datetimeType}"/>
+        <dropDefaultValue tableName="game" columnName="last_modified_date" columnDataType="${datetimeType}"/>
+    </changeSet>
+
+</databaseChangeLog>

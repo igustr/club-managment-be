@@ -53,4 +53,17 @@
     <!-- Comprehensive seed data -->
     <include file="config/liquibase/changelog/20260316100002_seed_comprehensive_data.xml" relativeToChangelogFile="false"/>
 
+    <!-- Parent users for U15 and U19 players -->
+    <include file="config/liquibase/changelog/20260319100001_seed_parent_users.xml" relativeToChangelogFile="false"/>
+
+    <!-- Games and Tournaments -->
+    <include file="config/liquibase/changelog/20260319100002_added_entity_Tournament.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260319100003_added_entity_Game.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260319100004_added_entity_GameSquadMember.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260319100005_added_entity_TournamentSquadMember.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260319100006_added_entity_constraints_Tournament.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260319100007_added_entity_constraints_Game.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260319100008_added_entity_constraints_GameSquadMember.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260319100009_added_entity_constraints_TournamentSquadMember.xml" relativeToChangelogFile="false"/>
+
 </databaseChangeLog>
