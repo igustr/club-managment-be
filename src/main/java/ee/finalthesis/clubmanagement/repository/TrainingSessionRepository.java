@@ -63,4 +63,10 @@ public interface TrainingSessionRepository extends JpaRepository<TrainingSession
   List<Object[]> countByTeamIdGroupByTeam(@Param("clubId") UUID clubId);
 
   List<TrainingSession> findByTeamIdIn(List<UUID> teamIds);
+
+  @Query(
+      "SELECT ts FROM TrainingSession ts WHERE ts.team.id = :teamId "
+          + "AND ts.date >= :fromDate AND ts.status = 'SCHEDULED'")
+  List<TrainingSession> findFutureScheduledByTeamId(
+      @Param("teamId") UUID teamId, @Param("fromDate") LocalDate fromDate);
 }

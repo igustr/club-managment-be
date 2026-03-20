@@ -43,6 +43,7 @@ public class TeamService {
   private final TeamMapper teamMapper;
   private final TeamMemberMapper teamMemberMapper;
   private final ConversationService conversationService;
+  private final AttendanceService attendanceService;
   private final MessageSource messageSource;
 
   @Transactional(readOnly = true)
@@ -152,6 +153,7 @@ public class TeamService {
         TeamMember.builder().team(team).user(user).joinedDate(LocalDate.now()).build();
 
     teamMember = teamMemberRepository.save(teamMember);
+    attendanceService.createAttendanceForNewTeamMember(teamId, user);
     conversationService.ensureTeamConversationExists(team);
     conversationService.addParticipantToTeamConversation(teamId, user);
     return teamMemberMapper.toDto(teamMember);

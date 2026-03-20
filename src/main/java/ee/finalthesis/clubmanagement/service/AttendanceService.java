@@ -16,6 +16,7 @@ import ee.finalthesis.clubmanagement.service.dto.attendance.AttendanceDTO;
 import ee.finalthesis.clubmanagement.service.dto.attendance.AttendanceSummaryDTO;
 import ee.finalthesis.clubmanagement.service.dto.attendance.UpdateAttendanceDTO;
 import ee.finalthesis.clubmanagement.service.mapper.AttendanceMapper;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
@@ -45,6 +46,7 @@ public class AttendanceService {
 
     List<Attendance> newAttendances =
         teamMemberRepository.findByTeamId(training.getTeam().getId()).stream()
+            .filter(tm -> tm.getUser().getRole() == ClubRole.PLAYER)
             .filter(tm -> !existingSet.contains(tm.getUser().getId()))
             .map(tm -> Attendance.builder().trainingSession(training).user(tm.getUser()).build())
             .toList();
@@ -54,17 +56,85 @@ public class AttendanceService {
     }
   }
 
+  @Transactional
+  public void createAttendanceForNewTeamMember(UUID teamId, User user) {
+    if (user.getRole() != ClubRole.PLAYER) {
+      return;
+    }
+    List<TrainingSession> futureTrainings =
+        trainingSessionRepository.findFutureScheduledByTeamId(teamId, LocalDate.now());
+
+    List<Attendance> newAttendances =
+        futureTrainings.stream()
+            .filter(
+                ts ->
+                    !attendanceRepository.existsByTrainingSessionIdAndUserId(
+                        ts.getId(), user.getId()))
+            .map(ts -> Attendance.builder().trainingSession(ts).user(user).build())
+            .toList();
+
+    if (!newAttendances.isEmpty()) {
+      attendanceRepository.saveAll(newAttendances);
+    }
+  }
+
   @Transactional(readOnly = true)
+  public List<AttendanceDTO> getMyAttendances(UUID clubId) {
+    UUID currentUserId =
+        SecurityUtils.getCurrentUserId()
+            .orElseThrow(() -> new AccessDeniedException(msg("error.attendance.notAuthorized")));
+    List<Attendance> attendances =
+        attendanceRepository.findByUserIdAndTrainingSessionTeamClubId(currentUserId, clubId);
+    return attendanceMapper.toDto(attendances);
+  }
+
+  @Transactional
   public List<AttendanceDTO> getAttendanceList(UUID clubId, UUID trainingId) {
     TrainingSession training = findTrainingInClub(clubId, trainingId);
-    List<Attendance> attendances = attendanceRepository.findByTrainingSessionId(training.getId());
+    createAttendanceForTraining(training);
+    List<Attendance> attendances =
+        attendanceRepository.findByTrainingSessionId(training.getId()).stream()
+            .filter(a -> a.getUser().getRole() == ClubRole.PLAYER)
+            .toList();
     return attendanceMapper.toDto(attendances);
   }
 
   @Transactional(readOnly = true)
+  public java.util.Optional<AttendanceDTO> getMyAttendance(
+      UUID clubId, UUID trainingId, UUID targetUserId) {
+    findTrainingInClub(clubId, trainingId);
+    UUID currentUserId =
+        SecurityUtils.getCurrentUserId()
+            .orElseThrow(() -> new AccessDeniedException(msg("error.attendance.notAuthorized")));
+
+    UUID lookupUserId = targetUserId != null ? targetUserId : currentUserId;
+
+    // If looking up another user's attendance, verify parent relationship
+    if (targetUserId != null && !targetUserId.equals(currentUserId)) {
+      User targetUser =
+          userRepository
+              .findById(targetUserId)
+              .orElseThrow(() -> new ResourceNotFoundException("User", "id", targetUserId));
+      boolean isParent =
+          targetUser.getParents().stream().anyMatch(p -> p.getId().equals(currentUserId));
+      if (!isParent) {
+        throw new AccessDeniedException(msg("error.attendance.notAuthorized"));
+      }
+    }
+
+    return attendanceRepository
+        .findByTrainingSessionIdAndUserId(trainingId, lookupUserId)
+        .map(attendanceMapper::toDto);
+  }
+
+  @Transactional
   public AttendanceSummaryDTO getAttendanceSummary(UUID clubId, UUID trainingId) {
     TrainingSession training = findTrainingInClub(clubId, trainingId);
-    List<Attendance> attendances = attendanceRepository.findByTrainingSessionId(training.getId());
+    createAttendanceForTraining(training);
+    List<Attendance> attendances =
+        attendanceRepository.findByTrainingSessionId(training.getId()).stream()
+            .filter(a -> a.getUser().getRole() == ClubRole.PLAYER)
+            .toList();
     List<AttendanceDTO> dtos = attendanceMapper.toDto(attendances);
 
     AttendanceSummaryDTO summary = new AttendanceSummaryDTO();
@@ -83,12 +153,19 @@ public class AttendanceService {
   @Transactional
   public AttendanceDTO updateAttendance(
       UUID clubId, UUID trainingId, UUID userId, UpdateAttendanceDTO request) {
-    findTrainingInClub(clubId, trainingId);
+    TrainingSession training = findTrainingInClub(clubId, trainingId);
+
+    User user =
+        userRepository
+            .findById(userId)
+            .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
 
     Attendance attendance =
         attendanceRepository
             .findByTrainingSessionIdAndUserId(trainingId, userId)
-            .orElseThrow(() -> new ResourceNotFoundException("Attendance", "userId", userId));
+            .orElseGet(
+                () -> attendanceRepository.save(
+                    Attendance.builder().trainingSession(training).user(user).build()));
 
     UUID currentUserId =
         SecurityUtils.getCurrentUserId()
@@ -106,12 +183,8 @@ public class AttendanceService {
 
       if (!isAdminOrCoach) {
         // Check if current user is a parent of the target user
-        User targetUser =
-            userRepository
-                .findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
         boolean isParent =
-            targetUser.getParents().stream().anyMatch(p -> p.getId().equals(currentUserId));
+            user.getParents().stream().anyMatch(p -> p.getId().equals(currentUserId));
         if (!isParent) {
           throw new AccessDeniedException(msg("error.attendance.notAuthorized"));
         }

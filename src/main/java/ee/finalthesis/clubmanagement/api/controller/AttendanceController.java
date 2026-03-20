@@ -15,30 +15,48 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/clubs/{clubId}/trainings/{trainingId}/attendance")
 @RequiredArgsConstructor
 public class AttendanceController {
 
   private final AttendanceService attendanceService;
 
-  @GetMapping
+  @GetMapping("/api/clubs/{clubId}/attendance/mine")
+  @PreAuthorize("@clubSecurity.isMemberOfClub(#clubId)")
+  public ResponseEntity<List<AttendanceDTO>> getMyAttendances(@PathVariable UUID clubId) {
+    return ResponseEntity.ok(attendanceService.getMyAttendances(clubId));
+  }
+
+  @GetMapping("/api/clubs/{clubId}/trainings/{trainingId}/attendance")
   @PreAuthorize("@clubSecurity.isAdminOrCoach(#clubId)")
   public ResponseEntity<List<AttendanceDTO>> getAttendanceList(
       @PathVariable UUID clubId, @PathVariable UUID trainingId) {
     return ResponseEntity.ok(attendanceService.getAttendanceList(clubId, trainingId));
   }
 
-  @GetMapping("/summary")
+  @GetMapping("/api/clubs/{clubId}/trainings/{trainingId}/attendance/summary")
   @PreAuthorize("@clubSecurity.isAdminOrCoach(#clubId)")
   public ResponseEntity<AttendanceSummaryDTO> getAttendanceSummary(
       @PathVariable UUID clubId, @PathVariable UUID trainingId) {
     return ResponseEntity.ok(attendanceService.getAttendanceSummary(clubId, trainingId));
   }
 
-  @PutMapping("/{userId}")
+  @GetMapping("/api/clubs/{clubId}/trainings/{trainingId}/attendance/mine")
+  @PreAuthorize("@clubSecurity.isMemberOfClub(#clubId)")
+  public ResponseEntity<AttendanceDTO> getMyAttendance(
+      @PathVariable UUID clubId,
+      @PathVariable UUID trainingId,
+      @RequestParam(required = false) UUID userId) {
+    return attendanceService
+        .getMyAttendance(clubId, trainingId, userId)
+        .map(ResponseEntity::ok)
+        .orElse(ResponseEntity.noContent().build());
+  }
+
+  @PutMapping("/api/clubs/{clubId}/trainings/{trainingId}/attendance/{userId}")
   @PreAuthorize("@clubSecurity.isMemberOfClub(#clubId)")
   public ResponseEntity<AttendanceDTO> updateAttendance(
       @PathVariable UUID clubId,
