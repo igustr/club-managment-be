@@ -21,7 +21,7 @@ public class StatisticsController {
   private final StatisticsService statisticsService;
 
   @GetMapping("/users/{userId}/statistics")
-  @PreAuthorize("@clubSecurity.isAdminOrCoach(#clubId)")
+  @PreAuthorize("@clubSecurity.isAdminOrCoachOrParentOf(#clubId, #userId)")
   public ResponseEntity<PlayerStatisticsDTO> getPlayerStatistics(
       @PathVariable UUID clubId, @PathVariable UUID userId) {
     return ResponseEntity.ok(statisticsService.getPlayerStatistics(clubId, userId));

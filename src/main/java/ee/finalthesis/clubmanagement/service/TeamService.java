@@ -58,11 +58,19 @@ public class TeamService {
       return teamMapper.toDto(teams);
     }
 
-    List<TeamMember> memberships = teamMemberRepository.findByUserId(userId);
+    List<TeamMember> memberships = new java.util.ArrayList<>(teamMemberRepository.findByUserId(userId));
+
+    // For parents: also include children's team memberships
+    if (role == ClubRole.PARENT) {
+      userRepository.findChildrenByParentId(userId)
+          .forEach(child -> memberships.addAll(teamMemberRepository.findByUserId(child.getId())));
+    }
+
     List<Team> teams =
         memberships.stream()
             .map(TeamMember::getTeam)
             .filter(team -> team.getClub().getId().equals(clubId))
+            .distinct()
             .collect(Collectors.toList());
     return teamMapper.toDto(teams);
   }

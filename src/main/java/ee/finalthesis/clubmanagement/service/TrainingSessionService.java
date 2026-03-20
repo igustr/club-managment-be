@@ -5,14 +5,18 @@ import ee.finalthesis.clubmanagement.common.exception.ConflictException;
 import ee.finalthesis.clubmanagement.common.exception.ResourceNotFoundException;
 import ee.finalthesis.clubmanagement.domain.Pitch;
 import ee.finalthesis.clubmanagement.domain.Team;
+import ee.finalthesis.clubmanagement.domain.TeamMember;
 import ee.finalthesis.clubmanagement.domain.TrainingSession;
+import ee.finalthesis.clubmanagement.domain.User;
 import ee.finalthesis.clubmanagement.domain.enumeration.ClubRole;
+import ee.finalthesis.clubmanagement.domain.enumeration.NotificationType;
 import ee.finalthesis.clubmanagement.domain.enumeration.SystemRole;
 import ee.finalthesis.clubmanagement.domain.enumeration.TrainingSessionStatus;
 import ee.finalthesis.clubmanagement.repository.PitchRepository;
 import ee.finalthesis.clubmanagement.repository.TeamMemberRepository;
 import ee.finalthesis.clubmanagement.repository.TeamRepository;
 import ee.finalthesis.clubmanagement.repository.TrainingSessionRepository;
+import ee.finalthesis.clubmanagement.repository.UserRepository;
 import ee.finalthesis.clubmanagement.security.SecurityUtils;
 import ee.finalthesis.clubmanagement.service.dto.training.CreateRecurringTrainingDTO;
 import ee.finalthesis.clubmanagement.service.dto.training.CreateTrainingSessionDTO;
@@ -21,9 +25,12 @@ import ee.finalthesis.clubmanagement.service.dto.training.UpdateTrainingSessionD
 import ee.finalthesis.clubmanagement.service.mapper.TrainingSessionMapper;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -40,8 +47,10 @@ public class TrainingSessionService {
   private final TeamRepository teamRepository;
   private final PitchRepository pitchRepository;
   private final TeamMemberRepository teamMemberRepository;
+  private final UserRepository userRepository;
   private final TrainingSessionMapper trainingSessionMapper;
   private final AttendanceService attendanceService;
+  private final NotificationService notificationService;
   private final MessageSource messageSource;
 
   @Transactional(readOnly = true)
@@ -61,6 +70,17 @@ public class TrainingSessionService {
             .filter(tm -> tm.getTeam().getClub().getId().equals(clubId))
             .map(tm -> tm.getTeam().getId())
             .collect(Collectors.toList());
+
+    // For parents: also include children's team trainings
+    if (role == ClubRole.PARENT) {
+      userRepository.findChildrenByParentId(userId).stream()
+          .flatMap(child -> teamMemberRepository.findByUserId(child.getId()).stream())
+          .filter(tm -> tm.getTeam().getClub().getId().equals(clubId))
+          .map(tm -> tm.getTeam().getId())
+          .forEach(id -> {
+            if (!teamIds.contains(id)) teamIds.add(id);
+          });
+    }
 
     if (teamIds.isEmpty()) {
       return List.of();
@@ -199,6 +219,12 @@ public class TrainingSessionService {
     }
 
     training = trainingSessionRepository.save(training);
+
+    notifyTeamMembers(
+        training,
+        NotificationType.TRAINING_UPDATED,
+        training.getTeam().getName() + " – " + training.getDate().format(DATE_FMT));
+
     return trainingSessionMapper.toDto(training);
   }
 
@@ -216,6 +242,11 @@ public class TrainingSessionService {
 
     training.setStatus(TrainingSessionStatus.CANCELLED);
     trainingSessionRepository.save(training);
+
+    notifyTeamMembers(
+        training,
+        NotificationType.TRAINING_CANCELLED,
+        training.getTeam().getName() + " – " + training.getDate().format(DATE_FMT));
   }
 
   @Transactional
@@ -224,6 +255,20 @@ public class TrainingSessionService {
         trainingSessionRepository
             .findByIdAndTeamClubId(trainingId, clubId)
             .orElseThrow(() -> new ResourceNotFoundException("TrainingSession", "id", trainingId));
+
+    String info = training.getTeam().getName() + " – " + training.getDate().format(DATE_FMT);
+    UUID teamId = training.getTeam().getId();
+
+    // Notify before deleting so we still have the training data
+    Set<User> recipients = getTeamRecipients(teamId);
+    notificationService.notifyUsers(
+        recipients,
+        training.getTeam().getClub(),
+        NotificationType.TRAINING_DELETED,
+        info,
+        null,
+        null);
+
     trainingSessionRepository.delete(training);
   }
 
@@ -254,6 +299,32 @@ public class TrainingSessionService {
       throw new ConflictException(
           msg("error.training.pitchConflict"), "trainingSession", "pitchConflict");
     }
+  }
+
+  private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+
+  private void notifyTeamMembers(
+      TrainingSession training, NotificationType type, String title) {
+    Set<User> recipients = getTeamRecipients(training.getTeam().getId());
+    notificationService.notifyUsers(
+        recipients, training.getTeam().getClub(), type, title, null, training.getId());
+  }
+
+  private Set<User> getTeamRecipients(UUID teamId) {
+    List<TeamMember> members = teamMemberRepository.findByTeamIdWithUsersAndParents(teamId);
+    Set<User> recipients = new HashSet<>();
+    for (TeamMember tm : members) {
+      recipients.add(tm.getUser());
+      if (tm.getUser().getParents() != null) {
+        for (User parent : tm.getUser().getParents()) {
+          if (parent.getClub() != null
+              && parent.getClub().getId().equals(tm.getTeam().getClub().getId())) {
+            recipients.add(parent);
+          }
+        }
+      }
+    }
+    return recipients;
   }
 
   private String msg(String key, Object... args) {

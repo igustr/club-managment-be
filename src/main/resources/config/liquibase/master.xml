@@ -69,4 +69,7 @@
     <!-- Remove venue_type from tournament -->
     <include file="config/liquibase/changelog/20260319100010_remove_venue_type_from_tournament.xml" relativeToChangelogFile="false"/>
 
+    <!-- Notification entity -->
+    <include file="config/liquibase/changelog/20260320100001_added_entity_Notification.xml" relativeToChangelogFile="false"/>
+
 </databaseChangeLog>

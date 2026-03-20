@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!--
+        Added the entity Notification.
+    -->
+    <changeSet id="20260320100001-1" author="clubmanagement">
+        <createTable tableName="notification">
+            <column name="id" type="${uuidType}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_id" type="${uuidType}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="club_id" type="${uuidType}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="type" type="varchar(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="message" type="varchar(500)"/>
+            <column name="reference_id" type="${uuidType}"/>
+            <column name="is_read" type="boolean" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="${datetimeType}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="${datetimeType}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_by" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_date" type="${datetimeType}">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="notification" baseColumnNames="user_id"
+                                 referencedTableName="users" referencedColumnNames="id"
+                                 constraintName="fk_notification_user_id"
+                                 onDelete="CASCADE"/>
+
+        <addForeignKeyConstraint baseTableName="notification" baseColumnNames="club_id"
+                                 referencedTableName="club" referencedColumnNames="id"
+                                 constraintName="fk_notification_club_id"
+                                 onDelete="CASCADE"/>
+
+        <createIndex tableName="notification" indexName="idx_notification_user_club_read">
+            <column name="user_id"/>
+            <column name="club_id"/>
+            <column name="is_read"/>
+        </createIndex>
+
+        <createIndex tableName="notification" indexName="idx_notification_created_at">
+            <column name="created_at" descending="true"/>
+        </createIndex>
+
+        <dropDefaultValue tableName="notification" columnName="created_date" columnDataType="${datetimeType}"/>
+        <dropDefaultValue tableName="notification" columnName="last_modified_date" columnDataType="${datetimeType}"/>
+    </changeSet>
+
+</databaseChangeLog>

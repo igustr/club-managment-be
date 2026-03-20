@@ -2,9 +2,11 @@ package ee.finalthesis.clubmanagement.service;
 
 import ee.finalthesis.clubmanagement.common.exception.ResourceNotFoundException;
 import ee.finalthesis.clubmanagement.domain.Conversation;
+import ee.finalthesis.clubmanagement.domain.ConversationParticipant;
 import ee.finalthesis.clubmanagement.domain.ConversationReadStatus;
 import ee.finalthesis.clubmanagement.domain.Message;
 import ee.finalthesis.clubmanagement.domain.User;
+import ee.finalthesis.clubmanagement.domain.enumeration.NotificationType;
 import ee.finalthesis.clubmanagement.repository.ConversationParticipantRepository;
 import ee.finalthesis.clubmanagement.repository.ConversationReadStatusRepository;
 import ee.finalthesis.clubmanagement.repository.ConversationRepository;
@@ -15,8 +17,10 @@ import ee.finalthesis.clubmanagement.service.dto.chat.MessageDTO;
 import ee.finalthesis.clubmanagement.service.dto.chat.SendMessageDTO;
 import ee.finalthesis.clubmanagement.service.mapper.MessageMapper;
 import java.time.Instant;
+import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -36,6 +40,7 @@ public class MessageService {
   private final ConversationReadStatusRepository conversationReadStatusRepository;
   private final UserRepository userRepository;
   private final MessageMapper messageMapper;
+  private final NotificationService notificationService;
   private final MessageSource messageSource;
 
   @Transactional(readOnly = true)
@@ -94,6 +99,27 @@ public class MessageService {
     // Increment unread count for all participants except sender
     conversationReadStatusRepository.incrementUnreadCountExcludingUser(
         conversationId, currentUserId);
+
+    // Create notifications for other participants
+    List<User> recipients =
+        conversationParticipantRepository.findByConversationId(conversationId).stream()
+            .map(ConversationParticipant::getUser)
+            .filter(u -> !u.getId().equals(currentUserId))
+            .collect(Collectors.toList());
+
+    String title = sender.getFirstName() + " " + sender.getLastName();
+    String preview =
+        request.getText().length() > 100
+            ? request.getText().substring(0, 100) + "..."
+            : request.getText();
+
+    notificationService.notifyUsers(
+        recipients,
+        conversation.getClub(),
+        NotificationType.MESSAGE,
+        title,
+        preview,
+        conversationId);
 
     return messageMapper.toDto(message);
   }

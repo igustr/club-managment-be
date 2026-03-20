@@ -83,8 +83,19 @@ public class AttendanceService {
     UUID currentUserId =
         SecurityUtils.getCurrentUserId()
             .orElseThrow(() -> new AccessDeniedException(msg("error.attendance.notAuthorized")));
-    List<Attendance> attendances =
-        attendanceRepository.findByUserIdAndTrainingSessionTeamClubId(currentUserId, clubId);
+    List<Attendance> attendances = new java.util.ArrayList<>(
+        attendanceRepository.findByUserIdAndTrainingSessionTeamClubId(currentUserId, clubId));
+
+    // For parents: also include children's attendance records
+    ClubRole role = SecurityUtils.getCurrentUserRole().orElse(null);
+    if (role == ClubRole.PARENT) {
+      List<User> children = userRepository.findChildrenByParentId(currentUserId);
+      for (User child : children) {
+        attendances.addAll(
+            attendanceRepository.findByUserIdAndTrainingSessionTeamClubId(child.getId(), clubId));
+      }
+    }
+
     return attendanceMapper.toDto(attendances);
   }
 

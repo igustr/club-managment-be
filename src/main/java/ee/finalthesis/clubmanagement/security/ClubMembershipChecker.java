@@ -2,6 +2,7 @@ package ee.finalthesis.clubmanagement.security;
 
 import ee.finalthesis.clubmanagement.domain.enumeration.ClubRole;
 import ee.finalthesis.clubmanagement.domain.enumeration.SystemRole;
+import ee.finalthesis.clubmanagement.repository.UserRepository;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -9,6 +10,8 @@ import org.springframework.stereotype.Component;
 @Component("clubSecurity")
 @RequiredArgsConstructor
 public class ClubMembershipChecker {
+
+  private final UserRepository userRepository;
 
   /** Checks if the current user is a MASTER_ADMIN (platform-level). */
   public boolean isMasterAdmin() {
@@ -53,6 +56,27 @@ public class ClubMembershipChecker {
     return SecurityUtils.getCurrentUserRole()
         .map(role -> role == ClubRole.CLUB_ADMIN || role == ClubRole.COACH)
         .orElse(false);
+  }
+
+  /**
+   * Checks if the current user is an admin/coach of the club OR a parent of the given user.
+   */
+  public boolean isAdminOrCoachOrParentOf(UUID clubId, UUID userId) {
+    if (isAdminOrCoach(clubId)) {
+      return true;
+    }
+    if (!isMemberOfClub(clubId)) {
+      return false;
+    }
+    ClubRole role = SecurityUtils.getCurrentUserRole().orElse(null);
+    if (role != ClubRole.PARENT) {
+      return false;
+    }
+    UUID currentUserId = SecurityUtils.getCurrentUserId().orElse(null);
+    if (currentUserId == null) {
+      return false;
+    }
+    return userRepository.existsParentChildRelationship(userId, currentUserId);
   }
 
   /** Checks if the current user has the CLUB_ADMIN role (regardless of club) or is MASTER_ADMIN. */
