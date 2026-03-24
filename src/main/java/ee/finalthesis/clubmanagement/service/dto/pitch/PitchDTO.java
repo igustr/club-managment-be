@@ -13,6 +13,5 @@ public class PitchDTO {
   private String name;
   private String address;
   private SurfaceType surfaceType;
-  private Integer capacity;
   private UUID clubId;
 }

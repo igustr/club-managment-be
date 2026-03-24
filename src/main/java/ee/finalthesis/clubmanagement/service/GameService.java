@@ -133,6 +133,7 @@ public class GameService {
     Game game =
         Game.builder()
             .date(request.getDate())
+            .gatheringTime(request.getGatheringTime())
             .startTime(request.getStartTime())
             .endTime(request.getEndTime())
             .opponent(request.getOpponent())
@@ -171,6 +172,7 @@ public class GameService {
     }
 
     game.setDate(request.getDate());
+    game.setGatheringTime(request.getGatheringTime());
     game.setStartTime(request.getStartTime());
     game.setEndTime(request.getEndTime());
     game.setOpponent(request.getOpponent());

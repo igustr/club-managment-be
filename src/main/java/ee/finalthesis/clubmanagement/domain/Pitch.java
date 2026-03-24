@@ -34,9 +34,6 @@ public class Pitch extends AbstractAuditingEntity<UUID> implements Serializable 
   @Column(name = "surface_type", length = 20)
   private SurfaceType surfaceType;
 
-  @Column(name = "capacity")
-  private Integer capacity;
-
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "club_id", nullable = false)
   @JsonIgnoreProperties(

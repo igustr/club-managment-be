@@ -15,6 +15,4 @@ public class CreatePitchDTO {
   @Size(max = 500) private String address;
 
   private SurfaceType surfaceType;
-
-  private Integer capacity;
 }

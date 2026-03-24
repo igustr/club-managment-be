@@ -33,6 +33,9 @@ public class Game extends AbstractAuditingEntity<UUID> implements Serializable {
   @NotNull @Column(name = "date", nullable = false)
   private LocalDate date;
 
+  @Column(name = "gathering_time")
+  private LocalTime gatheringTime;
+
   @NotNull @Column(name = "start_time", nullable = false)
   private LocalTime startTime;
 

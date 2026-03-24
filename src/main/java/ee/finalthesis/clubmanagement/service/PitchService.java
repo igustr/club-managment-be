@@ -66,7 +66,6 @@ public class PitchService {
             .name(request.getName())
             .address(request.getAddress())
             .surfaceType(request.getSurfaceType())
-            .capacity(request.getCapacity())
             .club(club)
             .build();
 
@@ -84,7 +83,6 @@ public class PitchService {
     pitch.setName(request.getName());
     pitch.setAddress(request.getAddress());
     pitch.setSurfaceType(request.getSurfaceType());
-    pitch.setCapacity(request.getCapacity());
 
     pitch = pitchRepository.save(pitch);
     return pitchMapper.toDto(pitch);

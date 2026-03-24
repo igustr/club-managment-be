@@ -75,4 +75,10 @@
     <!-- Pitch portion allocation -->
     <include file="config/liquibase/changelog/20260320100002_add_pitch_portion_to_training_session.xml" relativeToChangelogFile="false"/>
 
+    <!-- Gathering time for games -->
+    <include file="config/liquibase/changelog/20260324100001_add_gathering_time_to_game.xml" relativeToChangelogFile="false"/>
+
+    <!-- Remove capacity from pitch -->
+    <include file="config/liquibase/changelog/20260324100002_remove_capacity_from_pitch.xml" relativeToChangelogFile="false"/>
+
 </databaseChangeLog>

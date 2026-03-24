@@ -16,6 +16,8 @@ public class CreateGameDTO {
 
   @NotNull private LocalDate date;
 
+  private LocalTime gatheringTime;
+
   @NotNull private LocalTime startTime;
 
   @NotNull private LocalTime endTime;

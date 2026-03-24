@@ -16,6 +16,8 @@ public class UpdateGameDTO {
 
   @NotNull private LocalDate date;
 
+  private LocalTime gatheringTime;
+
   @NotNull private LocalTime startTime;
 
   @NotNull private LocalTime endTime;
