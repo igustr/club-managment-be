@@ -6,16 +6,22 @@ import ee.finalthesis.clubmanagement.domain.Pitch;
 import ee.finalthesis.clubmanagement.repository.ClubRepository;
 import ee.finalthesis.clubmanagement.repository.PitchRepository;
 import ee.finalthesis.clubmanagement.repository.TrainingSessionRepository;
+import ee.finalthesis.clubmanagement.domain.TrainingSession;
 import ee.finalthesis.clubmanagement.service.dto.pitch.CreatePitchDTO;
 import ee.finalthesis.clubmanagement.service.dto.pitch.PitchDTO;
+import ee.finalthesis.clubmanagement.service.dto.pitch.PitchOccupancyDTO;
 import ee.finalthesis.clubmanagement.service.dto.pitch.UpdatePitchDTO;
 import ee.finalthesis.clubmanagement.service.dto.training.TrainingSessionDTO;
 import ee.finalthesis.clubmanagement.service.mapper.PitchMapper;
 import ee.finalthesis.clubmanagement.service.mapper.TrainingSessionMapper;
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -101,6 +107,36 @@ public class PitchService {
     }
     return trainingSessionMapper.toDto(
         trainingSessionRepository.findByPitchIdAndDateBetween(pitchId, startDate, endDate));
+  }
+
+  @Transactional(readOnly = true)
+  public List<PitchOccupancyDTO> getPitchOverview(UUID clubId, LocalDate startDate, LocalDate endDate) {
+    List<Pitch> pitches = pitchRepository.findByClubId(clubId);
+    List<PitchOccupancyDTO> result = new ArrayList<>();
+
+    for (Pitch pitch : pitches) {
+      List<TrainingSession> sessions =
+          trainingSessionRepository.findByPitchIdAndDateBetween(pitch.getId(), startDate, endDate);
+
+      // Group sessions by date
+      Map<LocalDate, List<TrainingSession>> byDate =
+          sessions.stream().collect(Collectors.groupingBy(TrainingSession::getDate));
+
+      for (Map.Entry<LocalDate, List<TrainingSession>> entry : byDate.entrySet()) {
+        BigDecimal totalOccupancy = entry.getValue().stream()
+            .map(TrainingSession::getPitchPortion)
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        result.add(new PitchOccupancyDTO(
+            pitch.getId(),
+            pitch.getName(),
+            entry.getKey(),
+            totalOccupancy,
+            trainingSessionMapper.toDto(entry.getValue())));
+      }
+    }
+
+    return result;
   }
 
   private String msg(String key, Object... args) {

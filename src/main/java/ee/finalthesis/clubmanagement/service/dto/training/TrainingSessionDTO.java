@@ -1,6 +1,7 @@
 package ee.finalthesis.clubmanagement.service.dto.training;
 
 import ee.finalthesis.clubmanagement.domain.enumeration.TrainingSessionStatus;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.UUID;
@@ -20,6 +21,7 @@ public class TrainingSessionDTO {
   private UUID pitchId;
   private String pitchName;
   private TrainingSessionStatus status;
+  private BigDecimal pitchPortion;
   private String notes;
   private UUID recurrenceGroupId;
 }

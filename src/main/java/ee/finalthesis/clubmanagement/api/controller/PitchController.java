@@ -3,6 +3,7 @@ package ee.finalthesis.clubmanagement.api.controller;
 import ee.finalthesis.clubmanagement.service.PitchService;
 import ee.finalthesis.clubmanagement.service.dto.pitch.CreatePitchDTO;
 import ee.finalthesis.clubmanagement.service.dto.pitch.PitchDTO;
+import ee.finalthesis.clubmanagement.service.dto.pitch.PitchOccupancyDTO;
 import ee.finalthesis.clubmanagement.service.dto.pitch.UpdatePitchDTO;
 import ee.finalthesis.clubmanagement.service.dto.training.TrainingSessionDTO;
 import jakarta.validation.Valid;
@@ -74,5 +75,14 @@ public class PitchController {
       @RequestParam LocalDate startDate,
       @RequestParam LocalDate endDate) {
     return ResponseEntity.ok(pitchService.getPitchSchedule(clubId, pitchId, startDate, endDate));
+  }
+
+  @GetMapping("/overview")
+  @PreAuthorize("@clubSecurity.isAdmin(#clubId)")
+  public ResponseEntity<List<PitchOccupancyDTO>> getPitchOverview(
+      @PathVariable UUID clubId,
+      @RequestParam LocalDate startDate,
+      @RequestParam LocalDate endDate) {
+    return ResponseEntity.ok(pitchService.getPitchOverview(clubId, startDate, endDate));
   }
 }

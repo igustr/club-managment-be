@@ -1,7 +1,6 @@
 package ee.finalthesis.clubmanagement.service;
 
 import ee.finalthesis.clubmanagement.common.exception.BadRequestException;
-import ee.finalthesis.clubmanagement.common.exception.ConflictException;
 import ee.finalthesis.clubmanagement.common.exception.ResourceNotFoundException;
 import ee.finalthesis.clubmanagement.domain.Pitch;
 import ee.finalthesis.clubmanagement.domain.Team;
@@ -23,6 +22,7 @@ import ee.finalthesis.clubmanagement.service.dto.training.CreateTrainingSessionD
 import ee.finalthesis.clubmanagement.service.dto.training.TrainingSessionDTO;
 import ee.finalthesis.clubmanagement.service.dto.training.UpdateTrainingSessionDTO;
 import ee.finalthesis.clubmanagement.service.mapper.TrainingSessionMapper;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -111,11 +111,7 @@ public class TrainingSessionService {
     validateTimeRange(request.getStartTime(), request.getEndTime());
 
     Pitch pitch = resolvePitch(clubId, request.getPitchId());
-
-    if (pitch != null) {
-      checkPitchConflict(
-          pitch.getId(), request.getDate(), request.getStartTime(), request.getEndTime(), null);
-    }
+    BigDecimal portion = request.getPitchPortion() != null ? request.getPitchPortion() : BigDecimal.ONE;
 
     TrainingSession training =
         TrainingSession.builder()
@@ -125,6 +121,7 @@ public class TrainingSessionService {
             .notes(request.getNotes())
             .team(team)
             .pitch(pitch)
+            .pitchPortion(portion)
             .build();
 
     training = trainingSessionRepository.save(training);
@@ -151,6 +148,7 @@ public class TrainingSessionService {
     }
 
     Pitch pitch = resolvePitch(clubId, request.getPitchId());
+    BigDecimal portion = request.getPitchPortion() != null ? request.getPitchPortion() : BigDecimal.ONE;
 
     UUID recurrenceGroupId = UUID.randomUUID();
     List<TrainingSession> sessions = new ArrayList<>();
@@ -162,11 +160,6 @@ public class TrainingSessionService {
     }
 
     while (!current.isAfter(request.getEndDate())) {
-      if (pitch != null) {
-        checkPitchConflict(
-            pitch.getId(), current, request.getStartTime(), request.getEndTime(), null);
-      }
-
       TrainingSession training =
           TrainingSession.builder()
               .date(current)
@@ -175,6 +168,7 @@ public class TrainingSessionService {
               .notes(request.getNotes())
               .team(team)
               .pitch(pitch)
+              .pitchPortion(portion)
               .recurrenceGroupId(recurrenceGroupId)
               .build();
 
@@ -199,20 +193,14 @@ public class TrainingSessionService {
 
     Pitch pitch = resolvePitch(clubId, request.getPitchId());
 
-    if (pitch != null) {
-      checkPitchConflict(
-          pitch.getId(),
-          request.getDate(),
-          request.getStartTime(),
-          request.getEndTime(),
-          training.getId());
-    }
-
     training.setDate(request.getDate());
     training.setStartTime(request.getStartTime());
     training.setEndTime(request.getEndTime());
     training.setNotes(request.getNotes());
     training.setPitch(pitch);
+    if (request.getPitchPortion() != null) {
+      training.setPitchPortion(request.getPitchPortion());
+    }
 
     if (request.getStatus() != null) {
       training.setStatus(request.getStatus());
@@ -288,17 +276,19 @@ public class TrainingSessionService {
         .orElseThrow(() -> new ResourceNotFoundException("Pitch", "id", pitchId));
   }
 
-  private void checkPitchConflict(
+  /**
+   * Calculate the total occupied portion of a pitch for overlapping sessions on a given date/time range.
+   */
+  public BigDecimal calculateOccupancy(
       UUID pitchId, LocalDate date, LocalTime start, LocalTime end, UUID excludeId) {
-    List<TrainingSession> conflicts =
+    List<TrainingSession> overlapping =
         excludeId != null
             ? trainingSessionRepository.findConflictingBookingsExcluding(
                 pitchId, date, start, end, excludeId)
             : trainingSessionRepository.findConflictingBookings(pitchId, date, start, end);
-    if (!conflicts.isEmpty()) {
-      throw new ConflictException(
-          msg("error.training.pitchConflict"), "trainingSession", "pitchConflict");
-    }
+    return overlapping.stream()
+        .map(TrainingSession::getPitchPortion)
+        .reduce(BigDecimal.ZERO, BigDecimal::add);
   }
 
   private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("dd.MM.yyyy");

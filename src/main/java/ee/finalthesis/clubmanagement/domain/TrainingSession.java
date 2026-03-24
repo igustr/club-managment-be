@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.HashSet;
@@ -44,6 +45,10 @@ public class TrainingSession extends AbstractAuditingEntity<UUID> implements Ser
   @Column(name = "status", length = 20, nullable = false)
   @Builder.Default
   private TrainingSessionStatus status = TrainingSessionStatus.SCHEDULED;
+
+  @NotNull @Column(name = "pitch_portion", nullable = false, precision = 3, scale = 3)
+  @Builder.Default
+  private BigDecimal pitchPortion = BigDecimal.ONE;
 
   @Size(max = 1000) @Column(name = "notes", length = 1000)
   private String notes;

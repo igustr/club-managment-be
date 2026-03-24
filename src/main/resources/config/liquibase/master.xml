@@ -72,4 +72,7 @@
     <!-- Notification entity -->
     <include file="config/liquibase/changelog/20260320100001_added_entity_Notification.xml" relativeToChangelogFile="false"/>
 
+    <!-- Pitch portion allocation -->
+    <include file="config/liquibase/changelog/20260320100002_add_pitch_portion_to_training_session.xml" relativeToChangelogFile="false"/>
+
 </databaseChangeLog>

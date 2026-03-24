@@ -3,6 +3,7 @@ package ee.finalthesis.clubmanagement.service.dto.training;
 import ee.finalthesis.clubmanagement.domain.enumeration.TrainingSessionStatus;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.UUID;
@@ -20,6 +21,8 @@ public class UpdateTrainingSessionDTO {
   @NotNull private LocalTime endTime;
 
   private UUID pitchId;
+
+  private BigDecimal pitchPortion;
 
   @Size(max = 1000) private String notes;
 
