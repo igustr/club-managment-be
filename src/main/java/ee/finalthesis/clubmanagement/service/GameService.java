@@ -1,15 +1,16 @@
 package ee.finalthesis.clubmanagement.service;
 
 import ee.finalthesis.clubmanagement.common.exception.BadRequestException;
-import ee.finalthesis.clubmanagement.common.exception.ConflictException;
 import ee.finalthesis.clubmanagement.common.exception.ResourceNotFoundException;
 import ee.finalthesis.clubmanagement.domain.Club;
 import ee.finalthesis.clubmanagement.domain.Game;
 import ee.finalthesis.clubmanagement.domain.Pitch;
 import ee.finalthesis.clubmanagement.domain.Team;
-import ee.finalthesis.clubmanagement.domain.TrainingSession;
+import ee.finalthesis.clubmanagement.domain.TeamMember;
+import ee.finalthesis.clubmanagement.domain.User;
 import ee.finalthesis.clubmanagement.domain.enumeration.ClubRole;
 import ee.finalthesis.clubmanagement.domain.enumeration.GameStatus;
+import ee.finalthesis.clubmanagement.domain.enumeration.NotificationType;
 import ee.finalthesis.clubmanagement.domain.enumeration.SystemRole;
 import ee.finalthesis.clubmanagement.domain.enumeration.VenueType;
 import ee.finalthesis.clubmanagement.repository.ClubRepository;
@@ -18,15 +19,16 @@ import ee.finalthesis.clubmanagement.repository.GameSquadMemberRepository;
 import ee.finalthesis.clubmanagement.repository.PitchRepository;
 import ee.finalthesis.clubmanagement.repository.TeamMemberRepository;
 import ee.finalthesis.clubmanagement.repository.TeamRepository;
-import ee.finalthesis.clubmanagement.repository.TrainingSessionRepository;
 import ee.finalthesis.clubmanagement.security.SecurityUtils;
 import ee.finalthesis.clubmanagement.service.dto.game.CreateGameDTO;
 import ee.finalthesis.clubmanagement.service.dto.game.GameDTO;
 import ee.finalthesis.clubmanagement.service.dto.game.UpdateGameDTO;
 import ee.finalthesis.clubmanagement.service.mapper.GameMapper;
-import java.time.LocalDate;
+import java.math.BigDecimal;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -42,14 +44,17 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class GameService {
 
+  private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+
   private final GameRepository gameRepository;
   private final TeamRepository teamRepository;
   private final ClubRepository clubRepository;
   private final PitchRepository pitchRepository;
   private final TeamMemberRepository teamMemberRepository;
   private final GameSquadMemberRepository gameSquadMemberRepository;
-  private final TrainingSessionRepository trainingSessionRepository;
   private final GameMapper gameMapper;
+  private final PitchConflictValidator pitchConflictValidator;
+  private final NotificationService notificationService;
   private final MessageSource messageSource;
 
   @Transactional(readOnly = true)
@@ -126,8 +131,14 @@ public class GameService {
     Pitch pitch = resolveVenue(clubId, request.getVenueType(), request.getPitchId());
 
     if (pitch != null) {
-      checkPitchConflict(
-          pitch.getId(), request.getDate(), request.getStartTime(), request.getEndTime(), null);
+      pitchConflictValidator.checkConflict(
+          pitch.getId(),
+          request.getDate(),
+          request.getStartTime(),
+          request.getEndTime(),
+          BigDecimal.ONE,
+          null,
+          null);
     }
 
     Game game =
@@ -148,6 +159,9 @@ public class GameService {
             .build();
 
     game = gameRepository.save(game);
+
+    notifyTeamMembers(game, NotificationType.GAME_CREATED);
+
     return gameMapper.toDto(game);
   }
 
@@ -163,11 +177,13 @@ public class GameService {
     Pitch pitch = resolveVenue(clubId, request.getVenueType(), request.getPitchId());
 
     if (pitch != null) {
-      checkPitchConflict(
+      pitchConflictValidator.checkConflict(
           pitch.getId(),
           request.getDate(),
           request.getStartTime(),
           request.getEndTime(),
+          BigDecimal.ONE,
+          null,
           game.getId());
     }
 
@@ -184,6 +200,9 @@ public class GameService {
     game.setNotes(request.getNotes());
 
     game = gameRepository.save(game);
+
+    notifyTeamMembers(game, NotificationType.GAME_UPDATED);
+
     return gameMapper.toDto(game);
   }
 
@@ -200,6 +219,8 @@ public class GameService {
 
     game.setStatus(GameStatus.CANCELLED);
     gameRepository.save(game);
+
+    notifyTeamMembers(game, NotificationType.GAME_CANCELLED);
   }
 
   @Transactional
@@ -231,26 +252,27 @@ public class GameService {
     return null;
   }
 
-  private void checkPitchConflict(
-      UUID pitchId, LocalDate date, LocalTime start, LocalTime end, UUID excludeId) {
-    // Check training session conflicts
-    List<TrainingSession> trainingConflicts =
-        excludeId != null
-            ? trainingSessionRepository.findConflictingBookingsExcluding(
-                pitchId, date, start, end, excludeId)
-            : trainingSessionRepository.findConflictingBookings(pitchId, date, start, end);
-    if (!trainingConflicts.isEmpty()) {
-      throw new ConflictException(msg("error.game.pitchConflict"), "game", "pitchConflict");
-    }
+  private void notifyTeamMembers(Game game, NotificationType type) {
+    String title = game.getTeam().getName() + " – " + game.getDate().format(DATE_FMT);
+    Set<User> recipients = getTeamRecipients(game.getTeam().getId());
+    notificationService.notifyUsers(recipients, game.getClub(), type, title, null, game.getId());
+  }
 
-    // Check game conflicts
-    List<Game> gameConflicts =
-        excludeId != null
-            ? gameRepository.findConflictingBookingsExcluding(pitchId, date, start, end, excludeId)
-            : gameRepository.findConflictingBookings(pitchId, date, start, end);
-    if (!gameConflicts.isEmpty()) {
-      throw new ConflictException(msg("error.game.pitchConflict"), "game", "pitchConflict");
+  private Set<User> getTeamRecipients(UUID teamId) {
+    List<TeamMember> members = teamMemberRepository.findByTeamIdWithUsersAndParents(teamId);
+    Set<User> recipients = new HashSet<>();
+    for (TeamMember tm : members) {
+      recipients.add(tm.getUser());
+      if (tm.getUser().getParents() != null) {
+        for (User parent : tm.getUser().getParents()) {
+          if (parent.getClub() != null
+              && parent.getClub().getId().equals(tm.getTeam().getClub().getId())) {
+            recipients.add(parent);
+          }
+        }
+      }
     }
+    return recipients;
   }
 
   private String msg(String key, Object... args) {

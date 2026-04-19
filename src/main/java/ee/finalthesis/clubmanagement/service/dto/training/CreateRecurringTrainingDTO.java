@@ -20,6 +20,8 @@ public class CreateRecurringTrainingDTO {
 
   @NotNull private DayOfWeek dayOfWeek;
 
+  private LocalTime gatheringTime;
+
   @NotNull private LocalTime startTime;
 
   @NotNull private LocalTime endTime;

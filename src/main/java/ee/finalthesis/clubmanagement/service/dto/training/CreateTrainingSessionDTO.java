@@ -15,6 +15,8 @@ public class CreateTrainingSessionDTO {
 
   @NotNull private LocalDate date;
 
+  private LocalTime gatheringTime;
+
   @NotNull private LocalTime startTime;
 
   @NotNull private LocalTime endTime;

@@ -10,6 +10,7 @@ import org.mapstruct.Mapping;
 public interface UserMapper {
 
   @Mapping(source = "club.id", target = "clubId")
+  @Mapping(source = "club.name", target = "clubName")
   UserDTO toDto(User user);
 
   List<UserDTO> toDto(List<User> users);

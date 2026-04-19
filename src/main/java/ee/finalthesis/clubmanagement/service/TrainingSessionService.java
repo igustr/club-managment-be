@@ -51,6 +51,7 @@ public class TrainingSessionService {
   private final TrainingSessionMapper trainingSessionMapper;
   private final AttendanceService attendanceService;
   private final NotificationService notificationService;
+  private final PitchConflictValidator pitchConflictValidator;
   private final MessageSource messageSource;
 
   @Transactional(readOnly = true)
@@ -113,9 +114,21 @@ public class TrainingSessionService {
     Pitch pitch = resolvePitch(clubId, request.getPitchId());
     BigDecimal portion = request.getPitchPortion() != null ? request.getPitchPortion() : BigDecimal.ONE;
 
+    if (pitch != null) {
+      pitchConflictValidator.checkConflict(
+          pitch.getId(),
+          request.getDate(),
+          request.getStartTime(),
+          request.getEndTime(),
+          portion,
+          null,
+          null);
+    }
+
     TrainingSession training =
         TrainingSession.builder()
             .date(request.getDate())
+            .gatheringTime(request.getGatheringTime())
             .startTime(request.getStartTime())
             .endTime(request.getEndTime())
             .notes(request.getNotes())
@@ -126,6 +139,12 @@ public class TrainingSessionService {
 
     training = trainingSessionRepository.save(training);
     attendanceService.createAttendanceForTraining(training);
+
+    notifyTeamMembers(
+        training,
+        NotificationType.TRAINING_CREATED,
+        training.getTeam().getName() + " – " + training.getDate().format(DATE_FMT));
+
     return trainingSessionMapper.toDto(training);
   }
 
@@ -160,9 +179,21 @@ public class TrainingSessionService {
     }
 
     while (!current.isAfter(request.getEndDate())) {
+      if (pitch != null) {
+        pitchConflictValidator.checkConflict(
+            pitch.getId(),
+            current,
+            request.getStartTime(),
+            request.getEndTime(),
+            portion,
+            null,
+            null);
+      }
+
       TrainingSession training =
           TrainingSession.builder()
               .date(current)
+              .gatheringTime(request.getGatheringTime())
               .startTime(request.getStartTime())
               .endTime(request.getEndTime())
               .notes(request.getNotes())
@@ -176,6 +207,25 @@ public class TrainingSessionService {
       attendanceService.createAttendanceForTraining(training);
       sessions.add(training);
       current = current.plusWeeks(1);
+    }
+
+    if (!sessions.isEmpty()) {
+      TrainingSession first = sessions.get(0);
+      TrainingSession last = sessions.get(sessions.size() - 1);
+      String title =
+          first.getTeam().getName()
+              + " – "
+              + first.getDate().format(DATE_FMT)
+              + "–"
+              + last.getDate().format(DATE_FMT);
+      Set<User> recipients = getTeamRecipients(first.getTeam().getId());
+      notificationService.notifyUsers(
+          recipients,
+          first.getTeam().getClub(),
+          NotificationType.TRAINING_SERIES_CREATED,
+          title,
+          null,
+          recurrenceGroupId);
     }
 
     return trainingSessionMapper.toDto(sessions);
@@ -192,8 +242,22 @@ public class TrainingSessionService {
     validateTimeRange(request.getStartTime(), request.getEndTime());
 
     Pitch pitch = resolvePitch(clubId, request.getPitchId());
+    BigDecimal portion =
+        request.getPitchPortion() != null ? request.getPitchPortion() : training.getPitchPortion();
+
+    if (pitch != null) {
+      pitchConflictValidator.checkConflict(
+          pitch.getId(),
+          request.getDate(),
+          request.getStartTime(),
+          request.getEndTime(),
+          portion,
+          training.getId(),
+          null);
+    }
 
     training.setDate(request.getDate());
+    training.setGatheringTime(request.getGatheringTime());
     training.setStartTime(request.getStartTime());
     training.setEndTime(request.getEndTime());
     training.setNotes(request.getNotes());

@@ -23,5 +23,6 @@ public class UserDTO {
   private PlayerPosition position;
   private SystemRole systemRole;
   private UUID clubId;
+  private String clubName;
   private Boolean active;
 }

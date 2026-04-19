@@ -32,6 +32,9 @@ public class TrainingSession extends AbstractAuditingEntity<UUID> implements Ser
   @NotNull @Column(name = "date", nullable = false)
   private LocalDate date;
 
+  @Column(name = "gathering_time")
+  private LocalTime gatheringTime;
+
   @NotNull @Column(name = "start_time", nullable = false)
   private LocalTime startTime;
 

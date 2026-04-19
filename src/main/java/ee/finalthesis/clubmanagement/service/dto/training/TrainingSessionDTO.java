@@ -14,6 +14,7 @@ public class TrainingSessionDTO {
 
   private UUID id;
   private LocalDate date;
+  private LocalTime gatheringTime;
   private LocalTime startTime;
   private LocalTime endTime;
   private UUID teamId;

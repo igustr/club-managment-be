@@ -81,4 +81,7 @@
     <!-- Remove capacity from pitch -->
     <include file="config/liquibase/changelog/20260324100002_remove_capacity_from_pitch.xml" relativeToChangelogFile="false"/>
 
+    <!-- Gathering time for training sessions -->
+    <include file="config/liquibase/changelog/20260419100001_add_gathering_time_to_training_session.xml" relativeToChangelogFile="false"/>
+
 </databaseChangeLog>
