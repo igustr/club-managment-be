@@ -2,24 +2,34 @@ package ee.finalthesis.clubmanagement.service;
 
 import ee.finalthesis.clubmanagement.common.exception.ResourceNotFoundException;
 import ee.finalthesis.clubmanagement.domain.Club;
+import ee.finalthesis.clubmanagement.domain.Game;
 import ee.finalthesis.clubmanagement.domain.Pitch;
+import ee.finalthesis.clubmanagement.domain.TrainingSession;
 import ee.finalthesis.clubmanagement.repository.ClubRepository;
+import ee.finalthesis.clubmanagement.repository.GameRepository;
 import ee.finalthesis.clubmanagement.repository.PitchRepository;
 import ee.finalthesis.clubmanagement.repository.TrainingSessionRepository;
-import ee.finalthesis.clubmanagement.domain.TrainingSession;
 import ee.finalthesis.clubmanagement.service.dto.pitch.CreatePitchDTO;
+import ee.finalthesis.clubmanagement.service.dto.pitch.PitchConflictDTO;
 import ee.finalthesis.clubmanagement.service.dto.pitch.PitchDTO;
 import ee.finalthesis.clubmanagement.service.dto.pitch.PitchOccupancyDTO;
+import ee.finalthesis.clubmanagement.service.dto.pitch.PitchScheduleDTO;
+import ee.finalthesis.clubmanagement.service.dto.pitch.PitchScheduleEntryDTO;
+import ee.finalthesis.clubmanagement.service.dto.pitch.PitchScheduleEventDTO;
 import ee.finalthesis.clubmanagement.service.dto.pitch.UpdatePitchDTO;
 import ee.finalthesis.clubmanagement.service.dto.training.TrainingSessionDTO;
 import ee.finalthesis.clubmanagement.service.mapper.PitchMapper;
 import ee.finalthesis.clubmanagement.service.mapper.TrainingSessionMapper;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +45,7 @@ public class PitchService {
   private final PitchRepository pitchRepository;
   private final ClubRepository clubRepository;
   private final TrainingSessionRepository trainingSessionRepository;
+  private final GameRepository gameRepository;
   private final PitchMapper pitchMapper;
   private final TrainingSessionMapper trainingSessionMapper;
   private final MessageSource messageSource;
@@ -135,6 +146,149 @@ public class PitchService {
     }
 
     return result;
+  }
+
+  /**
+   * Returns club-wide pitch usage and detected scheduling conflicts within the given date range.
+   * Conflicts are detected per pitch per day using a sweep-line algorithm: an overbooking arises
+   * when the sum of overlapping pitch portions (trainings) and games (each treated as 1.0) exceeds
+   * 1.0 at any moment in time.
+   */
+  @Transactional(readOnly = true)
+  public PitchScheduleDTO getClubPitchSchedule(UUID clubId, LocalDate from, LocalDate to) {
+    if (!clubRepository.existsById(clubId)) {
+      throw new ResourceNotFoundException("Club", "id", clubId);
+    }
+
+    List<Pitch> pitches = pitchRepository.findByClubId(clubId);
+    List<Game> homeGames =
+        gameRepository.findHomeGamesByClubIdAndDateBetween(clubId, from, to);
+
+    List<PitchScheduleEntryDTO> entries = new ArrayList<>();
+    List<PitchConflictDTO> allConflicts = new ArrayList<>();
+
+    for (Pitch pitch : pitches) {
+      List<TrainingSession> trainings =
+          trainingSessionRepository.findByPitchIdAndDateBetween(pitch.getId(), from, to);
+
+      List<PitchScheduleEventDTO> events = new ArrayList<>();
+      for (TrainingSession ts : trainings) {
+        events.add(
+            new PitchScheduleEventDTO(
+                ts.getId(),
+                PitchScheduleEventDTO.EventType.TRAINING,
+                ts.getDate(),
+                ts.getStartTime(),
+                ts.getEndTime(),
+                ts.getTeam().getId(),
+                ts.getTeam().getName(),
+                ts.getPitchPortion() != null ? ts.getPitchPortion() : BigDecimal.ONE,
+                null));
+      }
+      for (Game g : homeGames) {
+        if (g.getPitch() != null && pitch.getId().equals(g.getPitch().getId())) {
+          events.add(
+              new PitchScheduleEventDTO(
+                  g.getId(),
+                  PitchScheduleEventDTO.EventType.GAME,
+                  g.getDate(),
+                  g.getStartTime(),
+                  g.getEndTime(),
+                  g.getTeam().getId(),
+                  g.getTeam().getName(),
+                  BigDecimal.ONE,
+                  g.getOpponent()));
+        }
+      }
+      events.sort(
+          Comparator.comparing(PitchScheduleEventDTO::getDate)
+              .thenComparing(PitchScheduleEventDTO::getStartTime));
+
+      entries.add(new PitchScheduleEntryDTO(pitch.getId(), pitch.getName(), events));
+      allConflicts.addAll(detectConflicts(pitch.getId(), pitch.getName(), events));
+    }
+
+    return new PitchScheduleDTO(from, to, entries, allConflicts);
+  }
+
+  /** Sweep-line conflict detection per pitch, grouped by date. */
+  private List<PitchConflictDTO> detectConflicts(
+      UUID pitchId, String pitchName, List<PitchScheduleEventDTO> events) {
+    List<PitchConflictDTO> result = new ArrayList<>();
+    Map<LocalDate, List<PitchScheduleEventDTO>> byDate =
+        events.stream().collect(Collectors.groupingBy(PitchScheduleEventDTO::getDate));
+
+    for (Map.Entry<LocalDate, List<PitchScheduleEventDTO>> entry : byDate.entrySet()) {
+      LocalDate date = entry.getKey();
+      List<PitchScheduleEventDTO> dayEvents = entry.getValue();
+      if (dayEvents.size() < 2) continue;
+
+      // Build sweep points: type=END before type=START at equal time → no false conflict at boundary
+      List<SweepPoint> points = new ArrayList<>();
+      for (PitchScheduleEventDTO e : dayEvents) {
+        BigDecimal portion = e.getPitchPortion() != null ? e.getPitchPortion() : BigDecimal.ONE;
+        points.add(new SweepPoint(e.getStartTime(), portion, true, e.getId()));
+        points.add(new SweepPoint(e.getEndTime(), portion, false, e.getId()));
+      }
+      points.sort(
+          Comparator.comparing((SweepPoint p) -> p.time)
+              .thenComparing(p -> p.isStart ? 1 : 0));
+
+      BigDecimal occupancy = BigDecimal.ZERO;
+      Set<UUID> active = new LinkedHashSet<>();
+      LocalTime conflictStart = null;
+      BigDecimal conflictMax = BigDecimal.ZERO;
+      Set<UUID> conflictIds = new LinkedHashSet<>();
+
+      for (SweepPoint p : points) {
+        if (p.isStart) {
+          occupancy = occupancy.add(p.portion);
+          active.add(p.eventId);
+        } else {
+          occupancy = occupancy.subtract(p.portion);
+          active.remove(p.eventId);
+        }
+
+        boolean inConflict = occupancy.compareTo(BigDecimal.ONE) > 0;
+
+        if (inConflict && conflictStart == null) {
+          conflictStart = p.time;
+          conflictIds = new LinkedHashSet<>(active);
+          conflictMax = occupancy;
+        } else if (inConflict) {
+          conflictIds.addAll(active);
+          if (occupancy.compareTo(conflictMax) > 0) conflictMax = occupancy;
+        } else if (conflictStart != null) {
+          result.add(
+              new PitchConflictDTO(
+                  pitchId,
+                  pitchName,
+                  date,
+                  conflictStart,
+                  p.time,
+                  conflictMax,
+                  new ArrayList<>(conflictIds)));
+          conflictStart = null;
+          conflictMax = BigDecimal.ZERO;
+          conflictIds = new LinkedHashSet<>();
+        }
+      }
+    }
+    return result;
+  }
+
+  private static final class SweepPoint {
+    final LocalTime time;
+    final BigDecimal portion;
+    final boolean isStart;
+    final UUID eventId;
+
+    SweepPoint(LocalTime time, BigDecimal portion, boolean isStart, UUID eventId) {
+      this.time = time;
+      this.portion = portion;
+      this.isStart = isStart;
+      this.eventId = eventId;
+    }
   }
 
   private String msg(String key, Object... args) {

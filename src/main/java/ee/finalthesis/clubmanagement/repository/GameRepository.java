@@ -49,4 +49,15 @@ public interface GameRepository extends JpaRepository<Game, UUID> {
       @Param("startTime") LocalTime startTime,
       @Param("endTime") LocalTime endTime,
       @Param("excludeId") UUID excludeId);
+
+  @Query(
+      "SELECT g FROM Game g JOIN FETCH g.team WHERE g.club.id = :clubId"
+          + " AND g.pitch.id IS NOT NULL"
+          + " AND g.date BETWEEN :startDate AND :endDate"
+          + " AND g.status = 'SCHEDULED'"
+          + " ORDER BY g.date, g.startTime")
+  List<Game> findHomeGamesByClubIdAndDateBetween(
+      @Param("clubId") UUID clubId,
+      @Param("startDate") LocalDate startDate,
+      @Param("endDate") LocalDate endDate);
 }

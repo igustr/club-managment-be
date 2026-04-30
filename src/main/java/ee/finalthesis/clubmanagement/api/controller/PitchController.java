@@ -4,6 +4,7 @@ import ee.finalthesis.clubmanagement.service.PitchService;
 import ee.finalthesis.clubmanagement.service.dto.pitch.CreatePitchDTO;
 import ee.finalthesis.clubmanagement.service.dto.pitch.PitchDTO;
 import ee.finalthesis.clubmanagement.service.dto.pitch.PitchOccupancyDTO;
+import ee.finalthesis.clubmanagement.service.dto.pitch.PitchScheduleDTO;
 import ee.finalthesis.clubmanagement.service.dto.pitch.UpdatePitchDTO;
 import ee.finalthesis.clubmanagement.service.dto.training.TrainingSessionDTO;
 import jakarta.validation.Valid;
@@ -84,5 +85,14 @@ public class PitchController {
       @RequestParam LocalDate startDate,
       @RequestParam LocalDate endDate) {
     return ResponseEntity.ok(pitchService.getPitchOverview(clubId, startDate, endDate));
+  }
+
+  @GetMapping("/schedule")
+  @PreAuthorize("@clubSecurity.isAdmin(#clubId)")
+  public ResponseEntity<PitchScheduleDTO> getClubPitchSchedule(
+      @PathVariable UUID clubId,
+      @RequestParam LocalDate from,
+      @RequestParam LocalDate to) {
+    return ResponseEntity.ok(pitchService.getClubPitchSchedule(clubId, from, to));
   }
 }
